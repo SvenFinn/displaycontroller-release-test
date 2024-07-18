@@ -33,7 +33,7 @@ coverage
 bower_components
 
 # node-waf configuration
-.lock-wscript
+.lock-wscript  
 
 # Compiled binary addons (https://nodejs.org/api/addons.html)
 build/Release
@@ -128,3 +128,6 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+
+src/screens/images/files
