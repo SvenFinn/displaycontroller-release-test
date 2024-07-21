@@ -7,6 +7,7 @@ import pino from "pino";
 
 dotenv.config();
 const logger = pino({
+    level: process.env.NODE_ENV === "production" ? "info" : "debug",
     transport: {
         target: "pino-pretty",
         options: {
@@ -15,27 +16,29 @@ const logger = pino({
     },
 });
 
+const basePath = `${__dirname}/../files`;
+
 const app: Express = express();
 app.use(fileUpload({
     limits: { fileSize: 50 * 1024 * 1024 },
     useTempFiles: true,
 }));
 
-app.get(`${process.env.BASE_API_URL}/*`, (req: Request, res) => {
+app.get("/*", (req: Request, res) => {
     logger.info(`GET ${req.params[0]}`);
-    if(req.params[0].includes("..")) {
+    if (req.params[0].includes("..")) {
         logger.info("Found .. in path");
-        res.status(400).send("Cannot access file");
+        res.status(404).sendFile("img/404.png", { root: __dirname });
         return;
     }
-    const path = `${process.env.BASE_PATH}/${req.params[0]}`;
-    if(!fs.existsSync(path)) {
+    const path = `${basePath}/${req.params[0]}`;
+    if (!fs.existsSync(path)) {
         logger.info("File not found");
-        res.status(404).send("File not found");
+        res.status(404).sendFile("img/404.png", { root: __dirname });
         return
     }
     logger.info("Scanning directory");
-    if(fs.lstatSync(path).isDirectory()) {
+    if (fs.lstatSync(path).isDirectory()) {
         const files = fs.readdirSync(path);
         const response = files.map((file) => {
             return {
@@ -50,9 +53,9 @@ app.get(`${process.env.BASE_API_URL}/*`, (req: Request, res) => {
 });
 
 async function handleFiles(files: fileUpload.FileArray, path: string) {
-    for(const [key, file] of Object.entries(files)) {
-        if(Array.isArray(file)) {
-            for(const f of file) {
+    for (const [key, file] of Object.entries(files)) {
+        if (Array.isArray(file)) {
+            for (const f of file) {
                 logger.debug(`Handling file ${f.name}`);
                 await handleFile(f, path);
             }
@@ -64,9 +67,9 @@ async function handleFiles(files: fileUpload.FileArray, path: string) {
 }
 
 async function handleFile(file: fileUpload.UploadedFile, path: string) {
-    if(file.mimetype === "application/pdf") {
+    if (file.mimetype === "application/pdf") {
         logger.info("Converting PDF to images");
-        if(fs.existsSync(`${path}/${file.name}`)) {
+        if (fs.existsSync(`${path}/${file.name}`)) {
             fs.rmSync(`${path}/${file.name}`, { recursive: true });
         }
         fs.mkdirSync(`${path}/${file.name}`);
@@ -83,52 +86,53 @@ async function handleFile(file: fileUpload.UploadedFile, path: string) {
     }
 }
 
-app.post(`${process.env.BASE_API_URL}/*`, async (req: Request, res) => {
+app.post("/*", async (req: Request, res) => {
     logger.info(`POST ${req.params[0]}`);
-    if(req.params[0].includes("..")) {
+    if (req.params[0].includes("..")) {
         logger.info("Found .. in path");
         res.status(400).send("Cannot create file");
         return;
     }
-    const path = `${process.env.BASE_PATH}/${req.params[0]}`;
-    if(!fs.existsSync(path)) {
+    const path = `${basePath}/${req.params[0]}`;
+    if (!fs.existsSync(path)) {
         logger.debug("Creating folder");
         await new Promise<void>((resolve, reject) => {
             fs.mkdir(path, { recursive: true }, (err) => {
-                if(err) {
+                if (err) {
                     reject(err);
                 }
                 resolve();
             });
         });
+        res.status(200).send("Folder created");
     }
-    if(!req.files) {
+    if (!req.files) {
         res.status(400).send("No files uploaded");
         return;
     }
     try {
         await handleFiles(req.files, path);
         res.status(200).send("Files uploaded");
-    } catch(err) {
+    } catch (err) {
         logger.warn(err);
         res.status(500).send("Error uploading files");
     }
 });
 
-app.delete(`${process.env.BASE_API_URL}/*`, (req: Request, res) => {
+app.delete("/*", (req: Request, res) => {
     logger.info(`DELETE ${req.params[0]}`);
-    if(req.params[0].includes("..")) {
+    if (req.params[0].includes("..")) {
         res.status(400).send("Cannot delete file");
         return;
     }
-    const path = `${process.env.BASE_PATH}/${req.params[0]}`;
-    if(!fs.existsSync(path)) {
+    const path = `${basePath}/${req.params[0]}`;
+    if (!fs.existsSync(path)) {
         res.status(404).send("File not found");
         return;
     }
-    if(fs.lstatSync(path).isDirectory()) {
+    if (fs.lstatSync(path).isDirectory()) {
         fs.rm(path, { recursive: true }, (err) => {
-            if(err) {
+            if (err) {
                 res.status(500).send("Error deleting folder");
                 return;
             }
@@ -136,7 +140,7 @@ app.delete(`${process.env.BASE_API_URL}/*`, (req: Request, res) => {
         });
     } else {
         fs.unlink(path, (err) => {
-            if(err) {
+            if (err) {
                 res.status(500).send("Error deleting file");
                 return;
             }
@@ -145,6 +149,7 @@ app.delete(`${process.env.BASE_API_URL}/*`, (req: Request, res) => {
     }
 });
 
+
 app.listen(80, () => {
-    console.log("Server is running on port 80");
+    logger.info("Server is running on port 80");
 });
