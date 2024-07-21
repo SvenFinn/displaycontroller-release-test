@@ -1,0 +1,16 @@
+services:
+  synchtml:
+    build: .
+    ports:
+      - "3000:80"
+    
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.100.0/16
+        - ip_range: 192.168.100.0/16
+        - gateway: 192.168.100.200
+    enable_ipv6: false
