@@ -1,0 +1,22 @@
+services:
+  dc-database:
+    image: postgres:latest
+    container_name: dc-database
+    hostname: database
+    networks:
+      - displaycontroller
+    environment:
+      POSTGRES_USER: softwareAccess
+      POSTGRES_PASSWORD: TRcOkg6xzacXdUWI
+      POSTGRES_DB: displaycontroller
+  dc-pgadmin:
+    build:
+      context: ./pgadmin
+      dockerfile: Dockerfile
+    container_name: dc-pgadmin
+    hostname: pgadmin
+    networks:
+      - displaycontroller
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: admin

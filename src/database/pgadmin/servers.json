@@ -1,0 +1,14 @@
+{
+    "Servers": {
+        "1": {
+            "Name": "Displaycontroller",
+            "Group": "Servers",
+            "Host": "database",
+            "Port": 5432,
+            "Shared": true,
+            "Username": "softwareAccess",
+            "MaintenanceDB": "displaycontroller",
+            "PassFile": "/pgPass"
+        }
+    }
+}

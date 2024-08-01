@@ -2,6 +2,7 @@ include:
     - proxy/docker-compose.yaml
     - screens/images/docker-compose.yaml
     - screens/evaluations/docker-compose.yaml
+    - database/docker-compose.yaml
 
 networks:
   displaycontroller:
