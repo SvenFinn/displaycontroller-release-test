@@ -1,5 +1,7 @@
 services:
   dc_reverse_proxy:
+    container_name: dc_reverse_proxy
+    hostname: reverse_proxy
     build: .
     ports:
       - "80:80"

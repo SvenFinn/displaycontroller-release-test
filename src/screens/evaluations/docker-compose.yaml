@@ -1,6 +1,7 @@
 services:
   dc_evaluations:
     hostname: evaluations
+    container_name: dc_evaluations
     networks:
       - displaycontroller
     build: 

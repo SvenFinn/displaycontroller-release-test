@@ -1,5 +1,6 @@
 services:
   dc_images:
+    container_name: dc_images
     hostname: images
     networks:
       - displaycontroller      
