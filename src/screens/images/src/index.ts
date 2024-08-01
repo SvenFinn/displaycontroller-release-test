@@ -16,7 +16,7 @@ const logger = pino({
     },
 });
 
-const basePath = `${__dirname}/../files`;
+const basePath = `${__dirname}/files`;
 
 const app: Express = express();
 app.use(fileUpload({
@@ -24,7 +24,7 @@ app.use(fileUpload({
     useTempFiles: true,
 }));
 
-app.get("/*", (req: Request, res) => {
+app.get("/api/images/?*", (req: Request, res) => {
     logger.info(`GET ${req.params[0]}`);
     if (req.params[0].includes("..")) {
         logger.info("Found .. in path");
@@ -37,8 +37,8 @@ app.get("/*", (req: Request, res) => {
         res.status(404).sendFile("img/404.png", { root: __dirname });
         return
     }
-    logger.info("Scanning directory");
     if (fs.lstatSync(path).isDirectory()) {
+        logger.info("Scanning directory");
         const files = fs.readdirSync(path);
         const response = files.map((file) => {
             return {
@@ -86,7 +86,7 @@ async function handleFile(file: fileUpload.UploadedFile, path: string) {
     }
 }
 
-app.post("/*", async (req: Request, res) => {
+app.post("/api/images/?*", async (req: Request, res) => {
     logger.info(`POST ${req.params[0]}`);
     if (req.params[0].includes("..")) {
         logger.info("Found .. in path");
@@ -119,7 +119,7 @@ app.post("/*", async (req: Request, res) => {
     }
 });
 
-app.delete("/*", (req: Request, res) => {
+app.delete("/api/images/?*", (req: Request, res) => {
     logger.info(`DELETE ${req.params[0]}`);
     if (req.params[0].includes("..")) {
         res.status(400).send("Cannot delete file");

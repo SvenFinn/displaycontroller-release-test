@@ -1,0 +1,8 @@
+include:
+    - proxy/docker-compose.yaml
+    - screens/images/docker-compose.yaml
+    - screens/evaluations/docker-compose.yaml
+
+networks:
+  displaycontroller:
+    driver: bridge

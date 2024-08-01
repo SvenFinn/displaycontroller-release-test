@@ -1,7 +1,10 @@
 services:
-  imagesrv:
-    build: .
-    ports:
-      - "3000:80"
+  dc_images:
+    hostname: images
+    networks:
+      - displaycontroller      
+    build:
+      context: .
+      dockerfile: Dockerfile
     volumes:
       - "./files:/app/files"
