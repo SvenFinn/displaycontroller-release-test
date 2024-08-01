@@ -1,0 +1,8 @@
+services:
+  dc_evaluations:
+    hostname: evaluations
+    networks:
+      - displaycontroller
+    build: 
+      context: .
+      dockerfile: Dockerfile

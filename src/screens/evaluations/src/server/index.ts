@@ -17,7 +17,7 @@ const basePath = path.resolve(`${__dirname}/../html`);
 
 const app: Express = express();
 
-app.get("/*", (req: Request, res) => {
+app.get("/api/evaluations/?*", (req: Request, res) => {
     logger.info(`GET ${req.params[0]}`);
     if (req.params[0].includes("..")) {
         logger.info("Found .. in path");
@@ -30,8 +30,8 @@ app.get("/*", (req: Request, res) => {
         res.status(404).send("File not found");
         return
     }
-    logger.info("Scanning directory");
     if (fs.lstatSync(path).isDirectory()) {
+        logger.info("Scanning directory");
         const files = fs.readdirSync(path);
         const response = files.map((file) => {
             return {
