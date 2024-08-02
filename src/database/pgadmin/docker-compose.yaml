@@ -1,0 +1,12 @@
+services:
+  dc-pgadmin:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dc-pgadmin
+    hostname: pgadmin
+    networks:
+      - displaycontroller
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: admin

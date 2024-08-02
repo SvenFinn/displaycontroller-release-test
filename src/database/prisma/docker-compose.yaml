@@ -1,9 +1,10 @@
 services:
-  dc_evaluations:
-    hostname: evaluations
-    container_name: dc-evaluations
+  dc_db_migrate:
+    container_name: dc-db-migrate
     networks:
       - displaycontroller
     build: 
       context: .
       dockerfile: Dockerfile
+      args:
+        - SELF_DB_URL=${SELF_DB_URL}

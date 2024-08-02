@@ -4,7 +4,9 @@
         "CONV",
         "ergebnis",
         "fileupload",
+        "MEYTON",
         "pino",
+        "prisma",
         "smbclient"
     ]
 }
