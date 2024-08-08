@@ -153,3 +153,9 @@ app.delete("/api/images/?*", (req: Request, res) => {
 app.listen(80, () => {
     logger.info("Server is running on port 80");
 });
+
+
+process.on("SIGTERM", () => {
+    logger.info("Received SIGTERM, shutting down");
+    process.exit(0);
+})

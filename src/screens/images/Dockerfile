@@ -5,15 +5,15 @@ WORKDIR /app
 FROM base AS deps
 
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+RUN npm ci --omit=dev --loglevel=info
 
 FROM base AS build
 
 COPY . .
-RUN rm -rf node_modules
-RUN npm ci
-RUN npm run build
-RUN cp -r src/img dist/img
+RUN rm -rf node_modules; \
+    npm ci --loglevel=info; \
+    npm run build
+COPY src/img dist/img
 
 FROM base AS final
 
