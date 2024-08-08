@@ -3,6 +3,7 @@ include:
     - screens/images/docker-compose.yaml
     - screens/evaluations/docker-compose.yaml
     - database/docker-compose.yaml
+    - checkServer/docker-compose.yaml
 
 networks:
   displaycontroller:

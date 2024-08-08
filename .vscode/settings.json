@@ -7,6 +7,7 @@
         "MEYTON",
         "pino",
         "prisma",
-        "smbclient"
+        "smbclient",
+        "ssmdb"
     ]
 }

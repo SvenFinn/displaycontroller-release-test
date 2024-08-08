@@ -1,14 +1,17 @@
 #!/bin/bash
 
-mkdir -p $SRV_TMP_DIR
-
 # Start the first process
 node ./server/index.js &
+server_pid=$!
 
 # Start the second process
 node ./sync/index.js &
+sync_pid=$!
 
-# Wait for either process to exit
-wait -n
+# Receive sigterm
+trap 'kill -TERM $server_pid $sync_pid' TERM
+
+# Wait for either process to exit or receive sigterm
+wait -n 
 
 exit $?

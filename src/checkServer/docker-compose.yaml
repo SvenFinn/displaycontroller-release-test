@@ -1,0 +1,18 @@
+services:
+  dc-check-server:
+    container_name: dc-check-server
+    hostname: check-server
+    networks:
+      - displaycontroller      
+    build:
+      context: .
+      dockerfile: Dockerfile
+      additional_contexts:
+        - database=../database/prisma/src
+      args:
+        - SELF_DB_URL=${SELF_DB_URL} 
+        - MIN_MEYTON_VERSION=${MIN_MEYTON_VERSION}
+        - MAX_MEYTON_VERSION=${MAX_MEYTON_VERSION}     
+    depends_on:
+      dc-db-migrate:
+        condition: service_completed_successfully
