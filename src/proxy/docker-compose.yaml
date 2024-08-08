@@ -1,5 +1,5 @@
 services:
-  dc_reverse_proxy:
+  dc-reverse-proxy:
     container_name: dc-reverse_proxy
     hostname: reverse_proxy
     build: .
@@ -7,3 +7,6 @@ services:
       - "80:80"
     networks:
       - displaycontroller
+    depends_on:
+      dc-db-migrate:
+        condition: service_completed_successfully

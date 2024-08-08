@@ -1,5 +1,5 @@
 services:
-  dc_images:
+  dc-images:
     container_name: dc-images
     hostname: images
     networks:
@@ -9,3 +9,6 @@ services:
       dockerfile: Dockerfile
     volumes:
       - "./files:/app/files"
+    depends_on:
+      dc-db-migrate:
+        condition: service_completed_successfully

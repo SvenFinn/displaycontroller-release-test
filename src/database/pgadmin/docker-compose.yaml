@@ -10,3 +10,6 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@pgadmin.org
       PGADMIN_DEFAULT_PASSWORD: admin
+    depends_on:
+      dc-db-migrate:
+        condition: service_completed_successfully

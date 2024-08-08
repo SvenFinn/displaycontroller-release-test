@@ -1,5 +1,5 @@
 services:
-  dc_evaluations:
+  dc-evaluations:
     hostname: evaluations
     container_name: dc-evaluations
     networks:
@@ -7,3 +7,6 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
+    depends_on:
+      dc-db-migrate:
+        condition: service_completed_successfully

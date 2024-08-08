@@ -1,5 +1,5 @@
 services:
-  dc_db_migrate:
+  dc-db-migrate:
     container_name: dc-db-migrate
     networks:
       - displaycontroller
