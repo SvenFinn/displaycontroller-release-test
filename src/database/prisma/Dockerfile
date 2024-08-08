@@ -7,24 +7,27 @@ ARG SELF_DB_URL
 FROM base AS deps
 
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+RUN npm ci --omit=dev --loglevel=info;
 
 FROM base AS build
 
 COPY . .
-RUN rm -rf node_modules
-RUN npm ci
-RUN npm run build
-COPY src/schema.prisma src/entrypoint.sh dist/
+COPY src/entrypoint.sh src/schema.prisma dist/
+RUN rm -rf node_modules; \
+    npm ci --loglevel=info; \
+    npx prisma generate --schema=dist/schema.prisma; \
+    npm run build; \
+    echo "SELF_DB_URL=$SELF_DB_URL\n" > dist/.env;
 COPY src/migrations dist/migrations
-RUN echo "SELF_DB_URL=$SELF_DB_URL" > dist/.env
 
 FROM base AS final
+
+RUN apt-get update && apt-get install netcat-openbsd -y
 
 COPY --from=build /app/dist ./
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/package.json ./package.json
 
-RUN npx prisma generate
+RUN npx prisma generate --schema=schema.prisma
 
 CMD ["bash" , "entrypoint.sh"]
