@@ -10,5 +10,3 @@ do
 done
 
 npx prisma migrate deploy
-
-node ./seed.js

@@ -1,25 +1,30 @@
 {
-  "name": "dc-prisma",
+  "name": "dc-db-local",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc"
+    "build": "tsc",
+    "postinstall": "ls; npx prisma generate",
+    "prepack": "npm run build"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
     "@prisma/client": "^5.17.0",
-    "pino": "^9.3.2",
-    "pino-pretty": "^11.2.2",
     "prisma": "^5.17.0"
   },
   "devDependencies": {
     "@types/node": "^22.1.0",
     "typescript": "^5.5.4"
   },
+  "files": [
+    "dist",
+    "schema.prisma"
+  ],
   "prisma": {
-    "seed": "node ./seed.js"
+    "schema": "schema.prisma"
   }
 }
