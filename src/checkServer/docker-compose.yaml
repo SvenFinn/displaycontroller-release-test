@@ -8,11 +8,13 @@ services:
       context: .
       dockerfile: Dockerfile
       additional_contexts:
-        - database=../database/prisma/src
+        - local-db=../database/local
       args:
         - SELF_DB_URL=${SELF_DB_URL} 
         - MIN_MEYTON_VERSION=${MIN_MEYTON_VERSION}
-        - MAX_MEYTON_VERSION=${MAX_MEYTON_VERSION}     
+        - MAX_MEYTON_VERSION=${MAX_MEYTON_VERSION}   
+        - MEYTON_SSH_USER=${MEYTON_SSH_USER}
+        - MEYTON_SSH_PASS=${MEYTON_SSH_PASS}  
     depends_on:
       dc-db-migrate:
         condition: service_completed_successfully

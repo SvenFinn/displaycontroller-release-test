@@ -8,9 +8,11 @@ services:
       context: .
       dockerfile: Dockerfile
       additional_contexts:
-        - database=../../database/prisma/src
+        - local-db=../../database/local
       args:
         - SELF_DB_URL=${SELF_DB_URL}
     depends_on:
       dc-db-migrate:
         condition: service_completed_successfully
+      dc-check-server:
+        condition: service_started

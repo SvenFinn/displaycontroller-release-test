@@ -8,5 +8,7 @@ services:
     networks:
       - displaycontroller
     depends_on:
-      dc-db-migrate:
-        condition: service_completed_successfully
+      - dc-check-server
+      - dc-evaluations
+      - dc-images
+      - dc-pgadmin

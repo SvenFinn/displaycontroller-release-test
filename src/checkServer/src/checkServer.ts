@@ -1,5 +1,5 @@
 import { execSync } from "child_process";
-import { PrismaClient } from "@prisma/client";
+import { LocalClient } from "dc-db-local";
 import { AdvServerState } from "./types";
 import { pino } from "pino";
 import dotenv from "dotenv";
@@ -15,13 +15,13 @@ const logger = pino({
     },
 });
 
-const prismaClient = new PrismaClient();
+const prismaClient = new LocalClient();
 
 export async function checkServiceAvailability(): Promise<AdvServerState> {
     logger.debug("Fetching server information");
     const server = (await prismaClient.parameter.findUnique({
         where: {
-            name: "MEYTON_SERVER_IP"
+            key: "MEYTON_SERVER_IP"
         }
     }))?.strValue;
     if (!server) {
@@ -29,8 +29,13 @@ export async function checkServiceAvailability(): Promise<AdvServerState> {
             online: false
         };
     }
-    const user = "meyton";
-    const pass = "mc4hct";
+    if (!process.env.MEYTON_SSH_USER || !process.env.MEYTON_SSH_PASS) {
+        logger.info(process.env);
+        logger.error("MEYTON_SSH_USER or MEYTON_SSH_PASS not set");
+        return {
+            online: false
+        };
+    }
     const commands = 'echo "[VERSION]";' +
         'cat /etc/meyton/shootmaster.version | grep -P "Date=";' +
         'cat /etc/meyton/shootmaster.version | grep -P "Version=";' +
@@ -38,7 +43,7 @@ export async function checkServiceAvailability(): Promise<AdvServerState> {
         'cat /etc/meyton/shootmasterd.cfg | grep -P "RealServerDaemons=";';
     let output = "";
     try {
-        output = execSync(`sshpass -p "${pass}" ssh -o ConnectTimeout=1 -o StrictHostKeyChecking=no ${user}@${server} '${commands}'`, { encoding: "utf-8", stdio: ["ignore", "pipe", "ignore"] });
+        output = execSync(`sshpass -p "${process.env.MEYTON_SSH_PASS}" ssh -o ConnectTimeout=1 -o StrictHostKeyChecking=no ${process.env.MEYTON_SSH_USER}@${server} '${commands}'`, { encoding: "utf-8", stdio: ["ignore", "pipe", "ignore"] });
     } catch (e) {
         logger.error("Error while checking server availability: " + e);
         return {
@@ -88,7 +93,7 @@ export async function checkServerAvailable(): Promise<boolean> {
     logger.debug("Checking server availability");
     const server = (await prismaClient.parameter.findUnique({
         where: {
-            name: "MEYTON_SERVER_IP"
+            key: "MEYTON_SERVER_IP"
         }
     }))?.strValue;
     if (!server) {
