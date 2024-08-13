@@ -1,6 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../generated/client";
 
-export { PrismaClient as LocalClient } from "@prisma/client";
+export { PrismaClient as LocalClient } from "../generated/client";
 
 export async function createLocalClient(): Promise<PrismaClient> {
     return new PrismaClient();

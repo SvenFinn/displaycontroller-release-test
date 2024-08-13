@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "postinstall": "ls; npx prisma generate",
-    "prepack": "npm run build"
+    "prepack": "chmod +x ./pack.sh && ./pack.sh"
   },
   "author": "",
   "license": "ISC",
@@ -22,7 +22,8 @@
   },
   "files": [
     "dist",
-    "schema.prisma"
+    "schema.prisma",
+    ".env"
   ],
   "prisma": {
     "schema": "schema.prisma"
