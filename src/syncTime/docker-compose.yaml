@@ -1,0 +1,16 @@
+services:
+  dc-sync-time:
+    container_name: dc-sync-time
+    hostname: sync_time
+    build:
+      context: .
+      dockerfile: Dockerfile
+      additional_contexts:
+        - local-db=../database/local
+        - smdb-db=../database/smdb
+    networks:
+      - displaycontroller
+    depends_on:
+      - dc-check-server
+    cap_add:
+      - SYS_TIME

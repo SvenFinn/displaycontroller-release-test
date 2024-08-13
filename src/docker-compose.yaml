@@ -4,6 +4,7 @@ include:
     - screens/evaluations/docker-compose.yaml
     - database/local/docker-compose.yaml
     - checkServer/docker-compose.yaml
+    - syncTime/docker-compose.yaml
 
 networks:
   displaycontroller:
