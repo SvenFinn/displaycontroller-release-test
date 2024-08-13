@@ -1,16 +1,6 @@
 import express, { Request, Response, Express } from "express";
 import { AdvServerState } from "./types";
-import pino from "pino";
-
-const logger = pino({
-    level: "info",
-    transport: {
-        target: "pino-pretty",
-        options: {
-            colorize: true,
-        },
-    },
-});
+import { logger } from "./logger";
 
 const app: Express = express();
 

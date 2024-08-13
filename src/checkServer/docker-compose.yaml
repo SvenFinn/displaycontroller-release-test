@@ -10,7 +10,6 @@ services:
       additional_contexts:
         - local-db=../database/local
       args:
-        - SELF_DB_URL=${SELF_DB_URL} 
         - MIN_MEYTON_VERSION=${MIN_MEYTON_VERSION}
         - MAX_MEYTON_VERSION=${MAX_MEYTON_VERSION}   
         - MEYTON_SSH_USER=${MEYTON_SSH_USER}

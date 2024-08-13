@@ -1,19 +1,9 @@
 import { execSync } from "child_process";
 import { LocalClient } from "dc-db-local";
 import { AdvServerState } from "./types";
-import { pino } from "pino";
+import { logger } from "./logger";
 import dotenv from "dotenv";
 dotenv.config();
-
-const logger = pino({
-    level: "info",
-    transport: {
-        target: "pino-pretty",
-        options: {
-            colorize: true,
-        },
-    },
-});
 
 const prismaClient = new LocalClient();
 

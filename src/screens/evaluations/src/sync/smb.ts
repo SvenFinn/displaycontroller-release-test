@@ -1,7 +1,7 @@
 import fs from "fs";
 import { exec } from "child_process";
 import { promisify } from "util";
-import { logger } from "./logger";
+import { logger } from "../logger";
 
 export async function fetchSamba(host: string, folder: string): Promise<boolean> {
     if (fs.existsSync(folder)) {

@@ -1,17 +1,6 @@
 import { checkServerAvailable, checkServiceAvailability } from "./checkServer";
 import { updateServerInfo } from "./webServer";
-import pino from "pino";
-import { AdvServerState } from "./types";
-
-const logger = pino({
-    level: "info",
-    transport: {
-        target: "pino-pretty",
-        options: {
-            colorize: true,
-        },
-    },
-});
+import { logger } from "./logger";
 
 let serverState: boolean | null;
 

@@ -1,17 +1,6 @@
 import express, { Express, Request } from "express";
 import * as fs from "fs";
-import pino from "pino";
-import path from "path";
-
-const logger = pino({
-    level: process.env.NODE_ENV === "production" ? "info" : "debug",
-    transport: {
-        target: "pino-pretty",
-        options: {
-            colorize: true,
-        },
-    },
-});
+import { logger } from "../logger";
 
 const app: Express = express();
 
