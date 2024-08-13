@@ -2,12 +2,14 @@
     "cSpell.words": [
         "conv",
         "CONV",
+        "datasources",
         "ergebnis",
         "fileupload",
-        "MEYTON",
+        "meyton",
         "pino",
         "prisma",
         "smbclient",
+        "smdb",
         "ssmdb"
     ]
 }

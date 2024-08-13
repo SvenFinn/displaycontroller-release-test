@@ -1,0 +1,27 @@
+{
+  "name": "dc-db-smdb",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "postinstall": "npx prisma generate",
+    "prepack": "chmod +x ./pack.sh && ./pack.sh"
+  },
+  "devDependencies": {
+    "@types/node": "^22.2.0",
+    "dc-db-local": "file:../local/dc-db-local-1.0.0.tgz",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.18.0",
+    "dotenv": "^16.4.5",
+    "prisma": "^5.18.0"
+  },
+  "files": [
+    "dist",
+    "schema.prisma",
+    ".env"
+  ]
+}
