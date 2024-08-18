@@ -16,3 +16,23 @@ model Parameter {
     createdAt DateTime @default(now())
     updatedAt DateTime @default(now()) @updatedAt
 }
+
+model Screens {
+    id           Int           @id @default(autoincrement())
+    preset       ScreensPreset
+    options      Json
+    condition    Json?
+    visibleFrom  Float         @default(-1)
+    visibleUntil Float         @default(-1)
+    duration     Float         @default(-1)
+    createdAt    DateTime      @default(now())
+    updatedAt    DateTime      @default(now()) @updatedAt
+}
+
+enum ScreensPreset {
+    drawTarget
+    cpcView
+    imageViewer
+    evaluation
+    evaluationGallery
+}

@@ -1,0 +1,14 @@
+services:
+  dc-screens-man:
+    container_name: dc-screens-man
+    hostname: screens-manager
+    networks:
+      - displaycontroller      
+    build:
+      context: .
+      dockerfile: Dockerfile
+      additional_contexts:
+        - local-db=../../database/local
+    depends_on:
+      dc-db-migrate:
+        condition: service_completed_successfully
