@@ -96,15 +96,7 @@ app.post("/api/images/?*", async (req: Request, res) => {
     const path = `${basePath}/${req.params[0]}`;
     if (!fs.existsSync(path)) {
         logger.debug("Creating folder");
-        await new Promise<void>((resolve, reject) => {
-            fs.mkdir(path, { recursive: true }, (err) => {
-                if (err) {
-                    reject(err);
-                }
-                resolve();
-            });
-        });
-        res.status(200).send("Folder created");
+        await fs.promises.mkdir(path, { recursive: true });
     }
     if (!req.files) {
         res.status(400).send("No files uploaded");
