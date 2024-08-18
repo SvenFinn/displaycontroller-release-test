@@ -10,6 +10,7 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@pgadmin.org
       PGADMIN_DEFAULT_PASSWORD: admin
+      GUNICORN_ACCESS_LOGFILE: "/dev/null"
     depends_on:
       dc-db-migrate:
         condition: service_completed_successfully
