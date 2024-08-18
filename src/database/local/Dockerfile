@@ -17,7 +17,7 @@ RUN rm -rf node_modules; \
     npm ci --loglevel=info; \
     npm run build; \
     echo "SELF_DB_URL=$SELF_DB_URL\n" > dist/.env;
-COPY src/migrations dist/migrations
+COPY migrations dist/migrations
 
 FROM base AS final
 
