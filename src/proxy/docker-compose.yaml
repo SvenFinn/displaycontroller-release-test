@@ -7,8 +7,3 @@ services:
       - "80:80"
     networks:
       - displaycontroller
-    depends_on:
-      - dc-check-server
-      - dc-evaluations
-      - dc-images
-      - dc-pgadmin
