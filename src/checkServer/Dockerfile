@@ -2,7 +2,6 @@ FROM node:latest AS base
 
 WORKDIR /app
 
-ARG SELF_DB_URL
 ARG MIN_MEYTON_VERSION
 ARG MAX_MEYTON_VERSION
 ARG MEYTON_SSH_PASS
@@ -27,8 +26,7 @@ RUN npm remove dc-db-local --loglevel=info; \
     echo "MIN_MEYTON_VERSION=$MIN_MEYTON_VERSION\n \
     MAX_MEYTON_VERSION=$MAX_MEYTON_VERSION\n \
     MEYTON_SSH_USER=$MEYTON_SSH_USER\n \
-    MEYTON_SSH_PASS=$MEYTON_SSH_PASS\n \
-    SELF_DB_URL=$SELF_DB_URL\n" > dist/.env;
+    MEYTON_SSH_PASS=$MEYTON_SSH_PASS\n" > dist/.env;
 COPY package.json dist/
 
 FROM base AS final
