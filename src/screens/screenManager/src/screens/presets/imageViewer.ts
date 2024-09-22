@@ -1,6 +1,7 @@
 import { Screens, validateDbScreenBase } from "./presets";
 import { BaseScreenAvailable, DbScreen } from "../types";
 import { logger } from "../../logger";
+import { isDirectoryListing } from "@shared/images";
 
 export default async function imageViewer(screen: DbScreen): Promise<Screens> {
     if (!validateViewerDb(screen)) {
@@ -46,8 +47,9 @@ async function createFileList(path: string): Promise<string[]> {
     const contentType = files.headers.get("content-type");
     if (!contentType) return [];
     if (!contentType.includes("application/json")) return [];
-    const fileList = await files.json() as [{ name: string, type: "folder" | "file" }];
-    const mappedList = fileList.map(async (file: { name: string, type: "folder" | "file" }) => {
+    const fileList = await files.json();
+    if (!isDirectoryListing(fileList)) return [];
+    const mappedList = fileList.map(async (file) => {
         if (file.type === "folder") return await createFileList(`${path}/${file.name}`);
         return `${path}/${file.name}`;
     });

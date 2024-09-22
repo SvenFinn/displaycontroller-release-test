@@ -1,6 +1,7 @@
 import { Screens, validateDbScreenBase } from "./presets";
 import { DbScreen } from "../types";
 import { logger } from "../../logger";
+import { isEvaluationListing } from "@shared/evaluations";
 
 export default async function evaluationGallery(screen: DbScreen): Promise<Screens> {
     if (!validateEvaluationGalleryDb(screen)) {
@@ -38,8 +39,9 @@ async function createFileList(path: string): Promise<string[]> {
     const contentType = files.headers.get("content-type");
     if (!contentType) return [];
     if (!contentType.includes("application/json")) return [];
-    const fileList = await files.json() as [{ name: string, type: "folder" | "file" }];
-    const mappedList = fileList.map(async (file: { name: string, type: "folder" | "file" }) => {
+    const fileList = await files.json();
+    if (!isEvaluationListing(fileList)) return [];
+    const mappedList = fileList.map(async (file) => {
         if (file.type === "folder") return await createFileList(`${path}/${file.name}`);
         return `${path}/${file.name}`;
     });

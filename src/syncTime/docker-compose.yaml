@@ -8,6 +8,10 @@ services:
       additional_contexts:
         - local-db=../database/local
         - smdb-db=../database/smdb
+      args:
+        - SELF_DB_URL=${SELF_DB_URL}
+        - MEYTON_DB_PASS=${MEYTON_DB_PASS}
+        - MEYTON_DB_USER=${MEYTON_DB_USER}
     networks:
       - displaycontroller
     depends_on:

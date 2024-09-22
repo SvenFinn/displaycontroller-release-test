@@ -4,11 +4,13 @@ services:
     container_name: dc-evaluations
     networks:
       - displaycontroller
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
       additional_contexts:
         - local-db=../../database/local
+      args:
+        - SELF_DB_URL=${SELF_DB_URL}
     depends_on:
       dc-db-migrate:
         condition: service_completed_successfully

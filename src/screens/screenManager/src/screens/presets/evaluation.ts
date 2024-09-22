@@ -1,6 +1,8 @@
 import { Screens, validateDbScreenBase } from "./presets";
 import { BaseScreenAvailable, DbScreen } from "../types";
 import { logger } from "../../logger";
+import { isEvaluationListing } from "@shared/evaluations";
+
 export default async function evaluation(screen: DbScreen): Promise<Screens> {
     if (!validateEvaluationDb(screen)) {
         logger.warn(`Screen ${screen.id} is not a valid evaluation screen`);
@@ -13,6 +15,9 @@ export default async function evaluation(screen: DbScreen): Promise<Screens> {
     if (!fileExists) return [{
         available: false
     }]
+    if (isEvaluationListing(fileExists)) return [{
+        available: false
+    }];
     return [
         {
             available: true,

@@ -4,6 +4,7 @@ import * as fs from "fs";
 import fileUpload from "express-fileupload";
 import { fromPath } from "pdf2pic";
 import pino from "pino";
+import { DirectoryListing } from "../types";
 
 dotenv.config();
 const logger = pino({
@@ -40,7 +41,7 @@ app.get("/api/images/?*", (req: Request, res) => {
     if (fs.lstatSync(path).isDirectory()) {
         logger.info("Scanning directory");
         const files = fs.readdirSync(path);
-        const response = files.map((file) => {
+        const response: DirectoryListing = files.map((file) => {
             return {
                 name: file,
                 type: fs.lstatSync(`${path}/${file}`).isDirectory() ? "folder" : "file"
@@ -90,7 +91,10 @@ app.post("/api/images/?*", async (req: Request, res) => {
     logger.info(`POST ${req.params[0]}`);
     if (req.params[0].includes("..")) {
         logger.info("Found .. in path");
-        res.status(400).send("Cannot create file");
+        res.status(400).send({
+            code: 400,
+            message: "Invalid path",
+        })
         return;
     }
     const path = `${basePath}/${req.params[0]}`;
@@ -99,44 +103,71 @@ app.post("/api/images/?*", async (req: Request, res) => {
         await fs.promises.mkdir(path, { recursive: true });
     }
     if (!req.files) {
-        res.status(400).send("No files uploaded");
+        res.status(400).send({
+            code: 400,
+            message: "No files uploaded",
+        })
         return;
     }
     try {
         await handleFiles(req.files, path);
-        res.status(200).send("Files uploaded");
+        res.status(200).send({
+            code: 200,
+            message: "Files uploaded",
+        });
     } catch (err) {
         logger.warn(err);
-        res.status(500).send("Error uploading files");
+        res.status(500).send({
+            code: 500,
+            message: "Error uploading files",
+        })
     }
 });
 
 app.delete("/api/images/?*", (req: Request, res) => {
     logger.info(`DELETE ${req.params[0]}`);
     if (req.params[0].includes("..")) {
-        res.status(400).send("Cannot delete file");
+        res.status(400).send({
+            code: 400,
+            message: "Invalid path",
+        })
         return;
     }
     const path = `${basePath}/${req.params[0]}`;
     if (!fs.existsSync(path)) {
-        res.status(404).send("File not found");
+        res.status(404).send({
+            code: 404,
+            message: "File not found",
+        });
         return;
     }
     if (fs.lstatSync(path).isDirectory()) {
         fs.rm(path, { recursive: true }, (err) => {
             if (err) {
-                res.status(500).send("Error deleting folder");
+                res.status(500).send({
+                    code: 500,
+                    message: "Error deleting folder",
+                });
                 return;
             }
-            res.status(200).send("Folder deleted");
+            res.status(200).send({
+                code: 200,
+                message: "Folder deleted",
+            });
         });
     } else {
         fs.unlink(path, (err) => {
             if (err) {
-                res.status(500).send("Error deleting file");
+                res.status(500).send({
+                    code: 500,
+                    message: "Error deleting file",
+                });
                 return;
             }
-            res.status(200).send("File deleted");
+            res.status(200).send({
+                code: 200,
+                message: "File deleted",
+            });
         });
     }
 });

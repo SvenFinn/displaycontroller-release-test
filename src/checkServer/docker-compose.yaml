@@ -3,7 +3,7 @@ services:
     container_name: dc-check-server
     hostname: check-server
     networks:
-      - displaycontroller      
+      - displaycontroller
     build:
       context: .
       dockerfile: Dockerfile
@@ -11,9 +11,10 @@ services:
         - local-db=../database/local
       args:
         - MIN_MEYTON_VERSION=${MIN_MEYTON_VERSION}
-        - MAX_MEYTON_VERSION=${MAX_MEYTON_VERSION}   
+        - MAX_MEYTON_VERSION=${MAX_MEYTON_VERSION}
         - MEYTON_SSH_USER=${MEYTON_SSH_USER}
-        - MEYTON_SSH_PASS=${MEYTON_SSH_PASS}  
+        - MEYTON_SSH_PASS=${MEYTON_SSH_PASS}
+        - SELF_DB_URL=${SELF_DB_URL}
     depends_on:
       dc-db-migrate:
         condition: service_completed_successfully

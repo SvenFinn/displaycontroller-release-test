@@ -5,6 +5,14 @@
         "moduleResolution": "NodeNext",
         "strict": true,
         "outDir": "./dist",
+        "paths": {
+            "@shared/images": [
+                "../images/types"
+            ],
+            "@shared/evaluations": [
+                "../evaluations/types"
+            ],
+        }
     },
     "include": [
         "src/**/*.ts"

@@ -6,24 +6,22 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "postinstall": "ls; npx prisma generate",
-    "prepack": "chmod +x ./pack.sh && ./pack.sh"
+    "postinstall": "npx prisma generate"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@prisma/client": "^5.17.0",
-    "prisma": "^5.17.0"
+    "@prisma/client": "^5.19.1"
   },
   "devDependencies": {
     "@types/node": "^22.1.0",
+    "prisma": "^5.19.1",
     "typescript": "^5.5.4"
   },
   "files": [
     "dist",
-    "schema.prisma",
-    ".env"
+    "schema.prisma"
   ],
   "prisma": {
     "schema": "schema.prisma"

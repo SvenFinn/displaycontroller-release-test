@@ -1,32 +1,36 @@
 FROM node:latest AS base
 
-WORKDIR /app
+ARG SELF_DB_URL
 
 FROM base AS deps
 
-COPY package.json package-lock.json ./
-COPY --from=local-db *.tgz ./deps/
-RUN npm remove dc-db-local --loglevel=info; \
-    npm ci --omit=dev --loglevel=info; \
-    npm i ./deps/*tgz --loglevel=info;
-
-FROM base AS build
-
-COPY . .
-COPY --from=local-db *.tgz ./deps/
-RUN npm remove dc-db-local --loglevel=info; \
-    npm ci --loglevel=info; \
-    npm i ./deps/*.tgz --loglevel=info; \
+WORKDIR /app/database/local
+COPY --from=local-db . .
+RUN npm ci --loglevel=info;\
     npm run build;
-COPY package.json dist/
+
+WORKDIR /app/screens
+COPY . .
+
+WORKDIR /app/screens/screenManager
+RUN npm i --omit=dev --loglevel=info --install-links; 
+
+FROM deps AS build
+RUN npm i --loglevel=info --install-links; \
+    npm run build; \
+    echo "SELF_DB_URL=$SELF_DB_URL" > dist/.env;
+
+COPY ./screenManager/package.json ./dist/
 
 FROM base AS final
 
-COPY --from=build /app/dist ./
-COPY --from=deps /app/node_modules ./node_modules
+WORKDIR /app
+
+COPY --from=build /app/screens/screenManager/dist ./
+COPY --from=deps /app/screens/screenManager/node_modules ./node_modules
 
 EXPOSE 80
 
 ENV NODE_ENV=production
 
-CMD ["node", "index.js"]
+CMD ["node", "./screenManager/src/index.js"]

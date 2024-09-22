@@ -1,9 +1,11 @@
+import dotenv from "dotenv";
 import { createLocalClient, LocalClient } from "dc-db-local";
 import { DbScreen, Screen } from "./types";
 import { checkCondition } from "./conditions";
 import { resolvePreset } from "./presets";
 import { logger } from "../logger";
 import { sendSSEResponse } from "../server";
+dotenv.config();
 
 let localClient: LocalClient | undefined;
 
@@ -88,7 +90,7 @@ export async function gotoScreen(id: number, subId: number = 0) {
     if (currentScreen.available) {
         screenTimeout = setTimeout(main, currentScreen.duration);
     } else {
-        screenTimeout = setTimeout(main, 5000);
+        screenTimeout = setTimeout(main, 30000);
     }
 }
 
@@ -107,9 +109,9 @@ async function main() {
     const currentScreen = screenList[currentListId];
     sendSSEResponse(currentScreen);
     if (!currentScreen.available) {
-        logger.info('No available screens, waiting for next screens');
+        logger.info('No available screens, waiting 30s');
         if (!isPaused) {
-            screenTimeout = setTimeout(main, 5000);
+            screenTimeout = setTimeout(main, 30000);
         }
         return;
     } else {
@@ -122,7 +124,6 @@ async function main() {
 }
 
 async function fetchNextScreens() {
-    logger.info('Fetching next screens from database');
     let newEntries: Array<Screen> = [];
     let currentScreenId = 0;
     let loops = 0;
@@ -153,7 +154,6 @@ async function fetchNextScreens() {
         }
         const newDbWType = newDb as unknown as DbScreen
         if (!checkCondition(newDbWType)) {
-            logger.info(`Screen ${newDbWType.id} does not meet conditions`);
             currentScreenId = newDbWType.id;
             continue;
         }

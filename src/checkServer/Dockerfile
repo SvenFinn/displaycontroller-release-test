@@ -6,35 +6,42 @@ ARG MIN_MEYTON_VERSION
 ARG MAX_MEYTON_VERSION
 ARG MEYTON_SSH_PASS
 ARG MEYTON_SSH_USER
+ARG SELF_DB_URL
 
 FROM base AS deps
 
-COPY package.json package-lock.json ./
-COPY --from=local-db *.tgz ./deps/
-RUN npm remove dc-db-local --loglevel=info; \
-    npm ci --omit=dev --loglevel=info; \
-    npm i ./deps/*tgz --loglevel=info;
+WORKDIR /app/database/local
+COPY --from=local-db . .
+RUN npm ci --loglevel=info;\
+    npm run build;
 
-FROM base AS build
+WORKDIR /app/checkServer
+COPY . ./
+
+RUN npm i --omit=dev --loglevel=info --install-links;
+
+
+FROM deps AS build
 
 COPY . .
 COPY --from=local-db *.tgz ./deps/
-RUN npm remove dc-db-local --loglevel=info; \
-    npm ci --loglevel=info; \
-    npm i ./deps/*.tgz --loglevel=info; \
+RUN npm i --loglevel=info --install-links; \
     npm run build; \
     echo "MIN_MEYTON_VERSION=$MIN_MEYTON_VERSION\n \
     MAX_MEYTON_VERSION=$MAX_MEYTON_VERSION\n \
     MEYTON_SSH_USER=$MEYTON_SSH_USER\n \
-    MEYTON_SSH_PASS=$MEYTON_SSH_PASS\n" > dist/.env;
+    MEYTON_SSH_PASS=$MEYTON_SSH_PASS\n \
+    SELF_DB_URL=$SELF_DB_URL" > dist/.env;
 COPY package.json dist/
 
 FROM base AS final
 
 RUN apt-get update; apt-get install sshpass netcat-openbsd -y
 
-COPY --from=build /app/dist ./
-COPY --from=deps /app/node_modules ./node_modules
+WORKDIR /app
+
+COPY --from=build /app/checkServer/dist ./
+COPY --from=deps /app/checkServer/node_modules ./node_modules
 
 EXPOSE 80
 

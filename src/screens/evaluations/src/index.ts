@@ -4,6 +4,8 @@ import { sync } from "./sync";
 import path from "path";
 import { startServer } from "./server";
 import { logger } from "./logger";
+import dotenv from "dotenv";
+dotenv.config();
 
 const htmlPath = path.resolve(`${__dirname}/../html`);
 const smbPath = path.resolve(`${__dirname}/../tmp/smb`);
