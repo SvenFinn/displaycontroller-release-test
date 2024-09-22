@@ -1,11 +1,12 @@
 include:
-    - proxy/docker-compose.yaml
-    - screens/images/docker-compose.yaml
-    - screens/evaluations/docker-compose.yaml
-    - database/local/docker-compose.yaml
-    - checkServer/docker-compose.yaml
-    - syncTime/docker-compose.yaml
-    - screens/screenManager/docker-compose.yaml
+  - proxy/docker-compose.yaml
+  - screens/images/docker-compose.yaml
+  - screens/evaluations/docker-compose.yaml
+  - database/local/docker-compose.yaml
+  - checkServer/docker-compose.yaml
+  - syncTime/docker-compose.yaml
+  - screens/screenManager/docker-compose.yaml
+  - ranges/docker-compose.yaml
 
 networks:
   displaycontroller:

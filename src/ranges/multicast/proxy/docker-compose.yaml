@@ -1,0 +1,12 @@
+services:
+  dc-ranges-multicast-proxy:
+    container_name: dc-ranges-multicast-proxy
+    network_mode: host
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      dc-db-migrate:
+        condition: service_completed_successfully
+      dc-ranges-rabbitmq:
+        condition: service_healthy
