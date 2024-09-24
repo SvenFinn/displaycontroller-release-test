@@ -14,10 +14,7 @@ const logger = pino({
 });
 
 async function main() {
-    const connection = await amqp.connect("amqp://localhost"/*, {
-        username: "admin",
-        password: "admin"
-    }*/);
+    const connection = await amqp.connect("amqp://localhost");
     const channel = await connection.createChannel();
     await channel.assertQueue("multicast-proxy", {
         durable: false,
@@ -45,7 +42,6 @@ async function main() {
             message: message.toString("base64")
         }
         logger.info(`Received message from ${remote.address}:${remote.port}`);
-        //logger.debug(proxiedMessage);
         channel.sendToQueue("multicast-proxy", Buffer.from(JSON.stringify(proxiedMessage)));
     });
     client.on("error", function (error) {
