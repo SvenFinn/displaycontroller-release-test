@@ -1,10 +1,6 @@
-import { validateMinMaxCondition } from "./base";
-import { Condition, ConditionMinMax } from "./types";
+import { ConditionMinMax } from "@shared/screens/conditions/base";
 
-export async function ranges_free_count(condition: Condition): Promise<boolean> {
-    if (!validateMinMaxCondition(condition)) return false;
-    if (condition.type != "ranges_free_count") return false;
-    const conditionWType = condition as ConditionMinMax;
+export async function ranges_free_count(condition: ConditionMinMax): Promise<boolean> {
     // TODO: Implement this function
     return true;
 }

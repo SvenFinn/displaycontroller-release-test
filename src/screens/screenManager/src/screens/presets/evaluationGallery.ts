@@ -1,35 +1,30 @@
-import { Screens, validateDbScreenBase } from "./presets";
-import { DbScreen } from "../types";
+import { Screens } from ".";
+import { EvaluationGalleryDbScreen } from "@shared/screens/evaluationGallery";
 import { logger } from "../../logger";
 import { isEvaluationListing } from "@shared/evaluations";
 
-export default async function evaluationGallery(screen: DbScreen): Promise<Screens> {
-    if (!validateEvaluationGalleryDb(screen)) {
-        logger.warn(`Screen ${screen.id} is not a valid evaluationGallery screen`);
-        return [{
-            available: false
-        }]
-    }
-    const screenWType = screen as EvaluationGalleryDbScreen;
-    const fileList = await createFileList(screenWType.options.path);
-    if (fileList.length === 0) return [{
-        available: false
-    }];
-    // Length of fileList is larger than 1, so this map always
-    // returns at least one element
-    // @ts-ignore
-    return fileList.map((file: string, index: number) => {
+export default async function evaluationGallery(screen: EvaluationGalleryDbScreen): Promise<Screens> {
+    const fileList = await createFileList(screen.options.path);
+    const screens = fileList.map((file: string, index: number) => {
         return {
             available: true,
-            id: screenWType.id,
+            id: screen.id,
             subId: index,
             preset: "evaluation",
             options: {
                 file: file
             },
-            duration: screenWType.duration
+            duration: screen.duration
         }
     });
+    if (screens.length === 0) {
+        logger.warn(`No files found in path ${screen.options.path}`);
+        return [{
+            available: false
+        }]
+    }
+    /*@ts-ignore*/
+    return screens;
 }
 
 async function createFileList(path: string): Promise<string[]> {
@@ -46,20 +41,4 @@ async function createFileList(path: string): Promise<string[]> {
         return `${path}/${file.name}`;
     });
     return (await Promise.all(mappedList)).flat();
-}
-
-export function validateEvaluationGalleryDb(screen: DbScreen): boolean {
-    if (!validateDbScreenBase(screen)) return false;
-    if (screen.preset !== "evaluationGallery") return false;
-    const screenWType = screen as EvaluationGalleryDbScreen;
-    if (!screenWType.options) return false;
-    if (!screenWType.options.path) return false;
-    return true;
-}
-
-export type EvaluationGalleryDbScreen = DbScreen & {
-    preset: "evaluationGallery";
-    options: {
-        path: string;
-    };
 }

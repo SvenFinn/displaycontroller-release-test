@@ -1,10 +1,6 @@
-import { Condition, ConditionNumber } from "./types";
-import { validateNumberCondition } from "./base";
+import { ConditionNumber } from "@shared/screens/conditions/base";
 
-export async function range_online(condition: Condition): Promise<boolean> {
-    if (!validateNumberCondition(condition)) return false;
-    if (condition.type != "range_online") return false;
-    const conditionWType = condition as ConditionNumber;
+export async function range_online(condition: ConditionNumber): Promise<boolean> {
     // TODO: Implement this function
     return true;
 }

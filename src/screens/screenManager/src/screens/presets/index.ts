@@ -1,14 +1,12 @@
-import { DbScreen, Screen } from "../types";
+import { DbScreen, Screen } from "@shared/screens";
 import cpcView from "./cpcView";
 import drawTarget from "./drawTarget";
 import evaluation from "./evaluation";
 import evaluationGallery from "./evaluationGallery";
-import { validateDbScreenBase } from "./presets";
 import imageViewer from "./imageViewer";
 import { logger } from "../../logger";
 
 export async function resolvePreset(screen: DbScreen): Promise<Array<Screen> | undefined> {
-    if (!validateDbScreenBase(screen)) return undefined;
     switch (screen.preset) {
         case "evaluation":
             return await evaluation(screen);
@@ -21,7 +19,10 @@ export async function resolvePreset(screen: DbScreen): Promise<Array<Screen> | u
         case "drawTarget":
             return await drawTarget(screen);
         default:
-            logger.warn(`Screen ${screen.id} has an unknown preset ${screen.preset}`);
+            const screenWType = screen as any;
+            logger.warn(`Screen ${screenWType?.id || "unknown"} has an unknown preset ${screenWType?.preset || "unknown"}`);
             return undefined;
     }
 }
+
+export type Screens = [Screen, ...Screen[]];

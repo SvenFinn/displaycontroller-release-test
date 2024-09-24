@@ -4,7 +4,7 @@ import { logger } from '../logger';
 import { LocalClient } from 'dc-db-local';
 import { getCurrentScreen, getPaused, gotoScreen, nextScreen, pauseScreen, previousScreen } from '../screens';
 import { resolvePreset } from '../screens/presets';
-import { DbScreen, Screen } from '../screens/types';
+import { DbScreen, Screen } from '@shared/screens';
 dotenv.config();
 
 const app: Express = express();

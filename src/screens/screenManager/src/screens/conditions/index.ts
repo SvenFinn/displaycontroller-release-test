@@ -1,15 +1,15 @@
-import { DbScreen } from "../types";
-import { validateNoneCondition } from "./base";
+import { DbScreen } from "@shared/screens";
 import { all_ranges_free } from "./AllRangesFree";
 import { meyton_available } from "./MeytonAvailable";
 import { range_free } from "./RangeFree";
 import { range_online } from "./RangeOnline";
 import { ranges_free_count } from "./RangesFreeCount";
 import { ranges_online_count } from "./RangesOnlineCount";
+import { isScreenCondition } from "@shared/screens/conditions";
 
 export async function checkCondition(screen: DbScreen) {
     if (!screen.condition) return true;
-    if (!validateNoneCondition(screen.condition)) return false;
+    if (!isScreenCondition(screen.condition)) return false;
     switch (screen.condition.type) {
         case "all_ranges_free":
             return all_ranges_free(screen.condition);

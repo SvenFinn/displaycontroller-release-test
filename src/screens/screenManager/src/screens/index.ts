@@ -1,11 +1,9 @@
-import dotenv from "dotenv";
 import { createLocalClient, LocalClient } from "dc-db-local";
-import { DbScreen, Screen } from "./types";
+import { DbScreen, isDbScreen, Screen } from "@shared/screens";
 import { checkCondition } from "./conditions";
 import { resolvePreset } from "./presets";
 import { logger } from "../logger";
 import { sendSSEResponse } from "../server";
-dotenv.config();
 
 let localClient: LocalClient | undefined;
 
@@ -152,7 +150,11 @@ async function fetchNextScreens() {
             loops++;
             continue;
         }
-        const newDbWType = newDb as unknown as DbScreen
+        if (!isDbScreen(newDb)) {
+            currentScreenId = newDb.id;
+            continue;
+        }
+        const newDbWType = newDb as DbScreen
         if (!checkCondition(newDbWType)) {
             currentScreenId = newDbWType.id;
             continue;

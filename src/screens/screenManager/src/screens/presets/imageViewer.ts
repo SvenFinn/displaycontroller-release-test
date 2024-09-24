@@ -1,26 +1,20 @@
-import { Screens, validateDbScreenBase } from "./presets";
-import { BaseScreenAvailable, DbScreen } from "../types";
+import { Screens } from ".";
+import { ViewerDbScreen } from "@shared/screens/imageViewer";
+
 import { logger } from "../../logger";
 import { isDirectoryListing } from "@shared/images";
 
-export default async function imageViewer(screen: DbScreen): Promise<Screens> {
-    if (!validateViewerDb(screen)) {
-        logger.warn(`Screen ${screen.id} is not a valid imageViewer screen`);
-        return [{
-            available: false
-        }]
-    }
-    const screenWType = screen as ViewerDbScreen;
+export default async function imageViewer(screen: ViewerDbScreen): Promise<Screens> {
     let fileList: string[];
     try {
-        fileList = await createFileList(screenWType.options.path);
+        fileList = await createFileList(screen.options.path);
     } catch (e) {
         logger.error(`Failed to fetch files for screen ${screen.id}`);
         return [{
             available: false
         }];
     }
-    if (fileList.length === 0) return [{
+    if (fileList.length < 1) return [{
         available: false
     }];
     // Length of fileList is larger than 1, so this map always
@@ -29,13 +23,13 @@ export default async function imageViewer(screen: DbScreen): Promise<Screens> {
     return fileList.map((file: string, index: number) => {
         return {
             available: true,
-            id: screenWType.id,
+            id: screen.id,
             subId: index,
             preset: "viewer",
             options: {
                 file: file
             },
-            duration: screenWType.duration
+            duration: screen.duration
         }
     });
 }
@@ -54,31 +48,4 @@ async function createFileList(path: string): Promise<string[]> {
         return `${path}/${file.name}`;
     });
     return (await Promise.all(mappedList)).flat();
-}
-
-export function validateViewerDb(screen: DbScreen): boolean {
-    if (!validateDbScreenBase(screen)) return false;
-    if (screen.preset !== "imageViewer") return false;
-    const screenWType = screen as ViewerDbScreen;
-    if (!screenWType.options) return false;
-    if (!screenWType.options.path) return false;
-    return true;
-}
-
-export type ViewerDbScreen = DbScreen & {
-    preset: "viewer";
-    options: {
-        path: string;
-    }
-}
-
-export type ViewerOptions = {
-    path: string;
-}
-
-export type ViewerScreen = BaseScreenAvailable & {
-    preset: "viewer";
-    options: {
-        file: string;
-    }
 }

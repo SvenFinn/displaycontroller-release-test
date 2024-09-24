@@ -1,9 +1,6 @@
-import { validateNoneCondition } from "./base";
-import { Condition } from "./types";
+import { ConditionNone } from "@shared/screens/conditions/base";
 
-export async function all_ranges_free(condition: Condition): Promise<boolean> {
-    if (!validateNoneCondition(condition)) return false;
-    if (condition.type != "all_ranges_free") return false;
+export async function all_ranges_free(condition: ConditionNone): Promise<boolean> {
     // TODO: Implement this function
     return true;
 }

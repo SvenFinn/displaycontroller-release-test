@@ -12,6 +12,12 @@
             "@shared/evaluations": [
                 "../evaluations/types"
             ],
+            "@shared/screens": [
+                "./types"
+            ],
+            "@shared/screens/*": [
+                "./types/*",
+            ],
         }
     },
     "include": [
