@@ -4,12 +4,18 @@
         "CONV",
         "datasources",
         "ergebnis",
+        "eventsource",
         "fileupload",
         "meyton",
         "pino",
         "prisma",
+        "proxied",
+        "shootmaster",
+        "shootmasterd",
         "smbclient",
         "smdb",
-        "ssmdb"
+        "sshpass",
+        "ssmdb",
+        "targetd"
     ]
 }
