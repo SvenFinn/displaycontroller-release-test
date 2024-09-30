@@ -4,7 +4,7 @@ export type BaseDbScreen = {
     id: number;
     preset: string;
     options: any;
-    condition: Condition;
+    condition: Condition | null;
     visibleFrom: number;
     visibleUntil: number;
     duration: number;
@@ -16,7 +16,7 @@ export function isBaseDbScreen(screen: any): screen is BaseDbScreen {
     if (!screen.id) return false;
     if (!screen.preset) return false;
     if (!screen.options) return false;
-    if (!isScreenCondition(screen.condition)) return false;
+    if (screen.condition && !isScreenCondition(screen.condition)) return false;
     if (!screen.visibleFrom) return false;
     if (!screen.visibleUntil) return false;
     if (!screen.duration) return false;
