@@ -13,7 +13,7 @@ COPY . .
 RUN rm -rf node_modules; \
     npm ci --loglevel=info; \
     npm run build
-COPY src/img dist/img
+COPY src/img dist/src/img
 
 FROM base AS final
 
