@@ -1,5 +1,5 @@
 import { SmdbClient } from "dc-db-smdb";
-import { SpecialDiscipline, StartList } from "@shared/ranges/startListCache"
+import { OverrideDiscipline, StartList } from "@shared/ranges/startListCache"
 import { StartListTypes } from "dc-db-smdb/generated/client";
 
 export async function getStartListCache(smdbCLient: SmdbClient): Promise<Array<StartList>> {
@@ -47,7 +47,7 @@ async function getStartList(smdbClient: SmdbClient, startListId: number): Promis
         name: startListDb.name,
         active: startListDbActive,
         type: getStartListType(startListDb.type),
-        specialDisciplines: await getSpecialDisciplines(smdbClient, startListDb.id),
+        overrideDisciplines: await getOverrideDiscipline(smdbClient, startListDb.id),
     };
     return startList;
 }
@@ -67,7 +67,7 @@ function getStartListType(type: StartListTypes): StartList["type"] {
     }
 }
 
-async function getSpecialDisciplines(smdbClient: SmdbClient, startListId: number): Promise<Array<SpecialDiscipline>> {
+async function getOverrideDiscipline(smdbClient: SmdbClient, startListId: number): Promise<Array<OverrideDiscipline>> {
     const specialDisciplinesDb = await smdbClient.startList.findUnique({
         where: {
             id: startListId

@@ -24,10 +24,10 @@ type MostStartList = BaseStartList & {
 
 type PriceStartList = BaseStartList & {
     type: "price",
-    specialDisciplines: Array<SpecialDiscipline>
+    overrideDisciplines: Array<OverrideDiscipline>
 }
 
-export type SpecialDiscipline = {
+export type OverrideDiscipline = {
     id: number,
     disciplineId: number,
     name: string,
