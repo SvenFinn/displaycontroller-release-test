@@ -53,4 +53,8 @@ export function isRange(range: any): range is Range {
     return isInactiveRange(range) || isActiveRange(range);
 }
 
-type Source = "multicast" | "log" | "ssmdb2";
+export type Source = "multicast" | "log" | "ssmdb2";
+
+export function isSource(source: any): source is Source {
+    return source === "multicast" || source === "log" || source === "ssmdb2";
+}
