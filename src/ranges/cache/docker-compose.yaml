@@ -1,0 +1,21 @@
+services:
+  dc-ranges-cache:
+    container_name: dc-ranges-cache
+    hostname: ranges-cache
+    networks:
+      - displaycontroller
+    build:
+      context: ..
+      dockerfile: ./cache/Dockerfile
+      additional_contexts:
+        - local-db=../../database/local
+        - smdb=../../database/smdb
+        - table-watcher=../../database/tableWatcher
+      args:
+        - SELF_DB_URL=${SELF_DB_URL}
+        - DISCIPLINE_DEFAULT_COLOR=${DISCIPLINE_DEFAULT_COLOR}
+        - MEYTON_DB_USER=${MEYTON_DB_USER}
+        - MEYTON_DB_PASS=${MEYTON_DB_PASS}
+    depends_on:
+      dc-db-migrate:
+        condition: service_completed_successfully

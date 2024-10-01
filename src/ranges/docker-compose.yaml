@@ -1,5 +1,6 @@
 include:
   - multicast/proxy/docker-compose.yaml
+  - cache/docker-compose.yaml
 
 services:
   dc-ranges-rabbitmq:

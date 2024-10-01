@@ -36,3 +36,21 @@ enum ScreensPreset {
     evaluation
     evaluationGallery
 }
+
+model Cache {
+    type CacheTypes
+    key  BigInt
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now()) @updatedAt
+
+    value Json
+
+    @@id([type, key])
+}
+
+enum CacheTypes {
+    shooter
+    startList
+    discipline
+}
