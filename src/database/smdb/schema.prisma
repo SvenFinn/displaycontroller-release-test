@@ -116,7 +116,7 @@ model Discipline {
   name      String  @map("DzplName") @db.VarChar(36)
   active    Boolean @map("aktiv") @db.TinyInt
   lastRange Int     @map("Belegung") @db.SmallInt
-  gage      Int     @map("Kaliber") @db.SmallInt
+  gauge     Int     @map("Kaliber") @db.SmallInt
 
   rounds           Rounds[]
   filterDiscipline FilterDiscipline[]
@@ -131,24 +131,24 @@ model Discipline {
 }
 
 model Rounds {
-  disciplineId Int    @id @map("DzplID")
-  id           Int    @map("StellungsIdx") @db.TinyInt
-  zoom         Int    @map("Zoom") @db.TinyInt
-  mode         Int    @map("Modus") @db.TinyInt
-  name         String @map("DurchgangsName") @db.VarChar(36)
-  targetDescId Int    @map("ScheiBesID")
-  maxHits      Int    @map("MaxTrefferZahl") @db.SmallInt
-  hitsPerSum   Int    @map("TrefferProSerie") @db.SmallInt
-  hitsPerView  Int    @map("TrefferProScheibe") @db.SmallInt
+  disciplineId   Int    @id @map("DzplID")
+  id             Int    @map("StellungsIdx") @db.TinyInt
+  zoom           Int    @map("Zoom") @db.TinyInt
+  mode           Int    @map("Modus") @db.TinyInt
+  name           String @map("DurchgangsName") @db.VarChar(36)
+  targetLayoutId Int    @map("ScheiBesID")
+  maxHits        Int    @map("MaxTrefferZahl") @db.SmallInt
+  hitsPerSum     Int    @map("TrefferProSerie") @db.SmallInt
+  hitsPerView    Int    @map("TrefferProScheibe") @db.SmallInt
 
-  discipline Discipline @relation(fields: [disciplineId], references: [id])
-  target     TargetDesc @relation(fields: [targetDescId], references: [id])
+  discipline   Discipline   @relation(fields: [disciplineId], references: [id])
+  targetLayout targetLayout @relation(fields: [targetLayoutId], references: [id])
 
   @@unique([disciplineId, id])
   @@map("Durchgang")
 }
 
-model TargetDesc {
+model targetLayout {
   id        Int    @id @map("ScheiBesID")
   name      String @map("ScheiBesTitel") @db.VarChar(72)
   holeSize  Int    @map("Spiegel") @db.SmallInt
@@ -587,14 +587,14 @@ model Revision {
 }
 
 model Rings {
-  targetDescId Int @map("ScheiBesId")
-  id           Int @map("RingIdx")
-  diameter     Int @map("Ringdurchmesser")
-  value        Int @map("Wert")
+  targetLayoutId Int @map("ScheiBesId")
+  id             Int @map("RingIdx")
+  diameter       Int @map("Ringdurchmesser")
+  value          Int @map("Wert")
 
-  targetDesc TargetDesc @relation(fields: [targetDescId], references: [id])
+  targetLayout targetLayout @relation(fields: [targetLayoutId], references: [id])
 
-  @@id([targetDescId, id])
+  @@id([targetLayoutId, id])
   @@map("Ringe")
 }
 

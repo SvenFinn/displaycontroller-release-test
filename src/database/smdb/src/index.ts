@@ -28,6 +28,5 @@ export async function createSMDBClient(local?: LocalClient): Promise<SmdbClient>
             }
         }
     });
-    await smdbClient.$connect();
     return smdbClient;
 }
