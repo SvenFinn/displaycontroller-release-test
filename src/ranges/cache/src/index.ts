@@ -5,17 +5,18 @@ import { createSMDBClient, SmdbClient } from "dc-db-smdb";
 import { TableWatcher } from "dc-table-watcher"
 import { LocalClient, createLocalClient } from "dc-db-local";
 import { logger } from "./logger";
-
-
+import { Discipline } from "@shared/ranges/discipline";
+import { StartList } from "@shared/ranges/startList";
+import { Shooter } from "@shared/ranges/shooter";
 
 const tables = [
-    "Starterlisten",
-    "Preisscheiben",
-    "Disziplin",
-    "Durchgang",
-    "Scheibenbeschreibung",
-    "Ringe",
-    "Schuetze",
+    "Starterlisten", // startList
+    "Preisscheiben", // priceShooting
+    "Disziplin", // discipline
+    "Durchgang", // rounds
+    "Scheibenbeschreibung", //targetLayout
+    "Ringe", // rings
+    "Schuetze", // shooter
 ]
 
 let smdbClient: SmdbClient | null = null;
@@ -41,103 +42,51 @@ async function init() {
 async function updateDisciplineCache() {
     logger.info("Updating discipline cache");
     const disciplines = await getDisciplineCache(smdbClient as SmdbClient);
-    for (const discipline of disciplines) {
-        await localClient?.cache.upsert({
-            where: {
-                type_key: {
-                    type: "discipline",
-                    key: discipline.id,
-                }
-            },
-            create: {
-                type: "discipline",
-                key: discipline.id,
-                value: discipline,
-            },
-            update: {
-                value: discipline,
-            }
-        });
-    }
-    await localClient?.cache.deleteMany({
-        where: {
-            type: "discipline",
-            NOT: {
-                key: {
-                    in: disciplines.map(discipline => discipline.id),
-                }
-            }
-        }
-    });
-    logger.info(`Discipline cache: ${disciplines.length} disciplines`);
+    await writeCache("discipline", disciplines);
 }
 
 async function updateStartListCache() {
     logger.info("Updating start list cache");
-    const startList = await getStartListCache(smdbClient as SmdbClient);
-    for (const start of startList) {
-        await localClient?.cache.upsert({
-            where: {
-                type_key: {
-                    type: "startList",
-                    key: start.id,
-                }
-            },
-            create: {
-                type: "startList",
-                key: start.id,
-                value: start,
-            },
-            update: {
-                value: start,
-            }
-        });
-    }
-    await localClient?.cache.deleteMany({
-        where: {
-            type: "startList",
-            NOT: {
-                key: {
-                    in: startList.map(start => start.id),
-                }
-            }
-        }
-    });
-    logger.info(`Start list cache: ${startList.length} start lists`);
+    const startLists = await getStartListCache(smdbClient as SmdbClient);
+    await writeCache("startList", startLists);
 }
 
 async function updateShooterCache() {
     logger.info("Updating shooter cache");
     const shooters = await getShooterCache(smdbClient as SmdbClient);
-    for (const shooter of shooters) {
+    await writeCache("shooter", shooters);
+}
+
+async function writeCache(type: "shooter" | "startList" | "discipline", cache: Array<Shooter> | Array<StartList> | Array<Discipline>) {
+    await Promise.all(cache.map(async item => {
         await localClient?.cache.upsert({
             where: {
                 type_key: {
-                    type: "shooter",
-                    key: shooter.id || 0,
+                    type: type,
+                    key: item.id || 0,
                 }
             },
             create: {
-                type: "shooter",
-                key: shooter.id || 0,
-                value: shooter,
+                type: type,
+                key: item.id || 0,
+                value: item,
             },
             update: {
-                value: shooter,
+                value: item,
             }
         });
-    }
+    }));
     await localClient?.cache.deleteMany({
         where: {
-            type: "shooter",
+            type: type,
             NOT: {
                 key: {
-                    in: shooters.map(shooter => shooter.id).filter(id => id !== null) as number[],
+                    in: cache.map(item => item.id || 0),
                 }
             }
         }
     });
-    logger.info(`Shooter cache: ${shooters.length} shooters`);
+    logger.info(`${type} cache: ${cache.length} ${type}`);
 }
 
 init();

@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import { Discipline } from "@shared/ranges/discipline";
 import { SmdbClient } from "dc-db-smdb";
 import { DisciplineRound, DisciplineRounds } from "@shared/ranges/discipline/round";
-import { DisciplineLayout } from "@shared/ranges/discipline/layout";
+import { DisciplineLayout, DisciplineLayouts } from "@shared/ranges/discipline/layout";
 import { DisciplineRoundMode } from "@shared/ranges/discipline/round/mode";
 import { DisciplineRoundZoom } from "@shared/ranges/discipline/round/zoom";
 
@@ -161,7 +161,7 @@ function getZoom(zoom: number): DisciplineRoundZoom {
     }
 }
 
-async function getLayouts(smdbClient: SmdbClient, disciplineId: number): Promise<Array<DisciplineLayout>> {
+async function getLayouts(smdbClient: SmdbClient, disciplineId: number): Promise<DisciplineLayouts> {
     const layoutDatabase = await smdbClient.discipline.findUnique({
         where: {
             id: disciplineId
@@ -177,9 +177,15 @@ async function getLayouts(smdbClient: SmdbClient, disciplineId: number): Promise
     if (!layoutDatabase) {
         return [];
     }
-    const layoutIds = layoutDatabase.rounds.map(round => round.targetLayoutId);
-    const layouts = await Promise.all(layoutIds.map(async id => { return await getLayout(smdbClient, id) }));
-    return layouts.filter(layout => layout !== undefined) as DisciplineLayout[];
+    const layoutIds = layoutDatabase.rounds.map(round => round.targetLayoutId).filter((value, index, self) => self.indexOf(value) === index);
+    const layouts: DisciplineLayouts = {};
+    for (let i = 0; i < layoutIds.length; i++) {
+        const layout = await getLayout(smdbClient, layoutIds[i]);
+        if (layout) {
+            layouts[layoutIds[i]] = layout
+        }
+    }
+    return layouts;
 }
 
 async function getLayout(smdbClient: SmdbClient, layoutId: number): Promise<DisciplineLayout | undefined> {
@@ -203,13 +209,12 @@ async function getLayout(smdbClient: SmdbClient, layoutId: number): Promise<Disc
             colored: ring.diameter <= layout.holeSize
         }
     });
-
     if (layout.innerTen > 0) {
         const maxValue = Math.max(...rings.map(ring => ring.value));
         rings.push({
             value: maxValue,
-            diameter: layout.innerTen,
-            colored: layout.innerTen <= layout.holeSize / 10
+            diameter: layout.innerTen / 10,
+            colored: layout.innerTen <= layout.holeSize
         });
     }
 

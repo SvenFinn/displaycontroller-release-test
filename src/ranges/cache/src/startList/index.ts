@@ -42,14 +42,23 @@ async function getStartList(smdbClient: SmdbClient, startListId: number): Promis
         const currentDate = new Date();
         startListDbActive = startDate <= currentDate && currentDate <= endDate;
     }
-    const startList: StartList = {
-        id: startListDb.id,
-        name: startListDb.name,
-        active: startListDbActive,
-        type: getStartListType(startListDb.type),
-        overrideDisciplines: await getOverrideDiscipline(smdbClient, startListDb.id),
-    };
-    return startList;
+    const startListType = getStartListType(startListDb.type);
+    if (startListType === "price") {
+        return {
+            id: startListDb.id,
+            name: startListDb.name,
+            active: startListDbActive,
+            type: "price",
+            overrideDisciplines: await getOverrideDiscipline(smdbClient, startListDb.id),
+        }
+    } else {
+        return {
+            id: startListDb.id,
+            name: startListDb.name,
+            active: startListDbActive,
+            type: startListType
+        }
+    }
 }
 
 function getStartListType(type: StartListTypes): StartList["type"] {
