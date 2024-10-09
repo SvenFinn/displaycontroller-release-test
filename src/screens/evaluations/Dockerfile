@@ -32,4 +32,6 @@ COPY --from=deps /app/screens/evaluations/node_modules ./node_modules
 
 EXPOSE 80
 
+ENV NODE_ENV=production
+
 CMD ["node", "src/index.js"]

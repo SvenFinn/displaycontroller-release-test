@@ -47,6 +47,7 @@ WORKDIR /app
 COPY --from=build /app/ranges/cache/dist ./
 COPY --from=deps /app/ranges/cache/node_modules ./node_modules
 
-EXPOSE 80
+ENV NODE_ENV=production
+
 
 CMD ["node", "/app/cache/src/index.js"]

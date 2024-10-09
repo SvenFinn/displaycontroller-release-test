@@ -37,8 +37,6 @@ FROM base AS final
 COPY --from=build /app/syncTime/dist ./
 COPY --from=deps /app/syncTime/node_modules ./node_modules
 
-EXPOSE 80
-
 ENV NODE_ENV=production
 
 CMD ["node", "index.js"]
