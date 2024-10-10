@@ -7,6 +7,7 @@ include:
   - syncTime/docker-compose.yaml
   - screens/screenManager/docker-compose.yaml
   - ranges/docker-compose.yaml
+  - rabbitmq/docker-compose.yaml
 
 networks:
   displaycontroller:

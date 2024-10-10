@@ -1,0 +1,17 @@
+services:
+  dc-ranges-rabbitmq:
+    container_name: dc-rabbitmq
+    hostname: rabbitmq
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - displaycontroller
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
