@@ -21,8 +21,9 @@ export function isDisciplineLayouts(disciplineLayouts: any): disciplineLayouts i
 }
 
 export function isDisciplineLayoutRing(disciplineLayoutRing: any): disciplineLayoutRing is DisciplineLayoutRing {
-    if (!disciplineLayoutRing.value) return false;
-    if (!disciplineLayoutRing.diameter) return false;
-    if (!disciplineLayoutRing.colored) return false;
+    if (typeof disciplineLayoutRing !== "object") return false;
+    if (typeof disciplineLayoutRing.value !== "number") return false;
+    if (typeof disciplineLayoutRing.diameter !== "number") return false;
+    if (typeof disciplineLayoutRing.colored !== "boolean") return false;
     return true;
 }

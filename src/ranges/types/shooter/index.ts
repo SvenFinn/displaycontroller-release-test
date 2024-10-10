@@ -5,8 +5,9 @@ export type Shooter = {
 }
 
 export function isShooter(shooter: any): shooter is Shooter {
-    if (!shooter.id && !shooter.id === null) return false;
-    if (!shooter.firstName) return false;
-    if (!shooter.lastName) return false;
+    if (typeof shooter !== "object") return false;
+    if (typeof shooter.id !== "number" && shooter.id !== null) return false;
+    if (typeof shooter.firstName !== "string") return false;
+    if (typeof shooter.lastName !== "string") return false;
     return true;
 }

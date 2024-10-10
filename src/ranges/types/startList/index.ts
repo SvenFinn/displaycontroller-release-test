@@ -5,8 +5,9 @@ export type StartList = {
 }
 
 export function isStartList(startList: any): startList is StartList {
-    if (!startList.id) return false;
-    if (!startList.name) return false;
-    if (!startList.type) return false;
+    if (typeof startList !== "object") return false;
+    if (typeof startList.id !== "number") return false;
+    if (typeof startList.name !== "string") return false;
+    if (typeof (startList.type) !== "string") return false;
     return true;
 }

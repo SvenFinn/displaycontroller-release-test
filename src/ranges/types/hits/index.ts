@@ -22,11 +22,12 @@ export type Hit = {
 }
 
 export function isHit(hit: any): hit is Hit {
-    if (!hit.id) return false;
-    if (!hit.x) return false;
-    if (!hit.y) return false;
-    if (!hit.divisor) return false;
-    if (!hit.rings) return false;
-    if (!hit.innerTen) return false;
+    if (typeof hit !== "object") return false;
+    if (typeof hit.id !== "number") return false;
+    if (typeof hit.x !== "number") return false;
+    if (typeof hit.y !== "number") return false;
+    if (typeof hit.divisor !== "number") return false;
+    if (typeof hit.rings !== "number") return false;
+    if (typeof hit.innerTen !== "boolean") return false;
     return true;
 }

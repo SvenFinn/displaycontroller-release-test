@@ -14,10 +14,11 @@ export type Discipline = {
 }
 
 export function isDiscipline(discipline: any): discipline is Discipline {
-    if (!discipline.id) return false;
-    if (!discipline.name) return false;
-    if (!discipline.color) return false;
-    if (!discipline.gauge) return false;
+    if (typeof (discipline) !== "object") return false;
+    if (typeof (discipline.id) !== "number") return false;
+    if (typeof (discipline.name) !== "string") return false;
+    if (typeof (discipline.color) !== "string") return false;
+    if (typeof (discipline.gauge) !== "number") return false;
     if (!isDisciplineRounds(discipline.rounds)) return false;
     if (!isDisciplineLayouts(discipline.layouts)) return false;
     return true;

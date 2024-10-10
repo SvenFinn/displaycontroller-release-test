@@ -13,17 +13,19 @@ export type BaseDbScreen = {
 }
 
 export function isBaseDbScreen(screen: any): screen is BaseDbScreen {
-    if (!screen.id) return false;
-    if (!screen.preset) return false;
-    if (!screen.options) return false;
+    if (typeof screen !== "object") return false;
+    if (typeof screen.id !== "number") return false;
+    if (typeof screen.preset !== "string") return false;
+    if (typeof screen.options !== "object") return false;
     if (screen.condition && !isScreenCondition(screen.condition)) return false;
-    if (!screen.visibleFrom) return false;
-    if (!screen.visibleUntil) return false;
-    if (!screen.duration) return false;
-    if (!screen.createdAt) return false;
-    if (!screen.updatedAt) return false;
+    if (typeof screen.visibleFrom !== "number") return false;
+    if (typeof screen.visibleUntil !== "number") return false;
+    if (typeof screen.duration !== "number") return false;
+    if (!(screen.createdAt instanceof Date)) return false;
+    if (!(screen.updatedAt instanceof Date)) return false;
     return true;
 }
+
 
 export type BaseScreenAvailable = {
     available: true;
@@ -36,13 +38,14 @@ export type BaseScreenAvailable = {
 }
 
 export function isBaseScreenAvailable(screen: any): screen is BaseScreenAvailable {
-    if (!screen.available) return false;
-    if (!screen.id) return false;
-    if (!screen.subId) return false;
-    if (!screen.preset) return false;
-    if (!screen.path) return false;
-    if (!screen.options) return false;
-    if (!screen.duration) return false;
+    if (typeof screen !== "object") return false;
+    if (typeof screen.available !== "boolean") return false;
+    if (typeof screen.id !== "number") return false;
+    if (typeof screen.subId !== "number") return false;
+    if (typeof screen.preset !== "string") return false;
+    if (typeof screen.path !== "string") return false;
+    if (typeof screen.options !== "object") return false;
+    if (typeof screen.duration !== "number") return false;
     return true;
 }
 
@@ -51,5 +54,5 @@ export type ScreenUnavailable = {
 }
 
 export function isScreenUnavailable(screen: any): screen is ScreenUnavailable {
-    return !screen.available;
+    return typeof screen === "object" && screen.available === false;
 }

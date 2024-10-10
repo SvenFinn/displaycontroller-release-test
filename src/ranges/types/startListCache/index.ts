@@ -1,13 +1,13 @@
 export type StartList = MostStartList | PriceStartList;
 
 export function isStartList(startList: any): startList is StartList {
-    if (!startList.id) return false;
-    if (!startList.name) return false;
-    if (!startList.active) return false;
-    if (!startList.type) return false;
+    if (typeof startList !== "object") return false;
+    if (typeof startList.id !== "number") return false;
+    if (typeof startList.name !== "string") return false;
+    if (typeof (startList.active) !== "boolean") return false;
+    if (typeof (startList.type) !== "string") return false;
     if (startList.type === "price") {
-        if (!startList.specialDisciplines) return false;
-        if (!Array.isArray(startList.specialDisciplines)) return false;
+        if (!Array.isArray(startList.overrideDisciplines)) return false;
     }
     return true;
 }

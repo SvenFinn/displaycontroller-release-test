@@ -36,9 +36,9 @@ type DisciplineRoundModeDecimal = {
 }
 
 export function isDisciplineRoundMode(disciplineRoundMode: any): disciplineRoundMode is DisciplineRoundMode {
-    if (!disciplineRoundMode.mode) return false;
-    if (disciplineRoundMode.mode === "rings" && !disciplineRoundMode.accuracy) return false;
-    if (disciplineRoundMode.mode === "divider" && !disciplineRoundMode.accuracy) return false;
-    if (disciplineRoundMode.mode === "ringsDiv" && !disciplineRoundMode.accuracy) return false;
+    if (typeof disciplineRoundMode !== "object") return false;
+    if (typeof disciplineRoundMode.mode !== "string") return false;
+    if (disciplineRoundMode.mode !== "rings" && disciplineRoundMode.mode !== "divider" && disciplineRoundMode.mode !== "ringsDiv") return true;
+    if (typeof disciplineRoundMode.accuracy !== "number") return false;
     return true;
 }

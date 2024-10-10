@@ -15,7 +15,8 @@ type DisciplineRoundZoomNone = {
 
 
 export function isDisciplineRoundZoom(disciplineRoundZoom: any): disciplineRoundZoom is DisciplineRoundZoom {
-    if (!disciplineRoundZoom.mode) return false;
-    if (disciplineRoundZoom.mode === "fixed" && !disciplineRoundZoom.value) return false;
+    if (typeof disciplineRoundZoom !== "object") return false;
+    if (typeof disciplineRoundZoom.mode !== "string") return false;
+    if (disciplineRoundZoom.mode === "fixed" && typeof disciplineRoundZoom.value !== "number") return false;
     return true;
 }

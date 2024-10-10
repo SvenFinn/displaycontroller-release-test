@@ -6,6 +6,7 @@ export type DisciplineRounds = Array<DisciplineRound | null>;
 export function isDisciplineRounds(disciplineRounds: any): disciplineRounds is DisciplineRounds {
     if (!Array.isArray(disciplineRounds)) return false;
     for (const disciplineRound of disciplineRounds) {
+        if (disciplineRound === null) continue;
         if (!isDisciplineRound(disciplineRound)) return false;
     }
     return true;
@@ -27,14 +28,15 @@ export type DisciplineRound = {
 }
 
 export function isDisciplineRound(disciplineRound: any): disciplineRound is DisciplineRound {
-    if (!disciplineRound.id) return false;
-    if (!disciplineRound.name) return false;
+    if (typeof (disciplineRound) !== "object") return false;
+    if (typeof (disciplineRound.id) !== "number") return false;
+    if (typeof (disciplineRound.name) !== "string") return false;
     if (!isDisciplineRoundMode(disciplineRound.mode)) return false;
-    if (!disciplineRound.maxHits) return false;
-    if (!disciplineRound.counts) return false;
+    if (typeof (disciplineRound.maxHits) !== "number") return false;
+    if (typeof (disciplineRound.counts) !== "boolean") return false;
     if (!isDisciplineRoundZoom(disciplineRound.zoom)) return false;
-    if (!disciplineRound.layoutId) return false;
-    if (!disciplineRound.hitsPerSum) return false;
-    if (!disciplineRound.hitsPerView) return false;
+    if (typeof (disciplineRound.layoutId) !== "number") return false;
+    if (typeof (disciplineRound.hitsPerSum) !== "number") return false;
+    if (typeof (disciplineRound.hitsPerView) !== "number") return false;
     return true;
 }

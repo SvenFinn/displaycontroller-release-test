@@ -38,12 +38,12 @@ export function isActiveRange(range: any): range is ActiveRange {
     if (!isBaseRange(range)) return false;
     const rangeWType = range as ActiveRange;
     if (typeof rangeWType.active !== "boolean" || !rangeWType.active) return false;
-    if (!rangeWType.round) return false;
+    if (typeof rangeWType.round !== "number") return false;
     if (!isShooter(rangeWType.shooter) && !rangeWType.shooter === null) return false;
     if (!isStartList(rangeWType.startList) && !rangeWType.startList === null) return false;
     if (!isDiscipline(rangeWType.discipline) && !rangeWType.discipline === null) return false;
     if (!isHits(rangeWType.hits) && !rangeWType.hits === null) return false;
-    if (!rangeWType.source) return false;
+    if (!isSource(rangeWType.source) && !rangeWType.source === null) return false;
     return true;
 }
 

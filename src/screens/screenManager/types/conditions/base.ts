@@ -1,7 +1,7 @@
 function isBaseCondition(condition: any): condition is BaseCondition {
-    if (!condition.invert) return false;
-    if (condition.invert !== true && condition.invert !== false) return false;
-    if (!condition.type) return false;
+    if (typeof condition !== "object") return false;
+    if (typeof condition.invert !== "boolean") return false;
+    if (typeof condition.type !== "string") return false;
     return true;
 }
 
@@ -21,8 +21,8 @@ export function isConditionMinMax(condition: any): condition is ConditionMinMax 
     if (!isBaseCondition(condition)) return false;
     if (condition.type !== "ranges_free_count" && condition.type !== "ranges_online_count") return false;
     const conditionWType = condition as ConditionMinMax;
-    if (!conditionWType.min) return false;
-    if (!conditionWType.max) return false;
+    if (typeof conditionWType.min !== "number") return false;
+    if (typeof conditionWType.max !== "number") return false;
     return true;
 }
 
@@ -35,7 +35,7 @@ export function isConditionNumber(condition: any): condition is ConditionNumber 
     if (!isBaseCondition(condition)) return false;
     if (condition.type !== "range_free" && condition.type !== "range_online") return false;
     const conditionWType = condition as ConditionNumber;
-    if (!conditionWType.number) return false;
+    if (typeof conditionWType.number !== "number") return false;
     return true;
 }
 

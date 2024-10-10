@@ -11,7 +11,7 @@ export function isEvaluationGalleryDbScreen(screen: any): screen is EvaluationGa
     if (!isBaseDbScreen(screen)) return false;
     if (screen.preset !== "evaluationGallery") return false;
     const screenWType = screen as EvaluationGalleryDbScreen;
-    if (!screenWType.options) return false;
-    if (!screenWType.options.path) return false;
+    if (typeof screenWType.options !== "object") return false;
+    if (typeof screenWType.options.path !== "string") return false;
     return true;
 }
