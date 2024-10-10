@@ -26,7 +26,7 @@ RUN npm i --omit=dev --loglevel=info --install-links;
 FROM deps AS build
 
 RUN npm i --loglevel=info; \
-    npm run build; \
+    npm run build && \
     echo "SELF_DB_URL=$SELF_DB_URL\n \
     MEYTON_DB_USER=$MEYTON_DB_USER\n \
     MEYTON_DB_PASS=$MEYTON_DB_PASS\n" > dist/.env;

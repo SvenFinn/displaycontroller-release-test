@@ -26,7 +26,7 @@ FROM deps AS build
 COPY . .
 COPY --from=local-db *.tgz ./deps/
 RUN npm i --loglevel=info --install-links; \
-    npm run build; \
+    npm run build && \
     echo "MIN_MEYTON_VERSION=$MIN_MEYTON_VERSION\n \
     MAX_MEYTON_VERSION=$MAX_MEYTON_VERSION\n \
     MEYTON_SSH_USER=$MEYTON_SSH_USER\n \

@@ -5,12 +5,13 @@ services:
     networks:
       - displaycontroller
     build:
-      context: ..
-      dockerfile: ./cache/Dockerfile
+      context: .
+      dockerfile: Dockerfile
       additional_contexts:
         - local-db=../../database/local
         - smdb=../../database/smdb
         - table-watcher=../../database/tableWatcher
+        - range-types=../types
       args:
         - SELF_DB_URL=${SELF_DB_URL}
         - DISCIPLINE_DEFAULT_COLOR=${DISCIPLINE_DEFAULT_COLOR}

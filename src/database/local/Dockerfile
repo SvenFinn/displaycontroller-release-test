@@ -15,7 +15,7 @@ COPY . .
 COPY src/entrypoint.sh schema.prisma dist/
 RUN rm -rf node_modules; \
     npm ci --loglevel=info; \
-    npm run build; \
+    npm run build && \
     echo "SELF_DB_URL=$SELF_DB_URL\n" > dist/.env;
 COPY migrations dist/migrations
 

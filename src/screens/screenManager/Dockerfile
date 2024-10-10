@@ -17,7 +17,7 @@ RUN npm i --omit=dev --loglevel=info --install-links;
 
 FROM deps AS build
 RUN npm i --loglevel=info --install-links; \
-    npm run build; \
+    npm run build && \
     echo "SELF_DB_URL=$SELF_DB_URL" > dist/.env;
 
 COPY ./screenManager/package.json ./dist/

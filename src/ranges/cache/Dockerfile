@@ -24,17 +24,18 @@ COPY --from=table-watcher . .
 RUN npm ci --loglevel=info;\
     npm run build;
 
-WORKDIR /app/ranges
-COPY . ./
+WORKDIR /app/ranges/types
+COPY --from=range-types . .
 
 WORKDIR /app/ranges/cache
+COPY . ./
 RUN npm i --omit=dev --loglevel=info --install-links;
 
 FROM deps AS build
 
-COPY ./cache/package.json dist/
+COPY ./package.json dist/
 RUN npm i --loglevel=info --install-links; \
-    npm run build; \
+    npm run build && \
     echo "SELF_DB_URL=$SELF_DB_URL\n \
     TARGET_DEFAULT_COLOR=$TARGET_DEFAULT_COLOR\n \
     MEYTON_DB_PASS=$MEYTON_DB_PASS\n \
