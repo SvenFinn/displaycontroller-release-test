@@ -36,7 +36,9 @@ COPY package.json dist/
 
 FROM base AS final
 
-RUN apt-get update; apt-get install sshpass netcat-openbsd -y
+RUN apt-get update; apt-get install sshpass netcat-openbsd -y; \
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/*;
 
 WORKDIR /app
 

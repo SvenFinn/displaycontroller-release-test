@@ -25,7 +25,9 @@ RUN npm i --loglevel=info --install-links; \
 
 FROM base AS final
 
-RUN apt-get update; apt-get install smbclient -y
+RUN apt-get update; apt-get install smbclient -y;\
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/*;
 
 COPY --from=build /app/screens/evaluations/dist ./
 COPY --from=deps /app/screens/evaluations/node_modules ./node_modules

@@ -17,7 +17,9 @@ COPY src/img dist/src/img
 
 FROM base AS final
 
-RUN apt-get update; apt-get install ghostscript graphicsmagick -y
+RUN apt-get update; apt-get install ghostscript graphicsmagick -y; \
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/*;
 
 COPY --from=build /app/dist ./
 COPY --from=deps /app/node_modules ./node_modules
