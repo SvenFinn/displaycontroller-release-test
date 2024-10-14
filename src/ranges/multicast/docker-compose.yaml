@@ -17,7 +17,7 @@ services:
     networks:
       - displaycontroller
     depends_on:
-      dc-ranges-rabbitmq:
+      dc-rabbitmq:
         condition: service_healthy
       dc-db-migrate:
         condition: service_completed_successfully

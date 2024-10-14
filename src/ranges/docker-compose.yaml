@@ -1,3 +1,4 @@
 include:
   - multicast/docker-compose.yaml
   - cache/docker-compose.yaml
+  - log/docker-compose.yaml
