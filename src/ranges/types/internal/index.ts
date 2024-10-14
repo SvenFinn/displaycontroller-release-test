@@ -3,19 +3,19 @@ import { Source, isSource } from "../index";
 
 export type InternalRange = {
     rangeId: number,
-    shooter: Shooter,
-    discipline: InternalDiscipline,
-    startListId: number,
+    shooter: Shooter | null,
+    discipline: InternalDiscipline | null,
+    startListId: number | null,
     hits: Hits,
-    source: Source
+    source: Source,
 }
 
 export function isInternalRange(range: any): range is InternalRange {
     if (typeof range !== "object") return false;
     if (typeof range.rangeId !== "number") return false;
-    if (!isShooter(range.shooter)) return false;
-    if (!isInternalDiscipline(range.discipline)) return false;
-    if (typeof range.startListId !== "number") return false;
+    if (!isShooter(range.shooter) && range.shooter !== null) return false;
+    if (!isInternalDiscipline(range.discipline) && range.discipline !== null) return false;
+    if (typeof range.startListId !== "number" && range.startListId !== null) return false;
     if (!isHits(range.hits)) return false;
     if (!isSource(range.source)) return false;
     return true;
@@ -45,16 +45,40 @@ export function isShooterByName(shooter: any): shooter is ShooterByName {
     return true;
 }
 
-export type InternalDiscipline = {
-    disciplineId: number,
-    overrideId: number,
+export type InternalDiscipline = InternalOverrideDiscipline | NormInternalDiscipline;
+
+export function isInternalDiscipline(discipline: any): discipline is InternalDiscipline {
+    return isInternalOverrideDiscipline(discipline) || isNormInternalDiscipline(discipline);
+}
+
+type BaseInternalDiscipline = {
     roundId: number,
 }
 
-export function isInternalDiscipline(discipline: any): discipline is InternalDiscipline {
+function isBaseInternalDiscipline(discipline: any): discipline is BaseInternalDiscipline {
     if (typeof discipline !== "object") return false;
-    if (typeof discipline.disciplineId !== "number") return false;
-    if (typeof discipline.overrideId !== "number") return false;
     if (typeof discipline.roundId !== "number") return false;
+    return true;
+}
+
+type InternalOverrideDiscipline = BaseInternalDiscipline & {
+    overrideId: number,
+}
+
+function isInternalOverrideDiscipline(discipline: any): discipline is InternalOverrideDiscipline {
+    if (!isBaseInternalDiscipline(discipline)) return false;
+    discipline = discipline as InternalOverrideDiscipline;
+    if (typeof discipline.overrideId !== "number") return false;
+    return true;
+}
+
+type NormInternalDiscipline = BaseInternalDiscipline & {
+    disciplineId: number,
+}
+
+function isNormInternalDiscipline(discipline: any): discipline is NormInternalDiscipline {
+    if (!isBaseInternalDiscipline(discipline)) return false;
+    discipline = discipline as NormInternalDiscipline;
+    if (typeof discipline.disciplineId !== "number") return false;
     return true;
 }

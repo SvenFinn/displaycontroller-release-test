@@ -2,6 +2,7 @@ import { createSocket, RemoteInfo } from "dgram";
 import pino from "pino";
 import { RangeProxyType } from "./types";
 import amqp from "amqplib";
+import { decode } from "iconv-lite";
 
 const logger = pino({
     level: process.env.LOG_LEVEL || "debug",
@@ -16,7 +17,7 @@ const logger = pino({
 async function main() {
     const connection = await amqp.connect("amqp://localhost");
     const channel = await connection.createChannel();
-    await channel.assertQueue("multicast-proxy", {
+    await channel.assertQueue("ranges.multicast.proxy", {
         durable: false,
         autoDelete: true,
         messageTtl: 30000
@@ -37,12 +38,17 @@ async function main() {
             logger.warn("Received message from non-IPv4 address");
             return;
         }
+        if (message.length < 3600) {
+            logger.debug("Discarding small message");
+            return;
+        }
+        const messageStr = decode(message, 'windows-1252');
         const proxiedMessage: RangeProxyType = {
-            ip: remote.address.split('.').map((n) => parseInt(n)) as [number, number, number, number],
-            message: message.toString("base64")
+            ip: remote.address,
+            message: Buffer.from(messageStr).toString("base64")
         }
         logger.info(`Received message from ${remote.address}:${remote.port}`);
-        channel.sendToQueue("multicast-proxy", Buffer.from(JSON.stringify(proxiedMessage)));
+        channel.sendToQueue("ranges.multicast.proxy", Buffer.from(JSON.stringify(proxiedMessage)));
     });
     client.on("error", function (error) {
         logger.error(error);

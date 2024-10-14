@@ -54,3 +54,10 @@ enum CacheTypes {
     startList
     discipline
 }
+
+model KnownRanges {
+    ipAddress String   @id @db.Inet
+    rangeId   Int?     @unique
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now()) @updatedAt
+}

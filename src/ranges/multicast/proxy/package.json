@@ -11,6 +11,7 @@
   "description": "",
   "dependencies": {
     "amqplib": "^0.10.4",
+    "iconv-lite": "^0.6.3",
     "pino": "^9.3.2",
     "pino-pretty": "^11.2.2"
   },
