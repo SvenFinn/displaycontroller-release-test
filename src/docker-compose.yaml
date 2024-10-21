@@ -1,11 +1,9 @@
 include:
   - proxy/docker-compose.yaml
-  - screens/images/docker-compose.yaml
-  - screens/evaluations/docker-compose.yaml
   - database/local/docker-compose.yaml
   - checkServer/docker-compose.yaml
   - syncTime/docker-compose.yaml
-  - screens/screenManager/docker-compose.yaml
+  - screens/docker-compose.yaml
   - ranges/docker-compose.yaml
   - rabbitmq/docker-compose.yaml
   - portainer/docker-compose.yaml
