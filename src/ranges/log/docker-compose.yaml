@@ -1,19 +1,18 @@
-include:
-  - ./proxy/docker-compose.yaml
-
 services:
-  dc-ranges-multicast:
-    container_name: dc-ranges-multicast
-    hostname: multicast
+  dc-ranges-log:
+    container_name: dc-ranges-log
+    hostname: ranges-log
     build:
       context: .
       dockerfile: Dockerfile
       args:
         - SELF_DB_URL=${SELF_DB_URL}
-        - LOG_LEVEL=${LOG_LEVEL}
+        - MEYTON_SSH_USER=${MEYTON_SSH_USER}
+        - MEYTON_SSH_PASS=${MEYTON_SSH_PASS}
       additional_contexts:
         - local-db=../../database/local
         - range-types=../types
+        - range-ttl=../ttl
     networks:
       - displaycontroller
     depends_on:

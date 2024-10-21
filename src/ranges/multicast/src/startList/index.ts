@@ -1,5 +1,5 @@
 import { LocalClient } from "dc-db-local";
-import { isStartList, OverrideDiscipline } from "@shared/ranges/startListCache/index"
+import { isOverrideDiscipline, isStartList, OverrideDiscipline } from "@shared/ranges/internal/startList";
 
 const matchStartLists = new Map<string, number>();
 const overrideDisciplines = new Map<number, Array<OverrideDiscipline>>();
@@ -17,7 +17,23 @@ export async function updateStartList(client: LocalClient) {
         }
         matchStartLists.set(list.value.name, Number(list.key));
         if (list.value.type === "price") {
-            overrideDisciplines.set(Number(list.key), list.value.overrideDisciplines);
+            const overrideDisciplinesDb = await client.cache.findMany({
+                where: {
+                    type: "overrideDiscipline",
+                    key: {
+                        in: list.value.overrideDisciplines
+                    }
+                }
+            });
+            if (overrideDisciplinesDb.length === 0) {
+                overrideDisciplines.set(Number(list.key), []);
+            }
+            overrideDisciplines.set(Number(list.key), overrideDisciplinesDb.map(item => {
+                if (!isOverrideDiscipline(item.value)) {
+                    return null;
+                }
+                return item.value;
+            }).filter(item => item !== null) as Array<OverrideDiscipline>);
         }
     }
 }

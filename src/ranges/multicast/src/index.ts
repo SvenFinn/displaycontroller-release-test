@@ -21,7 +21,6 @@ async function main() {
     });
     await channel.assertExchange("ranges.multicast", "fanout", {
         durable: false,
-        autoDelete: true,
     });
     channel.prefetch(1); // Only one message at a time
     channel.consume("ranges.multicast.proxy", async (msg) => {
@@ -58,7 +57,8 @@ async function getRangeData(message: string, rangeIp: string): Promise<InternalR
         shooter: shooter,
         discipline: discipline,
         hits: [],
-        source: "multicast"
+        source: "multicast",
+        ttl: 20
     }
 }
 
@@ -83,6 +83,7 @@ function getDisciplineObj(startListId: number | null, message: string): Internal
 
     }
 }
+
 main();
 
 process.on("SIGTERM", () => {

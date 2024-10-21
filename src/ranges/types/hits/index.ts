@@ -1,6 +1,4 @@
-export type Hits = {
-    [roundId: number]: Array<Hit>;
-}
+export type Hits = Array<Array<Hit>>;
 
 export function isHits(hits: any): hits is Hits {
     for (const roundId in hits) {

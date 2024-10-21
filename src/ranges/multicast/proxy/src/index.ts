@@ -5,7 +5,7 @@ import amqp from "amqplib";
 import { decode } from "iconv-lite";
 
 const logger = pino({
-    level: process.env.LOG_LEVEL || "debug",
+    level: process.env.LOG_LEVEL || "info",
     transport: {
         target: 'pino-pretty',
         options: {
@@ -13,6 +13,8 @@ const logger = pino({
         }
     }
 });
+
+const MESSAGE_MIN_LENGTH = 3600;
 
 async function main() {
     const connection = await amqp.connect("amqp://localhost");
@@ -38,8 +40,8 @@ async function main() {
             logger.warn("Received message from non-IPv4 address");
             return;
         }
-        if (message.length < 3600) {
-            logger.debug("Discarding small message");
+        if (message.length < MESSAGE_MIN_LENGTH) {
+            logger.warn(`Received short message (${message.length} < ${MESSAGE_MIN_LENGTH}) from ${remote.address}`);
             return;
         }
         const messageStr = decode(message, 'windows-1252');
@@ -47,7 +49,7 @@ async function main() {
             ip: remote.address,
             message: Buffer.from(messageStr).toString("base64")
         }
-        logger.info(`Received message from ${remote.address}:${remote.port}`);
+        logger.info(`Received message from ${remote.address}`);
         channel.sendToQueue("ranges.multicast.proxy", Buffer.from(JSON.stringify(proxiedMessage)));
     });
     client.on("error", function (error) {
