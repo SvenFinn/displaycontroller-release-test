@@ -8,6 +8,7 @@ include:
   - screens/screenManager/docker-compose.yaml
   - ranges/docker-compose.yaml
   - rabbitmq/docker-compose.yaml
+  - portainer/docker-compose.yaml
 
 networks:
   displaycontroller:

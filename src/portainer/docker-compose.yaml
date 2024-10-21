@@ -1,0 +1,15 @@
+services:
+  dc-portainer:
+    image: portainer/portainer-ce:latest
+    container_name: dc-portainer
+    hostname: portainer
+    ports:
+      - "9443:9443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - dc_portainer_data:/data
+    networks:
+      - displaycontroller
+
+volumes:
+  dc_portainer_data:
