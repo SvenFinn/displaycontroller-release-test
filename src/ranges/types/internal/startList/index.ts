@@ -9,7 +9,7 @@ export function isStartList(startList: any): startList is StartList {
     if (startList.type === "price") {
         if (!Array.isArray(startList.overrideDisciplines)) return false;
         for (const overrideDiscipline of startList.overrideDisciplines) {
-            if (!isOverrideDiscipline(overrideDiscipline)) return false;
+            if (typeof (overrideDiscipline) !== "number") return false;
         }
     }
     return true;
@@ -27,7 +27,7 @@ type MostStartList = BaseStartList & {
 
 type PriceStartList = BaseStartList & {
     type: "price",
-    overrideDisciplines: Array<OverrideDiscipline>
+    overrideDisciplines: Array<number>
 }
 
 export function isOverrideDiscipline(overrideDiscipline: any): overrideDiscipline is OverrideDiscipline {
@@ -36,6 +36,7 @@ export function isOverrideDiscipline(overrideDiscipline: any): overrideDisciplin
     if (typeof overrideDiscipline.disciplineId !== "number") return false;
     if (typeof overrideDiscipline.name !== "string") return false;
     if (typeof overrideDiscipline.color !== "string") return false;
+    if (typeof overrideDiscipline.startListId !== "number") return false;
     return true;
 }
 
@@ -44,4 +45,5 @@ export type OverrideDiscipline = {
     disciplineId: number,
     name: string,
     color: string,
+    startListId: number
 }

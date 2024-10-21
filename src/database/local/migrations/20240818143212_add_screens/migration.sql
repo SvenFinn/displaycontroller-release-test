@@ -5,7 +5,7 @@ CREATE TYPE "ScreensPreset" AS ENUM ('drawTarget', 'cpcView', 'imageViewer', 'ev
 CREATE TABLE "Screens" (
     "id" SERIAL NOT NULL,
     "preset" "ScreensPreset" NOT NULL,
-    "options" JSONB NOT NULL,
+    "options" JSONB,
     "condition" JSONB NOT NULL,
     "visibleFrom" DOUBLE PRECISION NOT NULL DEFAULT -1,
     "visibleUntil" DOUBLE PRECISION NOT NULL DEFAULT -1,

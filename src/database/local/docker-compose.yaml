@@ -16,7 +16,7 @@ services:
     container_name: dc-db-migrate
     networks:
       - displaycontroller
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
       args:

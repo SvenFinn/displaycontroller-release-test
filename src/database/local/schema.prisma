@@ -53,6 +53,7 @@ enum CacheTypes {
     shooter
     startList
     discipline
+    overrideDiscipline
 }
 
 model KnownRanges {

@@ -1,0 +1,24 @@
+import { SmdbClient } from "dc-db-smdb";
+import { OverrideDiscipline } from "@shared/ranges/internal/startList"
+
+export async function getOverrideDisciplines(smdbClient: SmdbClient): Promise<Array<OverrideDiscipline>> {
+    const overrideDisciplinesDb = await smdbClient.priceShooting.findMany({
+        select: {
+            id: true,
+            listId: true,
+            disciplineId: true,
+            color: true,
+            name: true
+        }
+    });
+    return overrideDisciplinesDb.map(overrideDiscipline => {
+        return {
+            id: overrideDiscipline.id,
+            disciplineId: overrideDiscipline.disciplineId,
+            name: overrideDiscipline.name,
+            color: overrideDiscipline.color,
+            startListId: overrideDiscipline.listId
+        }
+    });
+}
+

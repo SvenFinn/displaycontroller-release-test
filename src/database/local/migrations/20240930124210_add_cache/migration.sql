@@ -1,8 +1,5 @@
 -- CreateEnum
-CREATE TYPE "CacheTypes" AS ENUM ('shooter', 'startList', 'discipline');
-
--- AlterTable
-ALTER TABLE "Screens" ALTER COLUMN "condition" DROP NOT NULL;
+CREATE TYPE "CacheTypes" AS ENUM ('shooter', 'startList', 'discipline', 'overrideDiscipline');
 
 -- CreateTable
 CREATE TABLE "Cache" (

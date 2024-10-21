@@ -8,6 +8,8 @@ import { logger } from "./logger";
 import { Discipline } from "@shared/ranges/discipline";
 import { StartList } from "@shared/ranges/startList";
 import { Shooter } from "@shared/ranges/shooter";
+import { getOverrideDisciplines } from "./overrideDisciplines";
+import { OverrideDiscipline } from "@shared/ranges/internal/startList";
 
 const tables = [
     "Starterlisten", // startList
@@ -32,6 +34,7 @@ async function init() {
             updateDisciplineCache(),
             updateStartListCache(),
             updateShooterCache(),
+            updateOverrideDisciplineCache(),
         ]);
     });
     await tableWatcher.start();
@@ -57,7 +60,13 @@ async function updateShooterCache() {
     await writeCache("shooter", shooters);
 }
 
-async function writeCache(type: "shooter" | "startList" | "discipline", cache: Array<Shooter> | Array<StartList> | Array<Discipline>) {
+async function updateOverrideDisciplineCache() {
+    logger.info("Updating override discipline cache");
+    const overrideDisciplines = await getOverrideDisciplines(smdbClient as SmdbClient);
+    await writeCache("overrideDiscipline", overrideDisciplines);
+}
+
+async function writeCache(type: "shooter" | "startList" | "discipline" | "overrideDiscipline", cache: Array<Shooter> | Array<StartList> | Array<Discipline> | Array<OverrideDiscipline>) {
     await Promise.all(cache.map(async item => {
         await localClient?.cache.upsert({
             where: {
@@ -86,7 +95,7 @@ async function writeCache(type: "shooter" | "startList" | "discipline", cache: A
             }
         }
     });
-    logger.info(`${type} cache: ${cache.length} ${type}`);
+    logger.info(`${type} cache: ${cache.length} items`);
 }
 
 init();

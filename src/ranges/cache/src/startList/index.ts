@@ -1,5 +1,5 @@
 import { SmdbClient } from "dc-db-smdb";
-import { OverrideDiscipline, StartList } from "@shared/ranges/startListCache"
+import { StartList } from "@shared/ranges/internal/startList"
 import { StartListTypes } from "dc-db-smdb/generated/client";
 
 export async function getStartListCache(smdbCLient: SmdbClient): Promise<Array<StartList>> {
@@ -49,7 +49,7 @@ async function getStartList(smdbClient: SmdbClient, startListId: number): Promis
             name: startListDb.name,
             active: startListDbActive,
             type: "price",
-            overrideDisciplines: await getOverrideDiscipline(smdbClient, startListDb.id),
+            overrideDisciplines: await getOverrideDisciplineId(smdbClient, startListDb.id),
         }
     } else {
         return {
@@ -76,7 +76,7 @@ function getStartListType(type: StartListTypes): StartList["type"] {
     }
 }
 
-async function getOverrideDiscipline(smdbClient: SmdbClient, startListId: number): Promise<Array<OverrideDiscipline>> {
+async function getOverrideDisciplineId(smdbClient: SmdbClient, startListId: number): Promise<Array<number>> {
     const specialDisciplinesDb = await smdbClient.startList.findUnique({
         where: {
             id: startListId
@@ -85,9 +85,6 @@ async function getOverrideDiscipline(smdbClient: SmdbClient, startListId: number
             priceShooting: {
                 select: {
                     id: true,
-                    disciplineId: true,
-                    name: true,
-                    color: true,
                 }
             }
         }
@@ -96,11 +93,6 @@ async function getOverrideDiscipline(smdbClient: SmdbClient, startListId: number
         return [];
     }
     return specialDisciplinesDb.priceShooting.map(specialDiscipline => {
-        return {
-            id: specialDiscipline.id,
-            disciplineId: specialDiscipline.disciplineId,
-            name: specialDiscipline.name,
-            color: specialDiscipline.color,
-        }
+        return specialDisciplinesDb.id;
     });
 }
