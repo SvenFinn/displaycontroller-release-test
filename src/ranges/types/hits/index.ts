@@ -1,4 +1,4 @@
-export type Hits = Array<Array<Hit>>;
+export type Hits = Array<Array<Hit> | null>;
 
 export function isHits(hits: any): hits is Hits {
     for (const roundId in hits) {

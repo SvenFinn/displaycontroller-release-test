@@ -4,7 +4,7 @@ import EventSource from "eventsource";
 import pino from "pino";
 
 const logger = pino({
-    level: "info",
+    level: process.env.LOG_LEVEL || "info",
     transport: {
         target: "pino-pretty",
         options: {
@@ -79,7 +79,7 @@ export class TableWatcher extends EventEmitter {
         this.startInternal();
     }
 
-    private async watch() {
+    protected async watch() {
         logger.debug("Checking table checksums");
         let changed: string[] = [];
         await Promise.all(this.tables.map(async (table) => {
@@ -105,5 +105,33 @@ export class TableWatcher extends EventEmitter {
 
     public on(event: 'change', listener: (tables: string[]) => void): this {
         return super.on(event, listener);
+    }
+}
+
+export class TableWatcherFast extends TableWatcher {
+    // If this detects a change, it will increase the check interval to the fast interval
+    // It should then check with the fast interval for 30 seconds, and go back to the normal interval if no changes are detected
+    private slowInterval: number;
+    private fastInterval: number;
+    private fastTimeout: number;
+    private fastIntervalTimeout: NodeJS.Timeout | null = null;
+
+    constructor(prisma: PrismaClient, tables: string[], interval: number = 10000, fastInterval: number = 1000, fastTimeout: number = 30000) {
+        super(prisma, tables, interval);
+        this.slowInterval = interval;
+        this.fastInterval = fastInterval;
+        this.fastTimeout = fastTimeout;
+        this.on('change', this.changeInterval);
+    }
+
+    private changeInterval() {
+        logger.debug("Change detected, increasing interval");
+        if (this.fastIntervalTimeout !== null) {
+            clearTimeout(this.fastIntervalTimeout);
+        }
+        this.setInterval(this.fastInterval);
+        this.fastIntervalTimeout = setTimeout(() => {
+            this.setInterval(this.slowInterval);
+        }, this.fastTimeout);
     }
 }

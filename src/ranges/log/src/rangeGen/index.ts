@@ -63,13 +63,20 @@ export class RangeGen {
         // Delete hit
         if (logLine.action === "d") {
             const hits = this.hits[logLine.round.id];
+            if (!hits) {
+                return;
+            }
             // Check if hit exists
             const hitExists = hits.find(hit => hit.id === logLine.hit.id);
             if (hitExists) {
                 // Remove hit and renumber the rest
                 this.hits[logLine.round.id] = hits.filter(hit => hit.id !== logLine.hit.id);
-                for (let i = 0; i < this.hits[logLine.round.id].length; i++) {
-                    const hit = this.hits[logLine.round.id][i];
+                const hitsv2 = this.hits[logLine.round.id];
+                if (!hitsv2) {
+                    return;
+                }
+                for (let i = 0; i < hitsv2.length; i++) {
+                    const hit = hitsv2[i];
                     if (hit.id > logLine.hit.id) {
                         hit.id--;
                     }
@@ -77,10 +84,11 @@ export class RangeGen {
             }
         } else {
             // Add hit
-            const hitExists = this.hits[logLine.round.id].find(hit => hit.id === logLine.hit.id);
+            const hits = this.hits[logLine.round.id] || [];
+
+            const hitExists = hits.find(hit => hit.id === logLine.hit.id);
             if (hitExists) {
                 // Renumber the rest of hits
-                const hits = this.hits[logLine.round.id];
                 for (let i = 0; i < hits.length; i++) {
                     if (hits[i].id < logLine.hit.id) {
                         continue;
@@ -89,7 +97,7 @@ export class RangeGen {
                     }
                 }
             }
-            this.hits[logLine.round.id].push({
+            this.hits[logLine.round.id]?.push({
                 id: logLine.hit.id,
                 x: logLine.hit.x,
                 y: logLine.hit.y,
@@ -97,7 +105,7 @@ export class RangeGen {
                 rings: logLine.hit.rings,
                 innerTen: logLine.hit.innerRing,
             });
-            this.hits[logLine.round.id].sort((a, b) => a.id - b.id);
+            this.hits[logLine.round.id]?.sort((a, b) => a.id - b.id);
         }
     }
 

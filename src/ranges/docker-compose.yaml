@@ -2,3 +2,4 @@ include:
   - multicast/docker-compose.yaml
   - cache/docker-compose.yaml
   - log/docker-compose.yaml
+  - ssmdb2/docker-compose.yaml

@@ -8,24 +8,24 @@ ARG MEYTON_SSH_PASS
 ARG MEYTON_SSH_USER
 ARG SELF_DB_URL
 
-FROM base AS deps
+FROM base AS local-deps
 
 WORKDIR /app/database/local
 COPY --from=local-db . .
-RUN npm ci --loglevel=info;\
+RUN npm ci --loglevel=info &&\
     npm run build;
 
-WORKDIR /app/checkServer
-COPY . ./
+FROM local-deps AS deps
 
+WORKDIR /app/checkServer
+COPY package.json package-lock.json ./
 RUN npm i --omit=dev --loglevel=info --install-links;
 
+FROM local-deps AS build
 
-FROM deps AS build
-
+WORKDIR /app/checkServer
 COPY . .
-COPY --from=local-db *.tgz ./deps/
-RUN npm i --loglevel=info --install-links; \
+RUN npm i --loglevel=info --install-links && \
     npm run build && \
     echo "MIN_MEYTON_VERSION=$MIN_MEYTON_VERSION\n \
     MAX_MEYTON_VERSION=$MAX_MEYTON_VERSION\n \

@@ -1,0 +1,26 @@
+{
+  "name": "dc-ranges-ssmdb2",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc && tsc-alias"
+  },
+  "author": "Sven Finn",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/amqplib": "^0.10.5",
+    "@types/node": "^22.7.8",
+    "tsc-alias": "^1.8.10",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.4",
+    "dc-db-local": "file:../../database/local",
+    "dc-db-ssmdb2": "file:../../database/ssmdb2",
+    "dc-table-watcher": "file:../../database/tableWatcher",
+    "pino": "^9.5.0",
+    "pino-pretty": "^11.3.0"
+  }
+}

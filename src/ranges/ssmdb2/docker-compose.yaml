@@ -1,0 +1,27 @@
+services:
+  dc-ranges-ssmdb2:
+    container_name: dc-ranges-ssmdb2
+    hostname: ranges-ssmdb2
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - SELF_DB_URL=${SELF_DB_URL}
+        - LOG_LEVEL=${LOG_LEVEL}
+        - MEYTON_DB_USER=${MEYTON_DB_USER}
+        - MEYTON_DB_PASS=${MEYTON_DB_PASS}
+      additional_contexts:
+        - local-db=../../database/local
+        - ssmdb2=../../database/ssmdb2
+        - range-types=../types
+        - table-watcher=../../database/tableWatcher
+    networks:
+      - displaycontroller
+    #volumes:
+    #  - /etc/timezone:/etc/timezone:ro
+    #  - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      dc-db-migrate:
+        condition: service_completed_successfully
+      dc-rabbitmq:
+        condition: service_healthy
