@@ -4,24 +4,27 @@ WORKDIR /app
 
 ARG SELF_DB_URL
 
-FROM base AS deps
+FROM base AS local-deps
 
 WORKDIR /app/database/local
 COPY --from=local-db . .
-RUN npm ci --loglevel=info;\
+RUN npm ci --loglevel=info && \
     npm run build;
 
-WORKDIR /app/screens/evaluations
-COPY . ./
+FROM local-deps AS deps
 
+WORKDIR /app/screens/evaluations
+COPY package.json package-lock.json ./
 RUN npm i --omit=dev --loglevel=info --install-links;
 
-FROM deps AS build
+FROM local-deps AS build
 
-COPY package.json dist/
-RUN npm i --loglevel=info --install-links; \
+WORKDIR /app/screens/evaluations
+COPY . .
+RUN npm i --loglevel=info --install-links &&  \
     npm run build && \
     echo "SELF_DB_URL=$SELF_DB_URL" > dist/.env;
+COPY package.json dist/
 
 FROM base AS final
 

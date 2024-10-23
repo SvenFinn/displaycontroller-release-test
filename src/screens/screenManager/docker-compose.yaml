@@ -5,10 +5,12 @@ services:
     networks:
       - displaycontroller
     build:
-      context: ..
-      dockerfile: ./screenManager/Dockerfile
+      context: .
+      dockerfile: ./Dockerfile
       additional_contexts:
         - local-db=../../database/local
+        - images=../images
+        - evaluations=../evaluations
       args:
         - SELF_DB_URL=${SELF_DB_URL}
 

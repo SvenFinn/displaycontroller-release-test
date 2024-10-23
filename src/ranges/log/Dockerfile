@@ -6,12 +6,20 @@ ARG SELF_DB_URL
 ARG MEYTON_SSH_USER
 ARG MEYTON_SSH_PASS
 
-FROM base AS deps
+FROM base AS local-deps
 
 WORKDIR /app/database/local
 COPY --from=local-db . .
-RUN npm ci --loglevel=info;\
+RUN npm ci --loglevel=info && \
     npm run build;
+
+FROM local-deps AS deps
+
+WORKDIR /app/ranges/log
+COPY package.json package-lock.json ./
+RUN npm i --omit=dev --loglevel=info --install-links;
+
+FROM local-deps AS build
 
 WORKDIR /app/ranges/types
 COPY --from=range-types . .
@@ -20,12 +28,8 @@ WORKDIR /app/ranges/ttl
 COPY --from=range-ttl . .
 
 WORKDIR /app/ranges/log
-COPY . ./
-RUN npm i --omit=dev --loglevel=info --install-links;
-
-FROM deps AS build
-
-RUN npm i --loglevel=info --install-links; \
+COPY . .
+RUN npm i --loglevel=info --install-links && \
     npm run build && \
     echo "SELF_DB_URL=$SELF_DB_URL\n \
     MEYTON_SSH_USER=$MEYTON_SSH_USER\n \

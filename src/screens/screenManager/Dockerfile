@@ -2,25 +2,33 @@ FROM node:latest AS base
 
 ARG SELF_DB_URL
 
-FROM base AS deps
+FROM base AS local-deps
 
 WORKDIR /app/database/local
 COPY --from=local-db . .
 RUN npm ci --loglevel=info;\
     npm run build;
 
-WORKDIR /app/screens
-COPY . .
+FROM local-deps AS deps
 
 WORKDIR /app/screens/screenManager
+COPY package.json package-lock.json ./
 RUN npm i --omit=dev --loglevel=info --install-links; 
 
-FROM deps AS build
+FROM local-deps AS build
+
+WORKDIR /app/screens/images
+COPY --from=images . .
+
+WORKDIR /app/screens/evaluations
+COPY --from=evaluations . .
+
+WORKDIR /app/screens/screenManager
+COPY . .
 RUN npm i --loglevel=info --install-links; \
     npm run build && \
     echo "SELF_DB_URL=$SELF_DB_URL" > dist/.env;
-
-COPY ./screenManager/package.json ./dist/
+COPY package.json ./dist/
 
 FROM base AS final
 

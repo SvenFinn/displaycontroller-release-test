@@ -6,7 +6,7 @@ ARG SELF_DB_URL
 ARG MEYTON_DB_USER
 ARG MEYTON_DB_PASS
 
-FROM base AS deps
+FROM base AS local-deps
 
 WORKDIR /app/database/local
 COPY --from=local-db . .
@@ -18,13 +18,17 @@ COPY --from=smdb-db . .
 RUN npm ci --loglevel=info;\
     npm run build;
 
-WORKDIR /app/syncTime
-COPY . ./
+FROM local-deps AS deps
 
+WORKDIR /app/syncTime
+COPY package.json package-lock.json ./
 RUN npm i --omit=dev --loglevel=info --install-links;
 
-FROM deps AS build
+FROM local-deps AS build
 
+WORKDIR /app/syncTime
+
+COPY . .
 RUN npm i --loglevel=info; \
     npm run build && \
     echo "SELF_DB_URL=$SELF_DB_URL\n \

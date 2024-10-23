@@ -7,39 +7,43 @@ ARG TARGET_DEFAULT_COLOR=00A078
 ARG MEYTON_DB_PASS
 ARG MEYTON_DB_USER
 
-FROM base AS deps
+FROM base AS local-deps
 
 WORKDIR /app/database/local
 COPY --from=local-db . .
-RUN npm ci --loglevel=info;\
+RUN npm ci --loglevel=info && \
     npm run build;
 
 WORKDIR /app/database/smdb
 COPY --from=smdb . .
-RUN npm ci --loglevel=info;\
+RUN npm ci --loglevel=info && \
     npm run build;
 
 WORKDIR /app/database/tableWatcher
 COPY --from=table-watcher . .
-RUN npm ci --loglevel=info;\
+RUN npm ci --loglevel=info && \
     npm run build;
+
+FROM local-deps AS deps
+
+WORKDIR /app/ranges/cache
+COPY package.json package-lock.json ./
+RUN npm i --omit=dev --loglevel=info --install-links;
+
+FROM local-deps AS build
 
 WORKDIR /app/ranges/types
 COPY --from=range-types . .
 
 WORKDIR /app/ranges/cache
-COPY . ./
-RUN npm i --omit=dev --loglevel=info --install-links;
-
-FROM deps AS build
-
-COPY ./package.json dist/
-RUN npm i --loglevel=info --install-links; \
+COPY . .
+RUN npm i --loglevel=info --install-links && \
     npm run build && \
     echo "SELF_DB_URL=$SELF_DB_URL\n \
     TARGET_DEFAULT_COLOR=$TARGET_DEFAULT_COLOR\n \
     MEYTON_DB_PASS=$MEYTON_DB_PASS\n \
     MEYTON_DB_USER=$MEYTON_DB_USER" > dist/.env;
+COPY ./package.json dist/
 
 FROM base AS final
 
