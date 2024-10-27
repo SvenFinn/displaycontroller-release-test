@@ -1,0 +1,19 @@
+services:
+  dc-ranges-merger:
+    container_name: dc-ranges-merger
+    hostname: ranges-merger
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - SELF_DB_URL=${SELF_DB_URL}
+      additional_contexts:
+        - local-db=../../database/local
+        - range-types=../types
+    networks:
+      - displaycontroller
+    depends_on:
+      dc-rabbitmq:
+        condition: service_healthy
+      dc-db-migrate:
+        condition: service_completed_successfully

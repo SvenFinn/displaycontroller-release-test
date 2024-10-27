@@ -3,3 +3,4 @@ include:
   - cache/docker-compose.yaml
   - log/docker-compose.yaml
   - ssmdb2/docker-compose.yaml
+  - merge/docker-compose.yaml
