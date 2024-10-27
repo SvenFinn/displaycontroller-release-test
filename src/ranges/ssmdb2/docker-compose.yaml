@@ -7,7 +7,6 @@ services:
       dockerfile: Dockerfile
       args:
         - SELF_DB_URL=${SELF_DB_URL}
-        - LOG_LEVEL=${LOG_LEVEL}
         - MEYTON_DB_USER=${MEYTON_DB_USER}
         - MEYTON_DB_PASS=${MEYTON_DB_PASS}
       additional_contexts:

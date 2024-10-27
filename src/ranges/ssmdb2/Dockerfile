@@ -5,7 +5,6 @@ WORKDIR /app
 ARG SELF_DB_URL
 ARG MEYTON_DB_PASS
 ARG MEYTON_DB_USER
-ARG LOG_LEVEL
 
 FROM base AS local-deps
 
@@ -41,9 +40,7 @@ RUN npm i --loglevel=info --install-links; \
     npm run build && \
     echo "SELF_DB_URL=$SELF_DB_URL\n \
     MEYTON_DB_PASS=$MEYTON_DB_PASS\n \
-    MEYTON_DB_USER=$MEYTON_DB_USER\n \
-    LOG_LEVEL=$LOG_LEVEL" > dist/.env;
-
+    MEYTON_DB_USER=$MEYTON_DB_USER" > dist/.env;
 FROM base AS final
 
 WORKDIR /app

@@ -10,7 +10,6 @@ services:
       dockerfile: Dockerfile
       args:
         - SELF_DB_URL=${SELF_DB_URL}
-        - LOG_LEVEL=${LOG_LEVEL}
       additional_contexts:
         - local-db=../../database/local
         - range-types=../types
