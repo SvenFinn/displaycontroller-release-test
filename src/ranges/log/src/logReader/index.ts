@@ -10,18 +10,18 @@ import { logger } from "../logger";
 
 dotenv.config();
 
+const localClient = new LocalClient();
+
 if (!process.env.MEYTON_SSH_USER || !process.env.MEYTON_SSH_PASS) {
     throw new Error("Missing environment variables");
 }
 
 export class LogReader extends EventEmitter {
-    private readonly database: LocalClient;
     private readonly serverStateSSE: EventSource;
     private sshThread: ChildProcess | null = null;
 
-    constructor(database: LocalClient) {
+    constructor() {
         super();
-        this.database = database;
         this.serverStateSSE = new EventSource(`http://check-server/api/serverState/sse`);
         this.serverStateSSE.onmessage = this.onServerState.bind(this);
     }
@@ -40,7 +40,7 @@ export class LogReader extends EventEmitter {
 
     private async startSSH(): Promise<ChildProcess> {
         const script = fs.readFileSync(`${__dirname}/range-logs.sh`, "utf-8");
-        const serverIpQuery = await this.database.parameter.findUnique({
+        const serverIpQuery = await localClient.parameter.findUnique({
             where: {
                 key: "MEYTON_SERVER_IP",
             }

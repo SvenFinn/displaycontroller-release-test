@@ -1,25 +1,22 @@
 import { Hits } from "@shared/ranges/hits";
 import { LogLine } from "../logReader/types";
-import { InternalDiscipline, InternalRange, isInternalOverrideDiscipline, isShooterById, isShooterByName, ShooterById } from "@shared/ranges/internal"
-import { isOverrideDiscipline } from "@shared/ranges/internal/startList";
+import { InternalDiscipline, InternalRange, isInternalOverrideDiscipline, ShooterById } from "@shared/ranges/internal"
 import { logger } from "../logger";
-import { LocalClient } from "dc-db-local";
-import { isShooter } from "@shared/ranges/shooter";
 import { TTLHandler } from "@ranges/ttl";
 import { Channel } from "amqplib";
+import { isSameShooter } from "../cache/shooter";
+import { getDisciplineId } from "../cache/overrides";
 
 export class RangeGen {
     private readonly rangeId: number;
-    private readonly prisma: LocalClient;
     private targetId: number;
     private shooter: ShooterById | null;
     private disciplineId: number;
     private hits: Hits;
     private multicast: TTLHandler<InternalRange>;
 
-    constructor(rangeId: number, prism: LocalClient) {
+    constructor(rangeId: number,) {
         this.rangeId = rangeId;
-        this.prisma = prism;
         this.targetId = 0;
         this.shooter = null;
         this.disciplineId = 0;
@@ -113,38 +110,18 @@ export class RangeGen {
         return this.hits.length;
     }
 
-    private async isShooter(): Promise<boolean> {
+    private isShooter(): boolean {
         if (!this.shooter) {
             return false;
         }
         const multicastInfo = this.multicast.getMessage();
-        if (multicastInfo === null) {
+        if (multicastInfo === null || !multicastInfo.shooter) {
             return false;
         }
-        if (isShooterById(multicastInfo.shooter)) {
-            return multicastInfo.shooter === this.shooter;
-        }
-        const shooter = await this.prisma.cache.findUnique({
-            where: {
-                type_key: {
-                    type: "shooter",
-                    key: this.shooter,
-                }
-            }
-        });
-        if (!shooter) {
-            return false;
-        }
-        if (!isShooter(shooter)) {
-            return false;
-        }
-        if (!isShooterByName(multicastInfo.shooter)) {
-            return false;
-        }
-        return shooter.firstName === multicastInfo.shooter.firstName && shooter.lastName === multicastInfo.shooter.lastName;
+        return isSameShooter(this.shooter, multicastInfo.shooter);
     }
 
-    private async getDiscipline(): Promise<InternalDiscipline | null> {
+    private getDiscipline(): InternalDiscipline | null {
         const multicastInfo = this.multicast.getMessage();
         if (multicastInfo === null || !multicastInfo.discipline) {
             if (this.disciplineId === 0) {
@@ -156,21 +133,8 @@ export class RangeGen {
             }
         }
         if (isInternalOverrideDiscipline(multicastInfo.discipline)) {
-            const overrideDiscipline = await this.prisma.cache.findUnique({
-                where: {
-                    type_key: {
-                        type: "overrideDiscipline",
-                        key: multicastInfo.discipline.overrideId,
-                    }
-                }
-            });
-            if (!overrideDiscipline || !isOverrideDiscipline(overrideDiscipline.value)) {
-                return {
-                    disciplineId: this.disciplineId,
-                    roundId: this.getRoundId(),
-                }
-            }
-            if (overrideDiscipline.value.disciplineId === this.disciplineId) {
+            const multicastDisciplineId = getDisciplineId(multicastInfo.discipline.overrideId);
+            if (multicastDisciplineId === this.disciplineId) {
                 return {
                     overrideId: multicastInfo.discipline.overrideId,
                     roundId: this.getRoundId(),

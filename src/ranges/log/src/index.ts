@@ -1,12 +1,12 @@
 import { LogReader } from "./logReader";
 import { RangeGen } from "./rangeGen";
-import { LocalClient } from "dc-db-local";
 import amqp from "amqplib";
 import { isInternalRange } from "@shared/ranges/internal";
 import { logger } from "./logger";
 
+import "./cache/updater"; // Import the updater to start the caching
+
 const ranges = new Map<number, RangeGen>();
-const localClient = new LocalClient();
 
 async function main() {
     logger.info("Connecting to rabbitmq");
@@ -16,18 +16,24 @@ async function main() {
     await logChannel.assertExchange("ranges.log", "fanout", {
         durable: false,
     });
-    const connector = new LogReader(localClient);
-    connector.on("data", async (data) => {
-        if (!ranges.has(data.rangeId)) {
-            ranges.set(data.rangeId, new RangeGen(data.rangeId, localClient));
-        }
-        const range = ranges.get(data.rangeId);
-        if (!range) {
-            return;
-        }
+    const logReader = new LogReader();
+    logReader.on("data", async (data) => {
+        const rangeId = data.rangeId;
+        const range = getRangeGen(rangeId);
         range.addLogLine(data);
         await range.sendRange(logChannel);
     });
+}
+
+function getRangeGen(rangeId: number): RangeGen {
+    if (!ranges.has(rangeId)) {
+        ranges.set(rangeId, new RangeGen(rangeId));
+    }
+    const range = ranges.get(rangeId);
+    if (!range) {
+        throw new Error("Range not found");
+    }
+    return range;
 }
 
 async function recvMultiCast(channel: amqp.Channel, logChannel: amqp.Channel) {
@@ -44,15 +50,11 @@ async function recvMultiCast(channel: amqp.Channel, logChannel: amqp.Channel) {
         }
         const message = JSON.parse(msg.content.toString());
         if (isInternalRange(message)) {
-            if (!ranges.has(message.rangeId)) {
-                ranges.set(message.rangeId, new RangeGen(message.rangeId, localClient));
-            }
-            const range = ranges.get(message.rangeId);
-            if (!range) {
-                return;
-            }
+            const range = getRangeGen(message.rangeId);
             range.setMulticastInfo(message);
             await range.sendRange(logChannel);
+        } else {
+            logger.error("Received invalid multicast message");
         }
         channel.ack(msg);
     });

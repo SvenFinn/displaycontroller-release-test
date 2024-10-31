@@ -1,7 +1,7 @@
 import "./updater";
 import { isRangeProxy } from "../proxy/src/types";
 import amqp from "amqplib";
-import { getOverrideDiscipline, getStartList } from "./startList";
+import { getStartList } from "./startList";
 import { getDiscipline } from "./discipline";
 import { getShooters } from "./shooter";
 import { getRangeId } from "./rangeId";
@@ -22,7 +22,6 @@ async function main() {
     await channel.assertExchange("ranges.multicast", "fanout", {
         durable: false,
     });
-    channel.prefetch(1); // Only one message at a time
     channel.consume("ranges.multicast.proxy", async (msg) => {
         if (msg === null) {
             return;
@@ -34,7 +33,7 @@ async function main() {
         const multicastMessage = Buffer.from(message.message, "base64").toString();
         const rangeData = await getRangeData(multicastMessage, message.ip);
         if (rangeData === null) {
-            logger.error("Failed to get range data for " + message.ip);
+            logger.error("Failed to parse range data for " + message.ip);
             return;
         }
         logger.info(`Parsed data for range ${rangeData.rangeId} (${message.ip})`);
@@ -49,7 +48,7 @@ async function getRangeData(message: string, rangeIp: string): Promise<InternalR
         return null;
     }
     const startList = getStartList(message);
-    const discipline = getDisciplineObj(startList, message);
+    const discipline = getDiscipline(startList, message);
     const shooter = getShooters(message);
     return {
         rangeId: rangeId,
@@ -59,28 +58,6 @@ async function getRangeData(message: string, rangeIp: string): Promise<InternalR
         hits: [],
         source: "multicast",
         ttl: 20
-    }
-}
-
-function getDisciplineObj(startListId: number | null, message: string): InternalDiscipline | null {
-    if (startListId !== null) {
-        const overrideDiscipline = getOverrideDiscipline(startListId, message);
-        if (overrideDiscipline !== null) {
-            return {
-                overrideId: overrideDiscipline,
-                roundId: 0
-            }
-        }
-    }
-    const disciplineId = getDiscipline(message);
-    if (disciplineId !== null) {
-        return {
-            roundId: 0,
-            disciplineId: disciplineId,
-        }
-    } else {
-        return null;
-
     }
 }
 

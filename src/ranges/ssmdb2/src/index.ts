@@ -1,18 +1,10 @@
 import { TableWatcherFast } from "dc-table-watcher"
-import { createSSMDB2Client, Ssmdb2Client } from "dc-db-ssmdb2"
+import { createSSMDB2Client } from "dc-db-ssmdb2"
 import { getRangeData } from "./rangeData";
 import amqp from "amqplib";
-import pino from "pino";
+import { logger } from "./logger";
 
-const logger = pino({
-    level: process.env.LOG_LEVEL || "info",
-    transport: {
-        target: "pino-pretty",
-        options: {
-            colorize: true,
-        },
-    },
-});
+import "./cache/updater"; // Import the cache updater
 
 let lastRangeStates: Record<number, string> = {};
 

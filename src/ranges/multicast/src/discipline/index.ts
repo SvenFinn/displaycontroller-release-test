@@ -1,7 +1,9 @@
 import { LocalClient } from "dc-db-local";
 import { isDiscipline } from "@shared/ranges/discipline/index";
+import { InternalDiscipline } from "@shared/ranges/internal";
+import { getOverrideDiscipline } from "./overrides";
 
-const matchDiscipline = new Map<string, BigInt>();
+const matchDiscipline = new Map<string, InternalDiscipline>();
 
 export async function updateDisciplines(client: LocalClient) {
     const disciplines = await client.cache.findMany({
@@ -14,18 +16,26 @@ export async function updateDisciplines(client: LocalClient) {
         if (!isDiscipline(discipline.value)) {
             continue;
         }
-        matchDiscipline.set(`${discipline.value.name}\0`, discipline.key);
+        matchDiscipline.set(`${discipline.value.name}\0`, {
+            disciplineId: Number(discipline.key),
+            roundId: discipline.value.rounds.findIndex(round => round !== null)
+        });
     }
+
 }
 
-export function getDiscipline(message: string): number | null {
-    let currentDiscipline: null | number = null;
-    let currentDisciplineName = "";
-    for (const [name, key] of matchDiscipline) {
-        if (currentDisciplineName.length < name.length && message.includes(name)) {
-            currentDiscipline = Number(key);
-            currentDisciplineName = name;
+export function getDiscipline(startListId: number | null, message: string): InternalDiscipline | null {
+    if (startListId !== null) {
+        const overrideDiscipline = getOverrideDiscipline(startListId, message);
+        if (overrideDiscipline) {
+            return overrideDiscipline;
         }
     }
-    return currentDiscipline;
+    const keys = Array.from(matchDiscipline.keys()).sort((a, b) => b.length - a.length);// sort by length descending
+    for (const name of keys) {
+        if (message.includes(name)) {
+            return matchDiscipline.get(name) || null;
+        }
+    }
+    return null;
 }
