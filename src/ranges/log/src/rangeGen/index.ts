@@ -1,6 +1,6 @@
 import { Hits } from "@shared/ranges/hits";
 import { LogLine } from "../logReader/types";
-import { InternalDiscipline, InternalRange, isInternalOverrideDiscipline, ShooterById } from "@shared/ranges/internal"
+import { InternalDiscipline, InternalRange, isInternalOverrideDiscipline, InternalShooterById } from "@shared/ranges/internal"
 import { logger } from "../logger";
 import { TTLHandler } from "@ranges/ttl";
 import { Channel } from "amqplib";
@@ -10,7 +10,7 @@ import { getDisciplineId } from "../cache/overrides";
 export class RangeGen {
     private readonly rangeId: number;
     private targetId: number;
-    private shooter: ShooterById | null;
+    private shooter: InternalShooterById | null;
     private disciplineId: number;
     private hits: Hits;
     private multicast: TTLHandler<InternalRange>;
@@ -107,7 +107,10 @@ export class RangeGen {
     }
 
     private getRoundId(): number {
-        return this.hits.length;
+        if (this.hits.length === 0) {
+            return 0;
+        }
+        return this.hits.length - 1;
     }
 
     private isShooter(): boolean {

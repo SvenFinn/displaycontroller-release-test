@@ -21,7 +21,7 @@ export async function getRangeData(ssmdb2Client: Ssmdb2Client, targetId: number)
         shooter: data.shooterId,
         hits: hits,
         discipline: {
-            roundId: hits.length,
+            roundId: hits.length === 0 ? 0 : hits.length - 1,
             ...await getDiscipline(data.disciplineId)
         },
         source: "ssmdb2",
@@ -37,10 +37,11 @@ async function getHits(ssmdb2Client: Ssmdb2Client, targetId: number): Promise<Hi
     });
     const result: Hits = [];
     for (const hit of hits) {
-        if (result[hit.roundId] === undefined) {
-            result[hit.roundId] = [];
+        const roundId = hit.roundId - 1;
+        if (result[roundId] === undefined) {
+            result[roundId] = [];
         }
-        result[hit.roundId]?.push({
+        result[roundId]?.push({
             id: hit.id,
             x: hit.x / 100,
             y: hit.y / 100,

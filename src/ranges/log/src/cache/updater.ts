@@ -7,8 +7,10 @@ const localClient = new LocalClient();
 
 async function updateCaches() {
     logger.info("Updating caches");
-    await updateOverrides(localClient);
-    await updateShooters(localClient);
+    await Promise.all([
+        updateOverrides(localClient),
+        updateShooters(localClient),
+    ]);
     setTimeout(updateCaches, 60000);
 }
 

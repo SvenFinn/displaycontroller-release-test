@@ -1,5 +1,5 @@
 import { LocalClient } from "dc-db-local";
-import { isStartList } from "@shared/ranges/internal/startList";
+import { isInternalStartList } from "@shared/ranges/internal/startList";
 
 const matchStartLists = new Map<string, number>();
 
@@ -11,7 +11,7 @@ export async function updateStartList(client: LocalClient) {
     });
     matchStartLists.clear();
     for (const list of startList) {
-        if (!isStartList(list.value)) {
+        if (!isInternalStartList(list.value)) {
             continue;
         }
         matchStartLists.set(list.value.name, Number(list.key));

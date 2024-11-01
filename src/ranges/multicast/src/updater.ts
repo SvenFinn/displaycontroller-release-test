@@ -8,9 +8,11 @@ const client = new LocalClient();
 
 async function update() {
     logger.info("Updating disciplines, start list and shooters");
-    await updateDisciplines(client);
-    await updateStartList(client);
-    await updateShooters(client);
+    await Promise.all([
+        updateDisciplines(client),
+        updateStartList(client),
+        updateShooters(client)
+    ]);
     setTimeout(update, 60000);
 }
 

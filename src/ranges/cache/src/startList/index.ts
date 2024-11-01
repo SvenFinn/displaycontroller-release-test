@@ -1,8 +1,8 @@
 import { SmdbClient } from "dc-db-smdb";
-import { StartList } from "@shared/ranges/internal/startList"
+import { InternalStartList } from "@shared/ranges/internal/startList"
 import { StartListTypes } from "dc-db-smdb/generated/client";
 
-export async function getStartListCache(smdbCLient: SmdbClient): Promise<Array<StartList>> {
+export async function getStartListCache(smdbCLient: SmdbClient): Promise<Array<InternalStartList>> {
     const startListsDb = await smdbCLient.startList.findMany({
         where: {
             id: {
@@ -16,10 +16,10 @@ export async function getStartListCache(smdbCLient: SmdbClient): Promise<Array<S
     const startLists = await Promise.all(startListsDb.map(async startList => {
         return await getStartList(smdbCLient, startList.id);
     }));
-    return startLists.filter(startList => startList !== null) as StartList[];
+    return startLists.filter(startList => startList !== null) as InternalStartList[];
 }
 
-async function getStartList(smdbClient: SmdbClient, startListId: number): Promise<StartList | null> {
+async function getStartList(smdbClient: SmdbClient, startListId: number): Promise<InternalStartList | null> {
     const startListDb = await smdbClient.startList.findUnique({
         where: {
             id: startListId
@@ -61,7 +61,7 @@ async function getStartList(smdbClient: SmdbClient, startListId: number): Promis
     }
 }
 
-function getStartListType(type: StartListTypes): StartList["type"] {
+function getStartListType(type: StartListTypes): InternalStartList["type"] {
     switch (type) {
         case StartListTypes.default:
             return "default";

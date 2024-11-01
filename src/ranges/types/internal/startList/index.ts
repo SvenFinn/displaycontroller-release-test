@@ -1,6 +1,6 @@
-export type StartList = MostStartList | PriceStartList;
+export type InternalStartList = InternalMostStartList | InternalPriceStartList;
 
-export function isStartList(startList: any): startList is StartList {
+export function isInternalStartList(startList: any): startList is InternalStartList {
     if (typeof startList !== "object") return false;
     if (typeof startList.id !== "number") return false;
     if (typeof startList.name !== "string") return false;
@@ -11,21 +11,23 @@ export function isStartList(startList: any): startList is StartList {
         for (const overrideDiscipline of startList.overrideDisciplines) {
             if (typeof (overrideDiscipline) !== "number") return false;
         }
+    } else if (startList.type !== "default" && startList.type !== "league" && startList.type !== "round" && startList.type !== "final") {
+        return false;
     }
     return true;
 }
 
-export type BaseStartList = {
+export type InternalBaseStartList = {
     id: number,
     name: string,
     active: boolean
 }
 
-type MostStartList = BaseStartList & {
+type InternalMostStartList = InternalBaseStartList & {
     type: "default" | "league" | "round" | "final"
 }
 
-type PriceStartList = BaseStartList & {
+type InternalPriceStartList = InternalBaseStartList & {
     type: "price",
     overrideDisciplines: Array<number>
 }

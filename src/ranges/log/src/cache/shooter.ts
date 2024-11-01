@@ -1,8 +1,8 @@
-import { isShooterById, isShooterByName, Shooter, ShooterById, ShooterByName } from "@shared/ranges/internal";
+import { isInternalShooterById, isInternalShooterByName, InternalShooter, InternalShooterById, InternalShooterByName } from "@shared/ranges/internal";
 import { LocalClient } from "dc-db-local";
 import { isShooter as isShooterTypeCheck } from "@shared/ranges/shooter";
 
-export const shooterMap = new Map<ShooterById, ShooterByName>();
+export const shooterMap = new Map<InternalShooterById, InternalShooterByName>();
 
 export async function updateShooters(client: LocalClient) {
     const shooters = await client.cache.findMany({
@@ -22,20 +22,20 @@ export async function updateShooters(client: LocalClient) {
     }
 }
 
-export function isSameShooter(shooterOne: Shooter, shooterTwo: Shooter): boolean {
-    const isShooterOneById = isShooterById(shooterOne);
-    const isShooterTwoById = isShooterById(shooterTwo);
+export function isSameShooter(shooterOne: InternalShooter, shooterTwo: InternalShooter): boolean {
+    const isShooterOneById = isInternalShooterById(shooterOne);
+    const isShooterTwoById = isInternalShooterById(shooterTwo);
     if (isShooterOneById && isShooterTwoById) {
         return shooterOne === shooterTwo;
-    } else if (isShooterByName(shooterOne) && isShooterByName(shooterTwo)) {
+    } else if (isInternalShooterByName(shooterOne) && isInternalShooterByName(shooterTwo)) {
         return shooterOne.firstName === shooterTwo.firstName && shooterOne.lastName === shooterTwo.lastName;
-    } else if (isShooterOneById && isShooterByName(shooterTwo)) {
+    } else if (isShooterOneById && isInternalShooterByName(shooterTwo)) {
         const shooter = shooterMap.get(shooterOne);
         if (!shooter) {
             return false;
         }
         return shooter.firstName === shooterTwo.firstName && shooter.lastName === shooterTwo.lastName;
-    } else if (isShooterTwoById && isShooterByName(shooterOne)) {
+    } else if (isShooterTwoById && isInternalShooterByName(shooterOne)) {
         const shooter = shooterMap.get(shooterTwo);
         if (!shooter) {
             return false;

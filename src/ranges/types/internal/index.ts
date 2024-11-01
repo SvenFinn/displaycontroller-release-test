@@ -4,7 +4,7 @@ import { Source, isSource } from "../index";
 
 export type InternalRange = {
     rangeId: number,
-    shooter: Shooter | null,
+    shooter: InternalShooter | null,
     discipline: InternalDiscipline | null,
     startListId: number | null,
     hits: Hits,
@@ -15,7 +15,7 @@ export type InternalRange = {
 export function isInternalRange(range: any): range is InternalRange {
     if (typeof range !== "object") return false;
     if (typeof range.rangeId !== "number") return false;
-    if (range.shooter !== null && !isShooter(range.shooter)) return false;
+    if (range.shooter !== null && !isInternalShooter(range.shooter)) return false;
     if (range.discipline !== null && !isInternalDiscipline(range.discipline)) return false;
     if (range.startListId !== null && typeof range.startListId !== "number") return false;
     if (!isHits(range.hits)) return false;
@@ -24,24 +24,24 @@ export function isInternalRange(range: any): range is InternalRange {
     return true;
 }
 
-export type Shooter = ShooterById | ShooterByName;
+export type InternalShooter = InternalShooterById | InternalShooterByName;
 
-export function isShooter(shooter: any): shooter is Shooter {
-    return isShooterById(shooter) || isShooterByName(shooter);
+export function isInternalShooter(shooter: any): shooter is InternalShooter {
+    return isInternalShooterById(shooter) || isInternalShooterByName(shooter);
 }
 
-export type ShooterById = number;
+export type InternalShooterById = number;
 
-export function isShooterById(shooter: any): shooter is ShooterById {
+export function isInternalShooterById(shooter: any): shooter is InternalShooterById {
     return typeof shooter === "number";
 }
 
-export type ShooterByName = {
+export type InternalShooterByName = {
     firstName: string,
     lastName: string,
 }
 
-export function isShooterByName(shooter: any): shooter is ShooterByName {
+export function isInternalShooterByName(shooter: any): shooter is InternalShooterByName {
     if (typeof shooter !== "object" || shooter == null) return false;
     if (typeof shooter.firstName !== "string") return false;
     if (typeof shooter.lastName !== "string") return false;
