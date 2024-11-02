@@ -10,6 +10,7 @@ export class RangeMerger extends EventEmitter {
     private rangeData: Range;
     private sourceData: Array<TTLHandler<InternalRange>>;
     private resendTimeout: NodeJS.Timeout;
+    private resendCount: number = 0;
     constructor(rangeId: number) {
         super();
         this.rangeId = rangeId;
@@ -47,6 +48,7 @@ export class RangeMerger extends EventEmitter {
 
     private mergeData() {
         const newRangeData = mergeRange(this.sourceData, this.rangeId);
+        this.resendCount = 0;
         if (JSON.stringify(newRangeData) !== JSON.stringify(this.rangeData)) {
             this.rangeData = newRangeData;
             this.emit("update", this.rangeData);
@@ -66,6 +68,12 @@ export class RangeMerger extends EventEmitter {
 
     private resend() {
         this.emit("update", this.rangeData);
-        this.resendTimeout = setTimeout(this.resend.bind(this), 30000);
+        if (!this.rangeData.active) {
+            this.resendCount++;
+        }
+        if (this.resendCount < 3) {
+            clearTimeout(this.resendTimeout);
+            this.resendTimeout = setTimeout(this.resend.bind(this), 30000);
+        }
     }
 }
