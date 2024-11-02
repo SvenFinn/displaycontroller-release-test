@@ -22,6 +22,9 @@ FROM local-deps AS build
 WORKDIR /app/ranges/types
 COPY --from=range-types . .
 
+WORKDIR /app/ranges/ttl
+COPY --from=range-ttl . .
+
 WORKDIR /app/ranges/merger
 COPY . .
 RUN npm i --loglevel=info --install-links && \

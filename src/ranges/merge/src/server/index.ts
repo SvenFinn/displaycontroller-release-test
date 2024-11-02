@@ -1,47 +1,30 @@
 import express, { Express, Request, Response } from 'express';
 import { LocalClient } from 'dc-db-local';
-import { rangesData } from '../data';
 import { logger } from '../logger';
+import { rangeManager } from '../rangeMan';
 
 const app: Express = express();
 const localClient: LocalClient = new LocalClient();
 
-export type rangesSSE = {
-    ranges: number[] | null;
-    response: Response;
-}
-
-let sseConnections: rangesSSE[] = [];
-
 app.get('/api/ranges(/)?', async (req: Request, res: Response) => {
-    res.status(200).send([...rangesData.keys()]);
+    res.status(200).send(rangeManager.getRanges());
 });
 
 app.get('/api/ranges/free(/)?', async (req: Request, res: Response) => {
-    const freeRanges = [...rangesData.keys()].filter((range) => {
-        const rangeData = rangesData.get(range);
-        if (rangeData && rangeData.active === true) {
-            return rangeData.shooter === null;
-        }
-        return false;
-    })
+    const freeRanges = rangeManager.getFreeRanges();
     res.status(200).send(freeRanges);
 });
 
 app.get('/api/ranges/:range(/)?', async (req: Request, res: Response) => {
     const range: number = parseInt(req.params.range);
-    if (rangesData.has(range)) {
-        res.status(200).send(rangesData.get(range));
-    } else {
-        res.status(404).send('Range not found');
-    }
+    const rangeData = rangeManager.getRangeData(range);
+    res.status(200).send(rangeData);
 });
 
 app.get('/api/ranges/sse', async (req: Request, res: Response) => {
-    const rangesSSE: rangesSSE = { ranges: null, response: res };
+    let ranges: number[] | null = null;
     if (req.query.ranges) {
-        const ranges: number[] = JSON.parse(req.query.ranges.toString());
-        rangesSSE.ranges = ranges;
+        ranges = JSON.parse(req.query.ranges.toString()).map((range: any) => parseInt(range.toString())).filter((range: number) => !isNaN(range));
     }
     const headers = {
         'Content-Type': 'text/event-stream',
@@ -52,22 +35,11 @@ app.get('/api/ranges/sse', async (req: Request, res: Response) => {
     res.writeHead(200, headers);
 
     res.write("retry: 10000\n\n");
-    if (rangesSSE.ranges) {
-        for (const range of rangesData.keys()) {
-            if (rangesSSE.ranges.includes(range)) {
-                res.write(`data: ${JSON.stringify(rangesData.get(range))}\n\n`);
-            }
-        }
-    } else {
-        for (const range of rangesData.keys()) {
-            res.write(`data: ${JSON.stringify(rangesData.get(range))}\n\n`);
-        }
-    }
 
-    sseConnections.push(rangesSSE);
+    rangeManager.addSSE(res, ranges);
 
     req.on("close", () => {
-        sseConnections = sseConnections.filter((obj) => obj !== rangesSSE);
+        rangeManager.removeSSE(res);
     });
 });
 
@@ -88,7 +60,7 @@ app.get('/api/ranges/known/:rangeIp(/)?', async (req: Request, res: Response) =>
     if (knownRange) {
         res.status(200).send(knownRange);
     } else {
-        res.status(404).send('Known range not found');
+        res.status(404).send('Range not found');
     }
 });
 

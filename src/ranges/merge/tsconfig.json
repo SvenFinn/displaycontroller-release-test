@@ -8,6 +8,7 @@
         "paths": {
             "@shared/ranges": ["../types/"],
             "@shared/ranges/*": ["../types/*"],
+            "@ranges/ttl": ["../ttl/src"],
         }
     },
     "include": [
