@@ -23,6 +23,9 @@ COPY --from=images . .
 WORKDIR /app/screens/evaluations
 COPY --from=evaluations . .
 
+WORKDIR /app/ranges/types
+COPY --from=ranges . .
+
 WORKDIR /app/screens/screenManager
 COPY . .
 RUN npm i --loglevel=info --install-links; \
@@ -41,4 +44,4 @@ EXPOSE 80
 
 ENV NODE_ENV=production
 
-CMD ["node", "./screenManager/src/index.js"]
+CMD ["node", "/app/screens/screenManager/src/index.js"]

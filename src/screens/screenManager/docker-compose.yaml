@@ -11,6 +11,7 @@ services:
         - local-db=../../database/local
         - images=../images
         - evaluations=../evaluations
+        - ranges=../../ranges/types
       args:
         - SELF_DB_URL=${SELF_DB_URL}
 

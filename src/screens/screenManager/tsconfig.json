@@ -18,6 +18,12 @@
             "@shared/screens/*": [
                 "./types/*",
             ],
+            "@shared/ranges": [
+                "../../ranges/types"
+            ],
+            "@shared/ranges/*": [
+                "../../ranges/types/*"
+            ]
         }
     },
     "include": [
