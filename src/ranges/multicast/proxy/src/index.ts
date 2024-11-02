@@ -3,6 +3,9 @@ import pino from "pino";
 import { RangeProxyType } from "./types";
 import amqp from "amqplib";
 import { decode } from "iconv-lite";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const logger = pino({
     level: process.env.LOG_LEVEL || "info",
@@ -14,7 +17,11 @@ const logger = pino({
     }
 });
 
-const MESSAGE_MIN_LENGTH = 3600;
+if (!process.env.MULTICAST_MSG_MIN_LENGTH) {
+    logger.error("MULTICAST_MSG_MIN_LENGTH is not defined");
+    process.exit();
+}
+const MESSAGE_MIN_LENGTH = parseInt(process.env.MULTICAST_MSG_MIN_LENGTH);
 
 async function main() {
     const connection = await amqp.connect("amqp://localhost");
@@ -40,6 +47,7 @@ async function main() {
             logger.warn("Received message from non-IPv4 address");
             return;
         }
+        logger.debug("Received message of length " + message.length + " from " + remote.address);
         if (message.length < MESSAGE_MIN_LENGTH) {
             logger.warn(`Received short message (${message.length} < ${MESSAGE_MIN_LENGTH}) from ${remote.address}`);
             return;
@@ -57,7 +65,6 @@ async function main() {
         process.exit();
     });
     client.bind(49497, "0.0.0.0");
-
 }
 
 main();

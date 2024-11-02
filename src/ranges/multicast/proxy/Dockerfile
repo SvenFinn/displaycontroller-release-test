@@ -1,5 +1,7 @@
 FROM node:latest AS base
 
+ARG MULTICAST_MSG_MIN_LENGTH
+
 WORKDIR /app
 
 FROM base AS deps
@@ -10,8 +12,9 @@ RUN npm ci --omit=dev --loglevel=info;
 FROM base AS build
 
 COPY . .
-RUN npm ci --loglevel=info; \
-    npm run build;
+RUN npm ci --loglevel=info && \
+    npm run build && \
+    echo "MULTICAST_MSG_MIN_LENGTH=${MULTICAST_MSG_MIN_LENGTH}" > dist/.env;
 COPY package.json dist/
 
 FROM base AS final
