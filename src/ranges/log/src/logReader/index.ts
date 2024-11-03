@@ -51,9 +51,9 @@ export class LogReader extends EventEmitter {
         }
         const sshThread = spawn("sshpass", ["-p", process.env.MEYTON_SSH_PASS as string, "ssh", "-o", "StrictHostKeyChecking=no", `${process.env.MEYTON_SSH_USER}@${serverIp}`, script]);
         sshThread.on("error", async (error) => {
+            logger.error("SSH error", error);
             this.sshThread?.kill();
             this.sshThread = await this.startSSH();
-            logger.error("SSH error", error);
         });
         sshThread.on("exit", (code) => {
             this.sshThread = null;

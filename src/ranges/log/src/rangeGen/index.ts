@@ -68,12 +68,8 @@ export class RangeGen {
             if (hitExists) {
                 // Remove hit and renumber the rest
                 this.hits[logLine.round.id] = hits.filter(hit => hit.id !== logLine.hit.id);
-                const hitsv2 = this.hits[logLine.round.id];
-                if (!hitsv2) {
-                    return;
-                }
-                for (let i = 0; i < hitsv2.length; i++) {
-                    const hit = hitsv2[i];
+                for (let i = 0; i < hits.length; i++) {
+                    const hit = hits[i];
                     if (hit.id > logLine.hit.id) {
                         hit.id--;
                     }
