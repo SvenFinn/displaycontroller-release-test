@@ -5,7 +5,6 @@ function isBaseCondition(condition: any): condition is BaseCondition {
     return true;
 }
 
-
 type BaseCondition = {
     invert: boolean;
     type: string;

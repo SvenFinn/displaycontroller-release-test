@@ -26,7 +26,6 @@ export function isBaseDbScreen(screen: any): screen is BaseDbScreen {
     return true;
 }
 
-
 export type BaseScreenAvailable = {
     available: true;
     id: number;

@@ -42,7 +42,7 @@ export function parseLine(line: string): undefined | LogLine {
                 distance: parseFloat(values[19]),
                 innerRing: values[28] === "IZ",
                 rings: parseFloat(values[16].replace(/,/gi, ".")),
-                timestamp: parseTimeStampe(values[15] + " " + values[14]) || new Date(),
+                timestamp: parseTimeStamp(values[15] + " " + values[14]) || new Date(),
             }
         }
         return logInformation;
@@ -62,7 +62,7 @@ function parseTargetId(targetId: string): undefined | number {
     return undefined;
 }
 
-function parseTimeStampe(timestamp: string): undefined | Date {
+function parseTimeStamp(timestamp: string): undefined | Date {
     const splitTimestamp = timestamp.split(" ");
     if (splitTimestamp.length != 2) {
         return undefined;

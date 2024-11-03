@@ -21,7 +21,6 @@ export async function updateDisciplines(client: LocalClient) {
             roundId: discipline.value.rounds.findIndex(round => round !== null)
         });
     }
-
 }
 
 export function getDiscipline(startListId: number | null, message: string): InternalDiscipline | null {

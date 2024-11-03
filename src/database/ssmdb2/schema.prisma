@@ -64,20 +64,20 @@ model Series {
 }
 
 model Shot {
-  targetId        Int      @map("ScheibenID")
-  roundId         Int      @map("Stellung") @db.SmallInt
-  id              Int      @map("Treffer") @db.SmallInt
-  x               Int      @map("x")
-  y               Int      @map("y")
-  rings           Int      @map("Ring")
-  ringsTenth      Int      @map("Ring01")
-  dividerTenth    Int      @map("Teiler01")
-  dividerHundreth Int      @map("Teiler001")
-  text            String   @map("Text") @db.VarChar(36)
-  innerTen        Boolean  @map("Innenzehner")
-  evaluation      Int      @map("Wertung")
-  timestamp       DateTime @map("Zeitstempel") @db.DateTime(0)
-  millis          Int      @map("Millisekunden") @db.SmallInt
+  targetId         Int      @map("ScheibenID")
+  roundId          Int      @map("Stellung") @db.SmallInt
+  id               Int      @map("Treffer") @db.SmallInt
+  x                Int      @map("x")
+  y                Int      @map("y")
+  rings            Int      @map("Ring")
+  ringsTenth       Int      @map("Ring01")
+  dividerTenth     Int      @map("Teiler01")
+  dividerHundredth Int      @map("Teiler001")
+  text             String   @map("Text") @db.VarChar(36)
+  innerTen         Boolean  @map("Innenzehner")
+  evaluation       Int      @map("Wertung")
+  timestamp        DateTime @map("Zeitstempel") @db.DateTime(0)
+  millis           Int      @map("Millisekunden") @db.SmallInt
 
   target Target @relation(fields: [targetId], references: [id])
 

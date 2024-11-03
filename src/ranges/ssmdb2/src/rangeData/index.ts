@@ -45,7 +45,7 @@ async function getHits(ssmdb2Client: Ssmdb2Client, targetId: number): Promise<Hi
             id: hit.id,
             x: hit.x / 100,
             y: hit.y / 100,
-            divisor: hit.dividerHundreth / 100,
+            divisor: hit.dividerHundredth / 100,
             rings: hit.rings,
             innerTen: hit.innerTen
         });
