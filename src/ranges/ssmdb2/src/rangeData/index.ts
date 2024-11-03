@@ -25,7 +25,7 @@ export async function getRangeData(ssmdb2Client: Ssmdb2Client, targetId: number)
             ...await getDiscipline(data.disciplineId)
         },
         source: "ssmdb2",
-        ttl: 30000
+        ttl: 20000
     }
 }
 

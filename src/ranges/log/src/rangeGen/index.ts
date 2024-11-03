@@ -162,7 +162,7 @@ export class RangeGen {
             startListId: multicastInfo.startListId,
             hits: this.hits,
             source: "log",
-            ttl: 30
+            ttl: 20000
         }
     }
 

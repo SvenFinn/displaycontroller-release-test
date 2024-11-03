@@ -57,7 +57,7 @@ async function getRangeData(message: string, rangeIp: string): Promise<InternalR
         discipline: discipline,
         hits: [],
         source: "multicast",
-        ttl: 20
+        ttl: 20000
     }
 }
 
