@@ -5,7 +5,7 @@ import { isOverrideDiscipline, OverrideDiscipline } from "@shared/ranges/interna
 
 const overrideDisciplines = new Map<number, Map<string, InternalDiscipline>>();
 
-export async function updateDisciplines(client: LocalClient) {
+export async function updateOverrides(client: LocalClient) {
     const overrideDisciplinesData = await client.cache.findMany({
         where: {
             type: "overrideDiscipline"

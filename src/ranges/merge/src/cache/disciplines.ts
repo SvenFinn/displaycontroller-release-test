@@ -2,6 +2,7 @@ import { LocalClient } from "dc-db-local";
 import { Discipline, isDiscipline } from "@shared/ranges/discipline";
 import { isOverrideDiscipline } from "@shared/ranges/internal/startList";
 import { InternalDiscipline, isInternalOverrideDiscipline } from "@shared/ranges/internal";
+import { logger } from "../logger";
 
 export const disciplines = new Map<number, Discipline>();
 export const overrides = new Map<number, Discipline>();
@@ -16,6 +17,7 @@ export async function updateDisciplines(localClient: LocalClient) {
     for (const disciplineDb of newDisciplines) {
         const discipline = disciplineDb.value;
         if (!isDiscipline(discipline)) {
+            logger.warn("Invalid discipline", discipline);
             continue;
         }
         disciplines.set(discipline.id, discipline);
@@ -32,14 +34,24 @@ export async function updateOverrides(localClient: LocalClient) {
     for (const overrideDb of newOverrides) {
         const override = overrideDb.value;
         if (!isOverrideDiscipline(override)) {
+            logger.warn("Invalid override discipline", override);
             continue;
         }
-        const discipline = disciplines.get(override.id);
-        if (!discipline) {
+        const disciplineDb = await localClient.cache.findUnique({
+            where: {
+                type_key: {
+                    type: "discipline",
+                    key: override.disciplineId,
+                },
+            },
+        });
+        if (!disciplineDb || !isDiscipline(disciplineDb.value)) {
+            logger.warn("Invalid discipline", disciplineDb);
             continue;
         }
+        const discipline = disciplineDb.value;
         discipline.color = override.color;
-        override.name = override.name;
+        discipline.name = override.name;
         overrides.set(override.id, discipline);
     }
 }
