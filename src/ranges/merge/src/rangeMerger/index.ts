@@ -1,7 +1,7 @@
 import { Range } from "@shared/ranges";
 import { InternalRange } from "@shared/ranges/internal";
 import { EventEmitter } from "events";
-import { TTLHandler } from "@ranges/ttl";
+import { TTLHandler } from "dc-ranges-ttl";
 import { mergeRange } from "./merge";
 import { clear } from "console";
 

@@ -13,6 +13,11 @@ COPY --from=local-db . .
 RUN npm ci --loglevel=info && \
     npm run build;
 
+WORKDIR /app/ranges/ttl
+COPY --from=range-ttl . .
+RUN npm ci --loglevel=ifno && \
+    npm run build;
+
 FROM local-deps AS deps
 
 WORKDIR /app/ranges/log
@@ -23,9 +28,6 @@ FROM local-deps AS build
 
 WORKDIR /app/ranges/types
 COPY --from=range-types . .
-
-WORKDIR /app/ranges/ttl
-COPY --from=range-ttl . .
 
 WORKDIR /app/ranges/log
 COPY . .

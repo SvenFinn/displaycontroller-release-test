@@ -19,6 +19,7 @@
   "dependencies": {
     "amqplib": "^0.10.4",
     "dc-db-local": "file:../../database/local",
+    "dc-ranges-ttl": "file:../ttl",
     "express": "^4.21.1",
     "pino": "^9.5.0",
     "pino-pretty": "^11.3.0"

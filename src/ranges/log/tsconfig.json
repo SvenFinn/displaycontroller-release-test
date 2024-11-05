@@ -7,8 +7,7 @@
         "outDir": "./dist",
         "paths": {
             "@shared/ranges": ["../types/"],
-            "@shared/ranges/*": ["../types/*"],
-            "@ranges/ttl": ["../ttl/src/"],
+            "@shared/ranges/*": ["../types/*"]
         }
     },
     "include": [

@@ -1,4 +1,4 @@
-import { TTLHandler } from "@ranges/ttl";
+import { TTLHandler } from "dc-ranges-ttl";
 import { ActiveRange, InactiveRange, Source } from "@shared/ranges";
 import { InternalRange } from "@shared/ranges/internal";
 import { Discipline } from "@shared/ranges/discipline";
