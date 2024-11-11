@@ -9,6 +9,7 @@ services:
       dockerfile: Dockerfile
       additional_contexts:
         - local-db=../database/local
+        - screen-manager=../screens/screenManager
       args:
         - MIN_MEYTON_VERSION=${MIN_MEYTON_VERSION}
         - MAX_MEYTON_VERSION=${MAX_MEYTON_VERSION}
@@ -18,3 +19,5 @@ services:
     depends_on:
       dc-db-migrate:
         condition: service_completed_successfully
+      dc-rabbitmq:
+        condition: service_healthy

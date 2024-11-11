@@ -23,6 +23,9 @@ RUN npm i --omit=dev --loglevel=info --install-links;
 
 FROM local-deps AS build
 
+WORKDIR /app/screens/screenManager
+COPY --from=screen-manager . .
+
 WORKDIR /app/checkServer
 COPY . .
 RUN npm i --loglevel=info --install-links && \
@@ -49,4 +52,4 @@ EXPOSE 80
 
 ENV NODE_ENV=production
 
-CMD ["node", "index.js"]
+CMD ["node", "/app/checkServer/src/index.js"]

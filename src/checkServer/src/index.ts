@@ -1,10 +1,19 @@
 import { checkServerAvailable, checkServiceAvailability } from "./checkServer";
-import { updateServerInfo } from "./webServer";
+import { updateServerState } from "./webServer";
+import { AdvServerState } from "./types";
 import { logger } from "./logger";
+import amqp from "amqplib";
+import { sendSystemScreen } from "./screens";
 
 let serverState: boolean | null;
+let amqpChannel: amqp.Channel;
 
-async function main() {
+async function updateServerInfo(serverInfo: AdvServerState) {
+    updateServerState(serverInfo);
+    sendSystemScreen(serverInfo, amqpChannel);
+}
+
+async function loop() {
     const serverOnline = await checkServerAvailable();
     if (serverState != serverOnline) {
         logger.info(`Server Availability changed to ${serverOnline}`)
@@ -20,7 +29,20 @@ async function main() {
     }
 }
 
-setInterval(main, 2000);
+async function main() {
+    const connection = await amqp.connect("amqp://rabbitmq");
+    amqpChannel = await connection.createChannel();
+    await amqpChannel.assertQueue("screens.systemScreens", {
+        durable: false,
+        autoDelete: true,
+        messageTtl: 30000
+    });
+
+    setInterval(loop, 2000);
+}
+
+main();
+
 
 process.on("SIGTERM", function () {
     process.exit(0);

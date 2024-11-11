@@ -4,21 +4,29 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc"
+    "build": "tsc && npm run build:swagger",
+    "build:swagger": "npm run swagger && cp -v ./swagger-output.json ./dist/checkServer",
+    "swagger": "ts-node ./swagger.ts"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "amqplib": "^0.10.4",
     "dc-db-local": "file:../database/local",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "pino": "^9.5.0",
-    "pino-pretty": "^11.3.0"
+    "pino-pretty": "^11.3.0",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
+    "@types/amqplib": "^0.10.5",
     "@types/express": "^5.0.0",
     "@types/node": "^22.2.0",
+    "@types/swagger-ui-express": "^4.1.7",
+    "swagger-autogen": "^2.23.7",
+    "ts-node": "^10.9.2",
     "typescript": "^5.5.4"
   },
   "prisma": {
