@@ -1,9 +1,18 @@
-FROM dpage/pgadmin4:latest
+FROM dpage/pgadmin4:latest AS base
 
 USER root
 
-# Copy the pgadmin configuration file
-COPY servers.json /pgadmin4/servers.json
-COPY pgPass /var/lib/pgadmin/storage/admin_pgadmin.org/pgPass
+ARG SELF_DB_URL
 
-RUN chmod 600 /var/lib/pgadmin/storage/admin_pgadmin.org/pgPass
+FROM base AS build
+
+WORKDIR /app
+COPY create-configs.sh .
+RUN sh ./create-configs.sh $SELF_DB_URL
+
+FROM base AS final
+
+# Copy the pgadmin configuration file
+COPY --from=build /app/servers.json /pgadmin4/servers.json
+COPY --from=build /app/pgPass /pgPass
+RUN chmod 600 /pgPass

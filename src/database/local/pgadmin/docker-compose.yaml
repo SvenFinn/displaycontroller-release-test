@@ -1,8 +1,11 @@
 services:
   dc-pgadmin:
+    #image: dpage/pgadmin4
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - SELF_DB_URL=${SELF_DB_URL}
     container_name: dc-pgadmin
     hostname: pgadmin
     networks:
@@ -11,6 +14,8 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@pgadmin.org
       PGADMIN_DEFAULT_PASSWORD: admin
       GUNICORN_ACCESS_LOGFILE: "/dev/null"
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
     depends_on:
       dc-db-migrate:
         condition: service_completed_successfully
