@@ -4,13 +4,14 @@ import { DrawTargetScreen, isDrawTargetScreen, DrawTargetDbScreen, isDrawTargetD
 import { EvaluationScreen, isEvaluationScreen, EvaluationDbScreen, isEvaluationDbScreen } from "./evaluation";
 import { ViewerScreen, isViewerScreen, ViewerDbScreen, isViewerDbScreen } from "./imageViewer";
 import { EvaluationGalleryDbScreen, isEvaluationGalleryDbScreen } from "./evaluationGallery";
+import { SystemMessageScreen, isSystemMessageScreen } from "./systemMessage";
 
-export type ScreenAvailable = ViewerScreen | CpcViewScreen | DrawTargetScreen | EvaluationScreen;
+export type ScreenAvailable = ViewerScreen | CpcViewScreen | DrawTargetScreen | EvaluationScreen | SystemMessageScreen;
 
 export type Screen = ScreenAvailable | ScreenUnavailable;
 
 export function isScreenAvailable(screen: any): screen is ScreenAvailable {
-    return isViewerScreen(screen) || isCpcViewScreen(screen) || isDrawTargetScreen(screen) || isEvaluationScreen(screen);
+    return isViewerScreen(screen) || isCpcViewScreen(screen) || isDrawTargetScreen(screen) || isEvaluationScreen(screen) || isSystemMessageScreen(screen);
 }
 
 export function isScreen(screen: any): screen is Screen {

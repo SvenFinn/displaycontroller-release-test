@@ -18,3 +18,5 @@ services:
     depends_on:
       dc-db-migrate:
         condition: service_completed_successfully
+      dc-rabbitmq:
+        condition: service_healthy

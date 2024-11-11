@@ -1,15 +1,15 @@
-import { createLocalClient, LocalClient } from "dc-db-local";
-import { DbScreen, isDbScreen, Screen } from "@shared/screens";
-import { checkCondition } from "./conditions";
-import { resolvePreset } from "./presets";
+import { LocalClient } from "dc-db-local";
+import { isScreen, Screen } from "@shared/screens";
 import { logger } from "../logger";
 import { sendSSEResponse } from "../server";
+import { loadNextScreen, loadScreen } from "./screens";
+import amqp from "amqplib"
 
-let localClient: LocalClient | undefined;
+const localClient: LocalClient = new LocalClient();
 
-let screenList: Array<Screen> = [];
-let currentListId: number = 0;
-let screenTimeout: NodeJS.Timeout | undefined;
+let currentScreen: Screen = { available: false };
+let nextScreenList: Array<Screen> = [];
+let screenTimeout: NodeJS.Timeout | undefined = undefined;
 let isPaused: boolean = false;
 
 export function nextScreen() {
@@ -17,19 +17,7 @@ export function nextScreen() {
         clearTimeout(screenTimeout);
         screenTimeout = undefined;
     }
-    main();
-}
-
-export function previousScreen() {
-    if (screenTimeout) {
-        clearTimeout(screenTimeout);
-        screenTimeout = undefined;
-    }
-    if (currentListId == 0) {
-        throw new Error('No previous screen');
-    }
-    currentListId -= 2;
-    main();
+    screenLoop();
 }
 
 export function getPaused() {
@@ -43,17 +31,12 @@ export function pauseScreen() {
         isPaused = true;
     } else {
         isPaused = false;
-        main();
+        screenLoop();
     }
 }
 
 export function getCurrentScreen() {
-    if (screenList.length <= currentListId) {
-        return {
-            available: false
-        };
-    }
-    return screenList[currentListId];
+    return currentScreen;
 }
 
 export async function gotoScreen(id: number, subId: number = 0) {
@@ -61,119 +44,62 @@ export async function gotoScreen(id: number, subId: number = 0) {
         clearTimeout(screenTimeout);
         screenTimeout = undefined;
     }
-    if (id < 0 || subId < 0) {
-        throw new Error('Invalid screen id');
+    nextScreenList = await loadScreen(localClient, id);
+    if (nextScreenList.length <= subId) {
+        subId = 0;
     }
-    let currentScreenList = screenList.slice(0, currentListId + 1);
-    const dbScreen = await localClient?.screens.findFirst({
-        where: {
-            id: id
-        }
-    });
-    if (!dbScreen) {
-        throw new Error('Screen not found');
-    }
-    const dbScreenWType = dbScreen as unknown as DbScreen;
-    const newScreen = await resolvePreset(dbScreenWType);
-    if (!newScreen) {
-        throw new Error('Invalid screen');
-    }
-    currentListId = currentScreenList.length;
-    screenList = [...currentScreenList, ...newScreen];
-    if (screenList.length > 200) {
-        currentListId = currentListId - (screenList.length - 200);
-        screenList = screenList.slice(screenList.length - 200);
-    }
-    const currentScreen = screenList[currentListId];
-    if (currentScreen.available) {
-        screenTimeout = setTimeout(main, currentScreen.duration);
-    } else {
-        screenTimeout = setTimeout(main, 30000);
-    }
+    nextScreenList = nextScreenList.slice(subId);
+    screenLoop();
 }
 
 
-async function main() {
+async function screenLoop() {
     if (screenTimeout) {
         clearTimeout(screenTimeout);
+        screenTimeout = undefined;
     }
-    if (!localClient) {
-        localClient = await createLocalClient();
+    if (nextScreenList.length < 1) {
+        nextScreenList = await loadNextScreen(localClient, currentScreen.available ? currentScreen.id : 0);
     }
-    currentListId++;
-    if (screenList.length <= currentListId) {
-        await fetchNextScreens();
-    }
-    const currentScreen = screenList[currentListId];
+    currentScreen = nextScreenList.shift() || { available: false };
     sendSSEResponse(currentScreen);
     if (!currentScreen.available) {
         logger.info('No available screens, waiting 30s');
         if (!isPaused) {
-            screenTimeout = setTimeout(main, 30000);
+            screenTimeout = setTimeout(screenLoop, 30000);
         }
         return;
     } else {
         logger.info(`Current screen: ${currentScreen.id}-${currentScreen.subId}`);
         if (!isPaused) {
-            screenTimeout = setTimeout(main, currentScreen.duration);
+            screenTimeout = setTimeout(screenLoop, currentScreen.duration);
         }
         return;
     }
 }
 
-async function fetchNextScreens() {
-    let newEntries: Array<Screen> = [];
-    let currentScreenId = 0;
-    let loops = 0;
-    if (screenList.length > 0) {
-        const lastScreen = screenList[screenList.length - 1];
-        if (lastScreen.available == true) {
-            currentScreenId = lastScreen.id;
+async function main() {
+    const connection = await amqp.connect("amqp://rabbitmq");
+    const channel = await connection.createChannel();
+    await channel.assertQueue("screens.systemScreens", {
+        durable: false,
+        autoDelete: true,
+        messageTtl: 30000
+    });
+    await channel.consume("screens.systemScreens", async (msg) => {
+        if (msg === null) {
+            return;
         }
-    }
-    while (newEntries.length < 1) {
-        if (loops > 10) {
-            newEntries = [{
-                available: false
-            }];
-            break;
+        const message = JSON.parse(msg.content.toString());
+        if (!isScreen(message)) {
+            return;
         }
-        const newDb = await localClient?.screens.findFirst({
-            where: {
-                id: {
-                    gt: currentScreenId
-                }
-            }
-        });
-        if (!newDb) {
-            currentScreenId = 0;
-            loops++;
-            continue;
-        }
-        if (!isDbScreen(newDb)) {
-            currentScreenId = newDb.id;
-            continue;
-        }
-        const newDbWType = newDb as DbScreen
-        if (!checkCondition(newDbWType)) {
-            currentScreenId = newDbWType.id;
-            continue;
-        }
-        const newEntriesRaw = await resolvePreset(newDbWType);
-        if (!newEntriesRaw) {
-            currentScreenId = newDbWType.id;
-            continue;
-        }
-        newEntries = newEntriesRaw;
-        break;
-    }
-    logger.info(`Fetched ${newEntries.length} new screens`);
-    currentListId = screenList.length;
-    screenList = [...screenList, ...newEntries];
-    if (screenList.length > 200) {
-        currentListId = currentListId - (screenList.length - 200);
-        screenList = screenList.slice(screenList.length - 200);
-    }
+        const screen = message as Screen;
+        nextScreenList = [screen];
+        screenLoop();
+    });
+    logger.info("Screen manager started");
+    screenLoop();
 }
 
 main();
