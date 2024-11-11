@@ -133,3 +133,4 @@ dist
 src/screens/images/files
 
 generated
+swagger-output.json
