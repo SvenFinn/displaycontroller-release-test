@@ -12,6 +12,7 @@ services:
         - images=../images
         - evaluations=../evaluations
         - ranges=../../ranges/types
+        - logger=../../logger
       args:
         - SELF_DB_URL=${SELF_DB_URL}
 

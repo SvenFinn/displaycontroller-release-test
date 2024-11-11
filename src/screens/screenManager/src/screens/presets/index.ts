@@ -4,7 +4,7 @@ import drawTarget from "./drawTarget";
 import evaluation from "./evaluation";
 import evaluationGallery from "./evaluationGallery";
 import imageViewer from "./imageViewer";
-import { logger } from "../../logger";
+import { logger } from "dc-logger";
 
 export async function resolvePreset(screen: DbScreen): Promise<Array<Screen> | undefined> {
     switch (screen.preset) {

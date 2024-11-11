@@ -17,9 +17,8 @@
   "dependencies": {
     "dc-db-local": "file:../database/local",
     "dc-db-smdb": "file:../database/smdb",
+    "dc-logger": "file:../logger",
     "dotenv": "^16.4.5",
-    "eventsource": "^2.0.2",
-    "pino": "^9.5.0",
-    "pino-pretty": "^11.3.0"
+    "eventsource": "^2.0.2"
   }
 }

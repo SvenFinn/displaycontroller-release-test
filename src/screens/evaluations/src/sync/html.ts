@@ -1,6 +1,6 @@
 import { JSDOM } from "jsdom";
 import fs from "fs";
-import { logger } from "../logger";
+import { logger } from "dc-logger";
 
 export async function rewriteHTML(inputBase: string, outputBase: string) {
     logger.info(`Rewriting HTML files from ${inputBase} to ${outputBase}`);

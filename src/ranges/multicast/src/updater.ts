@@ -2,7 +2,7 @@ import { updateDisciplines } from "./discipline";
 import { updateStartList } from "./startList";
 import { updateShooters } from "./shooter";
 import { LocalClient } from "dc-db-local";
-import { logger } from "./logger";
+import { logger } from "dc-logger";
 import { updateOverrides } from "./discipline/overrides";
 
 const client = new LocalClient();

@@ -1,7 +1,7 @@
 import { Screens } from ".";
 import { ViewerDbScreen } from "@shared/screens/imageViewer";
 
-import { logger } from "../../logger";
+import { logger } from "dc-logger";
 import { isDirectoryListing } from "@shared/images";
 
 export default async function imageViewer(screen: ViewerDbScreen): Promise<Screens> {

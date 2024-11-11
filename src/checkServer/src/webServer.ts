@@ -1,6 +1,6 @@
 import express, { Request, Response, Express } from "express";
 import { AdvServerState } from "./types";
-import { logger } from "./logger";
+import { logger } from "dc-logger";
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from '../swagger-output.json';
 

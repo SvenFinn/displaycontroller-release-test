@@ -7,7 +7,7 @@ import { getShooters } from "./shooter";
 import { getRangeId } from "./rangeId";
 import { LocalClient } from "dc-db-local";
 import { InternalRange } from "@shared/ranges/internal";
-import { logger } from "./logger";
+import { logger } from "dc-logger";
 
 const prismaClient = new LocalClient();
 
@@ -62,7 +62,3 @@ async function getRangeData(message: string, rangeIp: string): Promise<InternalR
 }
 
 main();
-
-process.on("SIGTERM", () => {
-    process.exit(0);
-});

@@ -2,7 +2,7 @@ import { TableWatcherFast } from "dc-table-watcher"
 import { createSSMDB2Client } from "dc-db-ssmdb2"
 import { getRangeData } from "./rangeData";
 import amqp from "amqplib";
-import { logger } from "./logger";
+import { logger } from "dc-logger";
 
 import "./cache/updater"; // Import the cache updater
 
@@ -57,7 +57,3 @@ async function main() {
 }
 
 main();
-
-process.on("SIGTERM", () => {
-    process.exit(0);
-});

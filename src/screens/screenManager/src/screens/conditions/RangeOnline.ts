@@ -1,6 +1,6 @@
 import { ConditionNumber } from "@shared/screens/conditions/base";
 import { isRange } from "@shared/ranges"
-import { logger } from "../../logger";
+import { logger } from "dc-logger";
 
 export async function range_online(condition: ConditionNumber): Promise<boolean> {
     const rangeReq = await fetch(`http://ranges:80/api/ranges/${condition.number}`);

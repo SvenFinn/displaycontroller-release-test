@@ -12,11 +12,10 @@
   "dependencies": {
     "dc-db-local": "file:../../database/local",
     "dc-db-smdb": "file:../../database/smdb",
+    "dc-logger": "file:../../logger",
     "dc-table-watcher": "file:../../database/tableWatcher",
     "dotenv": "^16.4.5",
-    "eventsource": "^2.0.2",
-    "pino": "^9.4.0",
-    "pino-pretty": "^11.3.0"
+    "eventsource": "^2.0.2"
   },
   "devDependencies": {
     "@types/eventsource": "^1.1.15",

@@ -3,7 +3,7 @@ import EventSource from 'eventsource';
 import { sync } from "./sync";
 import path from "path";
 import { startServer } from "./server";
-import { logger } from "./logger";
+import { logger } from "dc-logger";
 
 const htmlPath = path.resolve(`${__dirname}/../html`);
 const smbPath = path.resolve(`${__dirname}/../tmp/smb`);
@@ -66,7 +66,3 @@ async function main() {
 }
 
 main();
-
-process.on("SIGTERM", function () {
-    process.exit(0);
-})

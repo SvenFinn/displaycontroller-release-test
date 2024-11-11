@@ -1,4 +1,4 @@
-import { logger } from "../logger";
+import { logger } from "dc-logger";
 import { updateOverrides } from "./overrides";
 import { updateShooters } from "./shooter";
 import { LocalClient } from "dc-db-local";

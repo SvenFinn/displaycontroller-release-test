@@ -1,5 +1,5 @@
 import { AdvServerState } from "./types";
-import { logger } from "./logger";
+import { logger } from "dc-logger";
 import { Screen } from "@shared/screens";
 import amqp from "amqplib";
 
@@ -38,11 +38,11 @@ export async function sendSystemScreen(serverState: AdvServerState, channel: amq
             options: {
                 type: "ssmdb2"
             },
-            duration: 10,
+            duration: 30,
             id: MAX_DB_NUM,
             subId: 0
         };
-        sendInterval = setInterval(sendSystemScreenInternal, 5000, screen, channel);
+        sendSystemScreenInternal(screen, channel);
         return;
     }
     if (serverState.online && serverState.compatible) {

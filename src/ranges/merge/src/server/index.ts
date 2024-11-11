@@ -1,6 +1,6 @@
 import express, { Express, Request, Response } from 'express';
 import { LocalClient } from 'dc-db-local';
-import { logger } from '../logger';
+import { logger } from "dc-logger";
 import { rangeManager } from '../rangeMan';
 
 const app: Express = express();

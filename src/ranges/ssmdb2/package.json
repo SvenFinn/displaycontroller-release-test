@@ -19,8 +19,7 @@
     "amqplib": "^0.10.4",
     "dc-db-local": "file:../../database/local",
     "dc-db-ssmdb2": "file:../../database/ssmdb2",
-    "dc-table-watcher": "file:../../database/tableWatcher",
-    "pino": "^9.5.0",
-    "pino-pretty": "^11.3.0"
+    "dc-logger": "file:../../logger",
+    "dc-table-watcher": "file:../../database/tableWatcher"
   }
 }

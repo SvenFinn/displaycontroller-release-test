@@ -1,6 +1,6 @@
 import { LocalClient } from "dc-db-local";
 import { isScreen, Screen } from "@shared/screens";
-import { logger } from "../logger";
+import { logger } from "dc-logger";
 import { sendSSEResponse } from "../server";
 import { loadNextScreen, loadScreen } from "./screens";
 import amqp from "amqplib"

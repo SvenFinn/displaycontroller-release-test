@@ -11,12 +11,11 @@
   "license": "ISC",
   "dependencies": {
     "dc-db-local": "file:../../database/local",
+    "dc-logger": "file:../../logger",
     "dotenv": "^16.4.5",
     "eventsource": "^2.0.2",
     "express": "^4.21.1",
-    "jsdom": "^25.0.1",
-    "pino": "^9.5.0",
-    "pino-pretty": "^11.3.0"
+    "jsdom": "^25.0.1"
   },
   "devDependencies": {
     "@types/eventsource": "^1.1.15",

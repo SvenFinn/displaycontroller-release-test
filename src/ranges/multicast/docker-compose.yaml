@@ -13,6 +13,7 @@ services:
       additional_contexts:
         - local-db=../../database/local
         - range-types=../types
+        - logger=../../logger
     networks:
       - displaycontroller
     depends_on:

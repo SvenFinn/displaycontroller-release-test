@@ -1,6 +1,6 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
-import { logger } from '../logger';
+import { logger } from "dc-logger";
 import { LocalClient } from 'dc-db-local';
 import { getCurrentScreen, getPaused, gotoScreen, nextScreen, pauseScreen } from '../screens';
 import { resolvePreset } from '../screens/presets';

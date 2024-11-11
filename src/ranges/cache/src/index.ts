@@ -4,7 +4,7 @@ import { getShooterCache } from "./shooter";
 import { createSMDBClient, SmdbClient } from "dc-db-smdb";
 import { TableWatcher } from "dc-table-watcher"
 import { LocalClient, createLocalClient } from "dc-db-local";
-import { logger } from "./logger";
+import { logger } from "dc-logger";
 import { Discipline } from "@shared/ranges/discipline";
 import { StartList } from "@shared/ranges/startList";
 import { Shooter } from "@shared/ranges/shooter";
@@ -99,10 +99,3 @@ async function writeCache(type: "shooter" | "startList" | "discipline" | "overri
 }
 
 init();
-
-process.on("SIGTERM", async () => {
-    logger.info("Stopping cache");
-    await localClient?.$disconnect();
-    await smdbClient?.$disconnect();
-    process.exit(0);
-});

@@ -1,5 +1,5 @@
 import { LogLine } from "./types"
-import { logger } from "../logger";
+import { logger } from "dc-logger";
 
 export function parseLine(line: string): undefined | LogLine {
     logger.debug("Parsing line", line);

@@ -1,7 +1,7 @@
 import { Hits } from "@shared/ranges/hits";
 import { LogLine } from "../logReader/types";
 import { InternalDiscipline, InternalRange, isInternalOverrideDiscipline, InternalShooterById } from "@shared/ranges/internal"
-import { logger } from "../logger";
+import { logger } from "dc-logger";
 import { TTLHandler } from "dc-ranges-ttl";
 import { Channel } from "amqplib";
 import { isSameShooter } from "../cache/shooter";

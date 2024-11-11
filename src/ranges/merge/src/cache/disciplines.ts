@@ -2,7 +2,7 @@ import { LocalClient } from "dc-db-local";
 import { Discipline, isDiscipline } from "@shared/ranges/discipline";
 import { isOverrideDiscipline } from "@shared/ranges/internal/startList";
 import { InternalDiscipline, isInternalOverrideDiscipline } from "@shared/ranges/internal";
-import { logger } from "../logger";
+import { logger } from "dc-logger";
 
 export const disciplines = new Map<number, Discipline>();
 export const overrides = new Map<number, Discipline>();

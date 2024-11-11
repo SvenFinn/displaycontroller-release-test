@@ -1,21 +1,9 @@
 import express, { Express, Request } from "express";
-import * as dotenv from "dotenv";
 import * as fs from "fs";
 import fileUpload from "express-fileupload";
 import { fromPath } from "pdf2pic";
-import pino from "pino";
 import { DirectoryListing } from "../types";
-
-dotenv.config();
-const logger = pino({
-    level: process.env.LOG_LEVEL || "info",
-    transport: {
-        target: "pino-pretty",
-        options: {
-            colorize: true,
-        },
-    },
-});
+import { logger } from "dc-logger";
 
 const basePath = `${__dirname}/files`;
 
@@ -176,9 +164,3 @@ app.delete("/api/images/?*", (req: Request, res) => {
 app.listen(80, () => {
     logger.info("Server is running on port 80");
 });
-
-
-process.on("SIGTERM", () => {
-    logger.info("Received SIGTERM, shutting down");
-    process.exit(0);
-})

@@ -1,5 +1,5 @@
 import { ConditionMinMax } from "@shared/screens/conditions/base";
-import { logger } from "../../logger";
+import { logger } from "dc-logger";
 
 export async function ranges_online_count(condition: ConditionMinMax): Promise<boolean> {
     const onlineRanges = await fetch("http://ranges:80/api/ranges/");

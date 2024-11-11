@@ -1,5 +1,5 @@
 import { ConditionNone } from "@shared/screens/conditions/base";
-import { logger } from "../../logger";
+import { logger } from "dc-logger";
 
 export async function meyton_available(condition: ConditionNone): Promise<boolean> {
     const serverStateReq = await fetch("http://check-server:80/api/serverState");

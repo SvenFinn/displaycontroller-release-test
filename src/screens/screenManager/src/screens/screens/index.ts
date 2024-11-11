@@ -3,7 +3,7 @@ import { resolvePreset } from "../presets";
 import { isDbScreen } from "@shared/screens";
 import { Screen } from "@shared/screens";
 import { checkCondition } from "../conditions";
-import { logger } from "../../logger";
+import { logger } from "dc-logger";
 
 export async function loadNextScreen(localClient: LocalClient, currentScreenId: number): Promise<Array<Screen>> {
     let nextScreenId = currentScreenId;

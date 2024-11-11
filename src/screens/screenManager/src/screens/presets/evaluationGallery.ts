@@ -1,6 +1,6 @@
 import { Screens } from ".";
 import { EvaluationGalleryDbScreen } from "@shared/screens/evaluationGallery";
-import { logger } from "../../logger";
+import { logger } from "dc-logger";
 import { isEvaluationListing } from "@shared/evaluations";
 
 export default async function evaluationGallery(screen: EvaluationGalleryDbScreen): Promise<Screens> {

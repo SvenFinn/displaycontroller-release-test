@@ -10,6 +10,7 @@ services:
       additional_contexts:
         - local-db=../database/local
         - screen-manager=../screens/screenManager
+        - logger=../logger
       args:
         - MIN_MEYTON_VERSION=${MIN_MEYTON_VERSION}
         - MAX_MEYTON_VERSION=${MAX_MEYTON_VERSION}

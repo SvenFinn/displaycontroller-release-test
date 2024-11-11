@@ -1,28 +1,15 @@
 import { execSync } from "child_process"
-import dotenv from "dotenv";
-import pino from "pino";
 import EventSource from "eventsource";
-import { LocalClient, createLocalClient } from "dc-db-local";
-import { SmdbClient, createSMDBClient } from "dc-db-smdb";
+import { LocalClient } from "dc-db-local";
+import { createSMDBClient } from "dc-db-smdb";
 import { CurrentTimestamp } from "./types";
-dotenv.config();
+import { logger } from "dc-logger";
 
-const logger = pino({
-  level: process.env.LOG_LEVEL || "info",
-  transport: {
-    target: "pino-pretty",
-    options: {
-      colorize: true,
-    },
-  }
-});
-
-let localPrismaClient: LocalClient | null = null;
+let localPrismaClient: LocalClient = new LocalClient();
 
 let syncTimeout: NodeJS.Timeout | null = null;
 
 async function main() {
-  localPrismaClient = await createLocalClient();
   const syncEnabled = (await localPrismaClient.parameter.findUnique({
     where: {
       key: "ENABLE_TIME_SYNC"
@@ -49,9 +36,6 @@ async function main() {
 
 async function loop() {
   logger.info("Syncing time");
-  if (!localPrismaClient) {
-    localPrismaClient = await createLocalClient();
-  }
   const smdbClient = await createSMDBClient(localPrismaClient);
   let timestampQuery: CurrentTimestamp[] = [];
   try {
@@ -74,10 +58,3 @@ async function loop() {
 }
 
 main();
-
-process.on("SIGTERM", () => {
-  if (localPrismaClient) {
-    localPrismaClient.$disconnect();
-  }
-  process.exit(0);
-});

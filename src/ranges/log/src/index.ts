@@ -2,7 +2,7 @@ import { LogReader } from "./logReader";
 import { RangeGen } from "./rangeGen";
 import amqp from "amqplib";
 import { isInternalRange } from "@shared/ranges/internal";
-import { logger } from "./logger";
+import { logger } from "dc-logger";
 
 import "./cache/updater"; // Import the updater to start the caching
 
@@ -61,7 +61,3 @@ async function recvMultiCast(channel: amqp.Channel, logChannel: amqp.Channel) {
 }
 
 main();
-
-process.on("SIGTERM", () => {
-    process.exit(0);
-});

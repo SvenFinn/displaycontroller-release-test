@@ -4,7 +4,7 @@ import "./server";// Import to start the server
 
 import amqp from "amqplib";
 import { rangeManager } from "./rangeMan";
-import { logger } from "./logger";
+import { logger } from "dc-logger";
 
 async function start() {
     const connection = await amqp.connect("amqp://rabbitmq");
@@ -37,7 +37,3 @@ async function start() {
 }
 
 start();
-
-process.on("SIGTERM", () => {
-    process.exit(0);
-});

@@ -1,6 +1,6 @@
 import express, { Express, Request } from "express";
 import * as fs from "fs";
-import { logger } from "../logger";
+import { logger } from "dc-logger";
 import { EvaluationListing } from "../../types";
 
 const app: Express = express();

@@ -3,10 +3,12 @@ services:
     container_name: dc-images
     hostname: images
     networks:
-      - displaycontroller      
+      - displaycontroller
     build:
       context: .
       dockerfile: Dockerfile
+      additional_contexts:
+        - logger=../../logger
     volumes:
       - "./files:/app/files"
     depends_on:

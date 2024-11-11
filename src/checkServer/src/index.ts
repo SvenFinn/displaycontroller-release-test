@@ -1,7 +1,7 @@
 import { checkServerAvailable, checkServiceAvailability } from "./checkServer";
 import { updateServerState } from "./webServer";
 import { AdvServerState } from "./types";
-import { logger } from "./logger";
+import { logger } from "dc-logger";
 import amqp from "amqplib";
 import { sendSystemScreen } from "./screens";
 
@@ -42,8 +42,3 @@ async function main() {
 }
 
 main();
-
-
-process.on("SIGTERM", function () {
-    process.exit(0);
-})

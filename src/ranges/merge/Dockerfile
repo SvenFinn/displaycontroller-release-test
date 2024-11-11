@@ -16,6 +16,11 @@ COPY --from=range-ttl . .
 RUN npm ci --loglevel=info && \
     npm run build;
 
+WORKDIR /app/logger
+COPY --from=logger . .
+RUN npm ci --loglevel=info && \
+    npm run build;
+
 FROM local-deps AS deps
 
 WORKDIR /app/ranges/merger

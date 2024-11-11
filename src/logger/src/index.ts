@@ -11,3 +11,8 @@ export const logger = pino({
         },
     },
 });
+
+process.on("SIGTERM", () => {
+    logger.info("Received SIGTERM, exiting");
+    process.exit(0);
+});

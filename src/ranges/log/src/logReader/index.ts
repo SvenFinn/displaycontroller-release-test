@@ -6,7 +6,7 @@ import fs from "fs";
 import { spawn } from "node:child_process";
 import { EventEmitter } from "node:events";
 import { parseLine } from "./parseLine";
-import { logger } from "../logger";
+import { logger } from "dc-logger";
 
 dotenv.config();
 

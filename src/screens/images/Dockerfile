@@ -2,16 +2,25 @@ FROM node:latest AS base
 
 WORKDIR /app
 
-FROM base AS deps
+FROM base AS local-deps
 
+WORKDIR /app/logger
+COPY --from=logger . .
+RUN npm ci --loglevel=info && \
+    npm run build
+
+FROM local-deps AS deps
+
+WORKDIR /app/screens/images
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev --loglevel=info
+RUN npm i --omit=dev --loglevel=info --install-links
 
-FROM base AS build
+FROM local-deps AS build
 
+WORKDIR /app/screens/images
 COPY . .
 RUN rm -rf node_modules; \
-    npm ci --loglevel=info; \
+    npm i --loglevel=info --install-links; \
     npm run build
 COPY src/img dist/src/img
 
@@ -21,8 +30,8 @@ RUN apt-get update; apt-get install ghostscript graphicsmagick -y; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*;
 
-COPY --from=build /app/dist ./
-COPY --from=deps /app/node_modules ./node_modules
+COPY --from=build /app/screens/images/dist ./
+COPY --from=deps /app/screens/images/node_modules ./node_modules
 
 EXPOSE 80
 

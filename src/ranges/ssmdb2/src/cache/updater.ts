@@ -1,6 +1,6 @@
 import { updateOverrides } from "./overrides";
 import { LocalClient } from "dc-db-local";
-import { logger } from "../logger";
+import { logger } from "dc-logger";
 
 const localClient = new LocalClient();
 
