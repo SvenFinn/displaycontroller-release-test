@@ -6,7 +6,7 @@ import { getDiscipline } from "./discipline";
 import { getShooters } from "./shooter";
 import { getRangeId } from "./rangeId";
 import { LocalClient } from "dc-db-local";
-import { InternalDiscipline, InternalRange } from "@shared/ranges/internal";
+import { InternalRange } from "@shared/ranges/internal";
 import { logger } from "./logger";
 
 const prismaClient = new LocalClient();
