@@ -7,6 +7,7 @@ include:
   - ranges/docker-compose.yaml
   - rabbitmq/docker-compose.yaml
   - portainer/docker-compose.yaml
+  - frontend/docker-compose.yaml
 
 networks:
   displaycontroller:

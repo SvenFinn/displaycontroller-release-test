@@ -1,0 +1,12 @@
+services:
+  dc-frontend:
+    hostname: frontend
+    container_name: dc-frontend
+    networks:
+      - displaycontroller
+    build:
+      context: .
+      dockerfile: Dockerfile
+      additional_contexts:
+        - range-types=../ranges/types
+        - screen-types=../screens/screenManager/types
