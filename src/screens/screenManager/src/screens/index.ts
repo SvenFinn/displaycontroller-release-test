@@ -86,6 +86,7 @@ async function main() {
         autoDelete: true,
         messageTtl: 30000
     });
+    await channel.prefetch(1);
     await channel.consume("screens.systemScreens", async (msg) => {
         if (msg === null) {
             return;
@@ -97,6 +98,9 @@ async function main() {
         const screen = message as Screen;
         nextScreenList = [screen];
         screenLoop();
+        setTimeout(() => {
+            channel.ack(msg);
+        }, 5000);
     });
     logger.info("Screen manager started");
     screenLoop();
