@@ -39,11 +39,11 @@ export function isActiveRange(range: any): range is ActiveRange {
     const rangeWType = range as ActiveRange;
     if (typeof rangeWType.active !== "boolean" || !rangeWType.active) return false;
     if (typeof rangeWType.round !== "number") return false;
-    if (!isShooter(rangeWType.shooter) && !rangeWType.shooter === null) return false;
-    if (!isStartList(rangeWType.startList) && !rangeWType.startList === null) return false;
-    if (!isDiscipline(rangeWType.discipline) && !rangeWType.discipline === null) return false;
-    if (!isHits(rangeWType.hits) && !rangeWType.hits === null) return false;
-    if (!isSource(rangeWType.source) && !rangeWType.source === null) return false;
+    if (rangeWType.shooter !== null && !isShooter(rangeWType.shooter)) return false;
+    if (rangeWType.startList !== null && !isStartList(rangeWType.startList)) return false;
+    if (rangeWType.discipline !== null && !isDiscipline(rangeWType.discipline)) return false;
+    if (rangeWType.hits !== null && !isHits(rangeWType.hits)) return false;
+    if (rangeWType.source !== null && !isSource(rangeWType.source)) return false;
     return true;
 }
 
