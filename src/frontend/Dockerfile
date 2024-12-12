@@ -1,9 +1,17 @@
 FROM node:latest AS builder
 
+WORKDIR /app/ranges/types
+COPY --from=range-types . .
+
+WORKDIR /app/screens/screenManager/types
+COPY --from=screen-types . .
+
 WORKDIR /app/frontend
+COPY package.json package-lock.json ./
+RUN npm i --loglevel=info;
+
 COPY . .
-RUN npm i --loglevel=info &&  \
-    npm run build;
+RUN npm run build;
 
 FROM nginx:alpine
 

@@ -15,7 +15,7 @@ export function isDrawTargetDbScreen(screen: any): screen is DrawTargetDbScreen 
     return true;
 }
 
-type DrawTargetOptions = {
+export type DrawTargetOptions = {
     ranges: Array<number> | Array<Array<number>>;
     highlightAssign: boolean;
 }

@@ -20,7 +20,14 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    "paths": {
+      "@shared/ranges": ["../ranges/types"],
+      "@shared/ranges/*": ["../ranges/types/*"],
+      "@shared/screens": ["../screens/screenManager/types"],
+      "@shared/screens/*": ["../screens/screenManager/types/*"],
+    }
   },
   "include": ["src"]
 }

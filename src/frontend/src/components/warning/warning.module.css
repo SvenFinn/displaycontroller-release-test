@@ -1,0 +1,10 @@
+div.warning {
+    position: absolute;
+    bottom: 0;
+    left:0;
+    width: 100%;
+    background-color: #FF4000;
+    color: white;
+    font-size:4vh;
+    text-align: center;
+}
