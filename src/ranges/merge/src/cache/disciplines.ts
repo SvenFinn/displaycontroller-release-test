@@ -17,7 +17,7 @@ export async function updateDisciplines(localClient: LocalClient) {
     for (const disciplineDb of newDisciplines) {
         const discipline = disciplineDb.value;
         if (!isDiscipline(discipline)) {
-            logger.warn("Invalid discipline", discipline);
+            logger.warn(`Invalid discipline ${disciplineDb.key}`);
             continue;
         }
         disciplines.set(discipline.id, discipline);
@@ -45,8 +45,11 @@ export async function updateOverrides(localClient: LocalClient) {
                 },
             },
         });
-        if (!disciplineDb || !isDiscipline(disciplineDb.value)) {
-            logger.warn("Invalid discipline", disciplineDb);
+        if (!disciplineDb) {
+            continue;
+        }
+        if (!isDiscipline(disciplineDb.value)) {
+            logger.warn(`Invalid discipline ${disciplineDb.key}`);
             continue;
         }
         const discipline = disciplineDb.value;
