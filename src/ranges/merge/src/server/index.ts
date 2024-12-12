@@ -15,12 +15,6 @@ app.get('/api/ranges/free(/)?', async (req: Request, res: Response) => {
     res.status(200).send(freeRanges);
 });
 
-app.get('/api/ranges/:range(/)?', async (req: Request, res: Response) => {
-    const range: number = parseInt(req.params.range);
-    const rangeData = rangeManager.getRangeData(range);
-    res.status(200).send(rangeData);
-});
-
 app.get('/api/ranges/sse', async (req: Request, res: Response) => {
     let ranges: number[] | null = null;
     if (req.query.ranges) {
@@ -34,7 +28,7 @@ app.get('/api/ranges/sse', async (req: Request, res: Response) => {
     };
     res.writeHead(200, headers);
 
-    res.write("retry: 10000\n\n");
+    //res.write("retry: 10000\n\n");
 
     rangeManager.addSSE(res, ranges);
 
@@ -100,6 +94,22 @@ app.delete('/api/ranges/known/:rangeIp(/)?', async (req: Request, res: Response)
     });
     res.status(200).send(knownRange);
 });
+
+app.get('/api/ranges/:rangeId', async (req: Request, res: Response) => {
+    logger.info("GET /api/ranges/:range");
+    const range: number = parseInt(req.params.rangeId);
+    if (isNaN(range)) {
+        res.status(400).send('Invalid range ID');
+        return;
+    }
+    const rangeData = rangeManager.getRangeData(range);
+    if (rangeData) {
+        res.status(200).send(rangeData);
+    } else {
+        res.status(404).send('Range not found');
+    }
+});
+
 
 app.listen(80, () => {
     logger.info('Listening on port 80');
