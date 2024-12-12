@@ -29,12 +29,12 @@ export class RangeManager {
                     this.rangeSSE.set(range, []);
                 }
                 this.rangeSSE.get(range)?.push(response);
-                response.write(`event: rangeData\ndata: ${JSON.stringify(this.getRangeData(range))}\n\n`);
+                response.write(`data: ${JSON.stringify(this.getRangeData(range))}\n\n`);
             }
         } else {
             this.allSSE.push(response);
             for (const range of this.ranges.keys()) {
-                response.write(`event: rangeData\ndata: ${JSON.stringify(this.getRangeData(range))}\n\n`);
+                response.write(`data: ${JSON.stringify(this.getRangeData(range))}\n\n`);
             }
         }
     }
@@ -55,10 +55,10 @@ export class RangeManager {
     private sendSSE(data: Range) {
         logger.info(`Sending update for range ${data.id}`);
         for (const response of this.allSSE) {
-            response.write(`event: rangeData\ndata: ${JSON.stringify(data)}\n\n`);
+            response.write(`data: ${JSON.stringify(data)}\n\n`);
         }
         for (const response of this.rangeSSE.get(data.id) || []) {
-            response.write(`event: rangeData\ndata: ${JSON.stringify(data)}\n\n`);
+            response.write(`data: ${JSON.stringify(data)}\n\n`);
         }
     }
     public getRangeData(rangeId: number): Range {
