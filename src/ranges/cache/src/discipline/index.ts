@@ -42,7 +42,7 @@ async function getDiscipline(smdbClient: SmdbClient, disciplineId: number): Prom
     return {
         id: disciplineId,
         name: discipline.name,
-        gauge: discipline.gauge,
+        gauge: parseFloat((discipline.gauge / 100).toFixed(2)),
         color: `#${process.env.TARGET_DEFAULT_COLOR}`,
         layouts: await getLayouts(smdbClient, disciplineId),
         rounds: await getRounds(smdbClient, disciplineId)
