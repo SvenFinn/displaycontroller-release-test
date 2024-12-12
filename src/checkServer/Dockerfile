@@ -32,15 +32,17 @@ WORKDIR /app/screens/screenManager
 COPY --from=screen-manager . .
 
 WORKDIR /app/checkServer
+
+COPY package.json package-lock.json ./
+RUN npm i --loglevel=info --install-links;
+
 COPY . .
-RUN npm i --loglevel=info --install-links && \
-    npm run build && \
+RUN npm run build && \
     echo "MIN_MEYTON_VERSION=$MIN_MEYTON_VERSION\n \
     MAX_MEYTON_VERSION=$MAX_MEYTON_VERSION\n \
     MEYTON_SSH_USER=$MEYTON_SSH_USER\n \
     MEYTON_SSH_PASS=$MEYTON_SSH_PASS\n \
     SELF_DB_URL=$SELF_DB_URL" > dist/.env;
-COPY package.json dist/
 
 FROM base AS final
 

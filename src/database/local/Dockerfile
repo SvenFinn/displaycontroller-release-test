@@ -11,13 +11,14 @@ RUN npm ci --omit=dev --loglevel=info;
 
 FROM base AS build
 
+COPY package.json package-lock.json schema.prisma ./
+RUN npm ci --loglevel=info;
+
 COPY . .
-COPY src/entrypoint.sh schema.prisma dist/
-RUN rm -rf node_modules; \
-    npm ci --loglevel=info; \
-    npm run build && \
+RUN npm run build && \
     echo "SELF_DB_URL=$SELF_DB_URL\n" > dist/.env;
 COPY migrations dist/migrations
+COPY src/entrypoint.sh schema.prisma dist/
 
 FROM base AS final
 

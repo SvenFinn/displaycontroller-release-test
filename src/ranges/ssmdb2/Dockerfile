@@ -40,9 +40,12 @@ WORKDIR /app/ranges/types
 COPY --from=range-types . .
 
 WORKDIR /app/ranges/ssmdb2
+
+COPY package.json package-lock.json ./
+RUN npm i --loglevel=info --install-links;
+
 COPY . .
-RUN npm i --loglevel=info --install-links; \
-    npm run build && \
+RUN npm run build && \
     echo "SELF_DB_URL=$SELF_DB_URL\n \
     MEYTON_DB_PASS=$MEYTON_DB_PASS\n \
     MEYTON_DB_USER=$MEYTON_DB_USER" > dist/.env;

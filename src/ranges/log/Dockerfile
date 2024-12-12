@@ -35,13 +35,15 @@ WORKDIR /app/ranges/types
 COPY --from=range-types . .
 
 WORKDIR /app/ranges/log
+
+COPY package.json package-lock.json ./
+RUN npm i --loglevel=info --install-links;
+
 COPY . .
-RUN npm i --loglevel=info --install-links && \
-    npm run build && \
+RUN npm run build && \
     echo "SELF_DB_URL=$SELF_DB_URL\n \
     MEYTON_SSH_USER=$MEYTON_SSH_USER\n \
     MEYTON_SSH_PASS=$MEYTON_SSH_PASS" > dist/.env;
-COPY package.json dist/
 COPY src/logReader/range-logs.sh dist/log/src/logReader/
 
 FROM base AS final

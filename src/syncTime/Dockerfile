@@ -33,13 +33,14 @@ FROM local-deps AS build
 
 WORKDIR /app/syncTime
 
+COPY package.json package-lock.json ./
+RUN npm i --loglevel=info --install-links;
+
 COPY . .
-RUN npm i --loglevel=info; \
-    npm run build && \
+RUN npm run build && \
     echo "SELF_DB_URL=$SELF_DB_URL\n \
     MEYTON_DB_USER=$MEYTON_DB_USER\n \
     MEYTON_DB_PASS=$MEYTON_DB_PASS\n" > dist/.env;
-COPY package.json dist/
 
 FROM base AS final
 

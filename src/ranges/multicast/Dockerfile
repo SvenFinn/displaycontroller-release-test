@@ -28,9 +28,12 @@ WORKDIR /app/ranges/types
 COPY --from=range-types . .
 
 WORKDIR /app/ranges/multicast
+
+COPY package.json package-lock.json ./
+RUN npm i --loglevel=info --install-links;
+
 COPY . .
-RUN npm i --loglevel=info --install-links && \
-    npm run build && \
+RUN    npm run build && \
     echo "SELF_DB_URL=$SELF_DB_URL" > dist/.env;
 
 FROM base AS final

@@ -25,11 +25,13 @@ RUN npm i --omit=dev --loglevel=info --install-links;
 FROM local-deps AS build
 
 WORKDIR /app/screens/evaluations
+
+COPY package.json package-lock.json ./
+RUN npm i --loglevel=info --install-links;
+
 COPY . .
-RUN npm i --loglevel=info --install-links &&  \
-    npm run build && \
+RUN npm run build && \
     echo "SELF_DB_URL=$SELF_DB_URL" > dist/.env;
-COPY package.json dist/
 
 FROM base AS final
 

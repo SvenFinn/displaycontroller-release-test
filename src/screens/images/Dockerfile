@@ -18,10 +18,12 @@ RUN npm i --omit=dev --loglevel=info --install-links
 FROM local-deps AS build
 
 WORKDIR /app/screens/images
+
+COPY package.json package-lock.json ./
+RUN npm i --loglevel=info --install-links
+
 COPY . .
-RUN rm -rf node_modules; \
-    npm i --loglevel=info --install-links; \
-    npm run build
+RUN npm run build
 COPY src/img dist/src/img
 
 FROM base AS final
