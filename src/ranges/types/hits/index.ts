@@ -2,6 +2,7 @@ export type Hits = Array<Array<Hit> | null>;
 
 export function isHits(hits: any): hits is Hits {
     for (const roundId in hits) {
+        if (hits[roundId] === null) continue;
         if (!Array.isArray(hits[roundId])) return false;
         for (const hit of hits[roundId]) {
             if (!isHit(hit)) return false;
