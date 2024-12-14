@@ -17,7 +17,6 @@ export async function sendSystemScreen(serverState: AdvServerState, channel: amq
         const screen: Screen = {
             available: true,
             preset: "systemMessage",
-            path: "/show/systemMessage",
             options: {
                 type: "serverIncompatible",
                 serverVersion: serverState.version
@@ -34,7 +33,6 @@ export async function sendSystemScreen(serverState: AdvServerState, channel: amq
         const screen: Screen = {
             available: true,
             preset: "systemMessage",
-            path: "/show/systemMessage",
             options: {
                 type: "ssmdb2"
             },

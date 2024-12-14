@@ -31,7 +31,6 @@ export type BaseScreenAvailable = {
     id: number;
     subId: number;
     preset: string;
-    path: string;
     options: Record<string, any>;
     duration: number;
 }
@@ -42,7 +41,6 @@ export function isBaseScreenAvailable(screen: any): screen is BaseScreenAvailabl
     if (typeof screen.id !== "number") return false;
     if (typeof screen.subId !== "number") return false;
     if (typeof screen.preset !== "string") return false;
-    if (typeof screen.path !== "string") return false;
     if (typeof screen.options !== "object") return false;
     if (typeof screen.duration !== "number") return false;
     return true;

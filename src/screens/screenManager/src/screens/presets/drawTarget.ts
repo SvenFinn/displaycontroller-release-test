@@ -8,7 +8,6 @@ export default async function drawTarget(screen: DrawTargetDbScreen): Promise<Sc
             id: screen.id,
             subId: 0,
             preset: "drawTarget",
-            path: "/show/drawTarget",
             options: screen.options,
             duration: screen.duration
         }
