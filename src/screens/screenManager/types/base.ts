@@ -5,8 +5,8 @@ export type BaseDbScreen = {
     preset: string;
     options: any;
     condition: Condition | null;
-    visibleFrom: number;
-    visibleUntil: number;
+    visibleFrom: Date;
+    visibleUntil: Date;
     duration: number;
     createdAt: Date;
     updatedAt: Date;
@@ -18,9 +18,9 @@ export function isBaseDbScreen(screen: any): screen is BaseDbScreen {
     if (typeof screen.preset !== "string") return false;
     if (typeof screen.options !== "object") return false;
     if (screen.condition && !isScreenCondition(screen.condition)) return false;
-    if (typeof screen.visibleFrom !== "number") return false;
-    if (typeof screen.visibleUntil !== "number") return false;
     if (typeof screen.duration !== "number") return false;
+    if (screen.visibleFrom !== null && !(screen.visibleFrom instanceof Date)) return false;
+    if (screen.visibleUntil !== null && !(screen.visibleUntil instanceof Date)) return false;
     if (!(screen.createdAt instanceof Date)) return false;
     if (!(screen.updatedAt instanceof Date)) return false;
     return true;

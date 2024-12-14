@@ -22,8 +22,8 @@ model Screens {
     preset       ScreensPreset
     options      Json
     condition    Json?
-    visibleFrom  Float         @default(-1)
-    visibleUntil Float         @default(-1)
+    visibleFrom  DateTime?
+    visibleUntil DateTime?
     duration     Float         @default(-1)
     createdAt    DateTime      @default(now())
     updatedAt    DateTime      @default(now()) @updatedAt
