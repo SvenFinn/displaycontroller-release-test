@@ -10,13 +10,9 @@ export default async function imageViewer(screen: ViewerDbScreen): Promise<Scree
         fileList = await createFileList(screen.options.path);
     } catch (e) {
         logger.error(`Failed to fetch files for screen ${screen.id}`);
-        return [{
-            available: false
-        }];
+        return [];
     }
-    if (fileList.length < 1) return [{
-        available: false
-    }];
+    if (fileList.length < 1) return [];
     // Length of fileList is larger than 1, so this map always
     // returns at least one element
     // @ts-ignore

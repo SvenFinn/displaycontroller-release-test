@@ -25,4 +25,4 @@ export async function resolvePreset(screen: DbScreen): Promise<Array<Screen> | u
     }
 }
 
-export type Screens = [Screen, ...Screen[]];
+export type Screens = Screen[];

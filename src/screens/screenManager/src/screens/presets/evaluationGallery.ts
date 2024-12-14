@@ -19,9 +19,7 @@ export default async function evaluationGallery(screen: EvaluationGalleryDbScree
     });
     if (screens.length === 0) {
         logger.warn(`No files found in path ${screen.options.path}`);
-        return [{
-            available: false
-        }]
+        return []
     }
     /*@ts-ignore*/
     return screens;

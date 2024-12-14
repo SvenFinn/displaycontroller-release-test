@@ -29,16 +29,14 @@ export async function loadNextScreen(localClient: LocalClient, currentScreenId: 
             nextScreenId = 0;
             continue
         }
-        if (nextScreen.id === currentScreenId) {
-            return [{
-                available: false
-            }]; // We have looped through all screens and found no new screen
-        }
         nextScreenId = nextScreen.id;
-        if (!checkCondition(localClient, nextScreenId)) {
+        if (! await checkCondition(localClient, nextScreenId)) {
             continue;
         }
-        return await loadScreen(localClient, nextScreenId);
+        const parsedScreen = await loadScreen(localClient, nextScreenId);
+        if (parsedScreen.length > 0) {
+            return parsedScreen;
+        }
     }
 }
 
