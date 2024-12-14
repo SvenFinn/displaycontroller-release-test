@@ -28,7 +28,7 @@ RUN npm i --omit=dev --loglevel=info --install-links;
 
 FROM local-deps AS build
 
-WORKDIR /app/screens/screenManager
+WORKDIR /app/screens/screenManager/types
 COPY --from=screen-manager . .
 
 WORKDIR /app/checkServer
