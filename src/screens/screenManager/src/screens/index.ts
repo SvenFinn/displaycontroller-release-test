@@ -64,9 +64,9 @@ async function screenLoop() {
     currentScreen = nextScreenList.shift() || { available: false };
     sendSSEResponse(currentScreen);
     if (!currentScreen.available) {
-        logger.info('No available screens, waiting 30s');
+        logger.info('No available screens, waiting 10s');
         if (!isPaused) {
-            screenTimeout = setTimeout(screenLoop, 30000);
+            screenTimeout = setTimeout(screenLoop, 10000);
         }
         return;
     } else {
