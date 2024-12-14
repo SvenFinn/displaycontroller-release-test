@@ -5,7 +5,7 @@ import { fromPath } from "pdf2pic";
 import { DirectoryListing } from "../types";
 import { logger } from "dc-logger";
 
-const basePath = `${__dirname}/files`;
+const basePath = `/app/files`;
 
 const app: Express = express();
 app.use(fileUpload({
