@@ -27,7 +27,7 @@ export function startServer(basePath: string) {
         }
         if (fs.lstatSync(path).isDirectory()) {
             logger.info("Scanning directory");
-            const files = fs.readdirSync(path);
+            const files = fs.readdirSync(`${path}/`);
             const response: EvaluationListing = files.map((file) => {
                 return {
                     name: file,
