@@ -4,10 +4,21 @@ import { sync } from "./sync";
 import path from "path";
 import { startServer } from "./server";
 import { logger } from "dc-logger";
+import fs from "fs";
 
 const htmlPath = path.resolve(`${__dirname}/../html`);
 const smbPath = path.resolve(`${__dirname}/../tmp/smb`);
 const convPath = path.resolve(`${__dirname}/../tmp/conv`);
+if (!fs.existsSync(htmlPath)) {
+    fs.mkdirSync(htmlPath, { recursive: true });
+}
+if (!fs.existsSync(smbPath)) {
+    fs.mkdirSync(smbPath, { recursive: true });
+}
+if (!fs.existsSync(convPath)) {
+    fs.mkdirSync(convPath, { recursive: true });
+}
+
 
 let localPrismaClient: LocalClient | null = null;
 let nextSyncTimeOut: NodeJS.Timeout | null = null;
