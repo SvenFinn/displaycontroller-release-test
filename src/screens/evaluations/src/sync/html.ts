@@ -61,24 +61,41 @@ async function rewriteHTMLFile(inputFName: string, outputFName: string): Promise
         }
     }
 
+    const body = dom.window.document.querySelector("body");
+    if (body != null) {
+        body.style.fontSize = "1.667vh";
+        body.style.overflow = "hidden";
+    }
+
     // Pin credits table to bottom
-    const creditsTable = dom.window.document.querySelector("table:last-of-type");
+    const creditsTable = dom.window.document.querySelector<HTMLTableElement>("table:last-of-type");
     if (creditsTable != null) {
-        creditsTable.setAttribute("style", "position: absolute; bottom: 0; left: 0; right: 0; width:100%; background-color:#FFFFFF; padding-top:5px;");
+        creditsTable.style.position = "absolute";
+        creditsTable.style.bottom = "0";
+        creditsTable.style.left = "0";
+        creditsTable.style.right = "0";
+        creditsTable.style.width = "100%";
+        creditsTable.style.backgroundColor = "#FFFFFF";
+        creditsTable.style.paddingTop = "5px";
         const creditsTableCols = creditsTable.querySelectorAll("td");
-        creditsTableCols[0].setAttribute("style", "float: left; text-align: left;");
-        creditsTableCols[1].setAttribute("style", "float: right; text-align: right;");
+        creditsTableCols[0].style.float = "left";
+        creditsTableCols[1].style.float = "right";
+        creditsTableCols[0].style.textAlign = "left";
+        creditsTableCols[1].style.textAlign = "right";
+
     }
 
     // Set evaluation name
     const evaluationName = dom.window.document.querySelector("table.resultStatus tr:last-of-type td:first-of-type");
     if (evaluationName != null) {
         const evaluationNameRaw: string = evaluationName.innerHTML;
-        const evaluationNameText = evaluationNameRaw.trim().split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(" ");
+        const evaluationNameText = evaluationNameRaw.trim().split(/[ -]/g).map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(" ");
         const infoTable = dom.window.document.querySelector("table:first-of-type");
         const nameRow = dom.window.document.createElement("tr");
         const nameCol = dom.window.document.createElement("td");
-        nameCol.setAttribute("style", "text-align: center; font-size: 130%; font-weight: bold;");
+        nameCol.style.textAlign = "center";
+        nameCol.style.fontSize = "130%";
+        nameCol.style.fontWeight = "bold";
         nameCol.innerHTML = evaluationNameText;
         nameRow.appendChild(nameCol);
         infoTable?.firstElementChild?.firstElementChild?.after(nameRow);
