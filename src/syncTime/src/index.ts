@@ -39,12 +39,13 @@ async function loop() {
   const smdbClient = await createSMDBClient(localPrismaClient);
   let timestampQuery: CurrentTimestamp[] = [];
   try {
-    timestampQuery = (await smdbClient.$queryRaw`SELECT CURRENT_TIMESTAMP;`) as CurrentTimestamp[];
+    timestampQuery = (await smdbClient.$queryRaw`SELECT UTC_TIMESTAMP;`) as CurrentTimestamp[];
   } catch (e) {
     logger.error(e);
   }
   if (timestampQuery.length > 0) {
-    const date = timestampQuery[0].CURRENT_TIMESTAMP;
+    console.log(timestampQuery[0].UTC_TIMESTAMP.getTime());
+    const date = timestampQuery[0].UTC_TIMESTAMP;
     execSync(`date -s @${Math.round(date.getTime() / 1000)}`);
   }
   const syncInterval = (await localPrismaClient.parameter.findUnique({

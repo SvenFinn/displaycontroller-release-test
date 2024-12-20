@@ -1,4 +1,4 @@
 
 export type CurrentTimestamp = {
-    CURRENT_TIMESTAMP: Date
+    UTC_TIMESTAMP: Date
 }
