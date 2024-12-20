@@ -1,7 +1,7 @@
 import { ChildProcess } from "child_process";
 import { LocalClient } from "dc-db-local";
 import dotenv from "dotenv";
-import EventSource from "eventsource";
+import { EventSource } from "eventsource";
 import fs from "fs";
 import { spawn } from "node:child_process";
 import { EventEmitter } from "node:events";

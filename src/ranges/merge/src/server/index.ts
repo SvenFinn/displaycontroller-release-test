@@ -28,8 +28,6 @@ app.get('/api/ranges/sse', async (req: Request, res: Response) => {
     };
     res.writeHead(200, headers);
 
-    //res.write("retry: 10000\n\n");
-
     rangeManager.addSSE(res, ranges);
 
     req.on("close", () => {

@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { EventEmitter } from 'events';
-import EventSource from "eventsource";
+import { EventSource } from "eventsource";
 import pino from "pino";
 
 const logger = pino({
