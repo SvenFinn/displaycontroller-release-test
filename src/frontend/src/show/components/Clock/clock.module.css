@@ -1,0 +1,7 @@
+div.clock {
+    position: absolute;
+    right: 2%;
+    top: 1%;
+    text-align: right;
+    font-size: 3vh;
+}

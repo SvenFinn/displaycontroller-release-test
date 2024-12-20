@@ -1,16 +1,25 @@
-import ServerState from "../components/serverEvents/serverState"
-import DrawTarget from "./components/drawTarget/drawTarget"
-import Clock from "./components/time"
+import { Provider } from "react-redux";
+import ScreenEvents from "./components/ServerEvents/screens";
+import ServerState from "./components/ServerEvents/serverState"
+import { Background } from "./components/Background"
+import Clock from "./components/Clock"
+import Logo from "./components/Logo"
+import ShowScreen from "./components/ShowScreen";
+import { nextScreen } from "./store/screensReducer";
+import { store } from "./store/store";
+import FullscreenButton from "./components/Fullscreen";
 
 export default function Show(): JSX.Element {
     return (
-        <>
-            <Clock locale="de-DE" />
+        <Provider store={store}>
+            <ShowScreen id={0} />
+            <ShowScreen id={1} />
+            <FullscreenButton />
+            <Clock />
+            <Logo />
+            <ScreenEvents action={nextScreen} />
             <ServerState />
-            <DrawTarget options={{
-                ranges: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                highlightAssign: false
-            }} />
-        </>
+            <Background />
+        </Provider>
     )
 }

@@ -1,0 +1,13 @@
+@media all and (display-mode: fullscreen) {
+    img.fullscreen {
+        display:none;
+    }  
+}
+  
+img.fullscreen {
+    position: absolute;
+    top: 5%;
+    right: 0;
+    width:2%;
+    z-index: 1000;
+}
