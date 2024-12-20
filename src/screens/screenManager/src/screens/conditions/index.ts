@@ -6,6 +6,7 @@ import { range_online } from "./RangeOnline";
 import { ranges_free_count } from "./RangesFreeCount";
 import { ranges_online_count } from "./RangesOnlineCount";
 import { LocalClient } from "dc-db-local";
+import { logger } from "dc-logger";
 
 export async function checkCondition(localClient: LocalClient, screenId: number): Promise<boolean> {
     const screen = await localClient.screens.findFirst({
@@ -14,7 +15,10 @@ export async function checkCondition(localClient: LocalClient, screenId: number)
         }
     });
     if (!screen) return false;
-    if (!isDbScreen(screen)) return false;
+    if (!isDbScreen(screen)) {
+        logger.warn(`Screen ${screenId} is not a valid screen`);
+        return false;
+    }
     if (!screen.condition) return true;
     switch (screen.condition.type) {
         case "all_ranges_free":

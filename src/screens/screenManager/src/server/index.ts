@@ -43,7 +43,6 @@ app.get('/api/screens/current/sse(/)?', (req: Request, res: Response) => {
     };
     res.writeHead(200, headers);
 
-    res.write("retry: 10000\n\n");
     res.write(`data: ${JSON.stringify(getCurrentScreen())}\n\n`);
 
     sseConnections.push(res);
