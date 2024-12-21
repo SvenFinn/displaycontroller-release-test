@@ -37,13 +37,15 @@ RUN npm i --omit=dev --loglevel=info --install-links;
 
 FROM local-deps AS build
 
-WORKDIR /app/ranges/types
-COPY --from=range-types . .
-
 WORKDIR /app/ranges/cache
 
 COPY package.json package-lock.json ./
 RUN npm i --loglevel=info --install-links;
+
+WORKDIR /app/ranges/types
+COPY --from=range-types . .
+
+WORKDIR /app/ranges/cache
 
 COPY . .
 RUN npm run build && \

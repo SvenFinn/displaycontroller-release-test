@@ -28,13 +28,15 @@ RUN npm i --omit=dev --loglevel=info --install-links;
 
 FROM local-deps AS build
 
-WORKDIR /app/screens/screenManager/types
-COPY --from=screen-manager . .
-
 WORKDIR /app/checkServer
 
 COPY package.json package-lock.json ./
 RUN npm i --loglevel=info --install-links;
+
+WORKDIR /app/screens/screenManager/types
+COPY --from=screen-manager . .
+
+WORKDIR /app/checkServer
 
 COPY . .
 RUN npm run build && \

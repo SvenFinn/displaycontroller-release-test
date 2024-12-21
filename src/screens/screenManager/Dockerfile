@@ -22,6 +22,11 @@ RUN npm i --omit=dev --loglevel=info --install-links;
 
 FROM local-deps AS build
 
+WORKDIR /app/screens/screenManager
+
+COPY package.json package-lock.json ./
+RUN npm i --loglevel=info --install-links;
+
 WORKDIR /app/screens/images
 COPY --from=images . .
 
@@ -32,9 +37,6 @@ WORKDIR /app/ranges/types
 COPY --from=ranges . .
 
 WORKDIR /app/screens/screenManager
-
-COPY package.json package-lock.json ./
-RUN npm i --loglevel=info --install-links;
 
 COPY . .
 RUN npm run build && \
