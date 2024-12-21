@@ -13,12 +13,11 @@
     "dc-db-local": "file:../../database/local",
     "dc-logger": "file:../../logger",
     "dotenv": "^16.4.5",
-    "eventsource": "^3.0.2",
+    "eventsource": "^3.0.1",
     "express": "^4.21.2",
     "jsdom": "^25.0.1"
   },
   "devDependencies": {
-    "@types/eventsource": "^1.1.15",
     "@types/express": "^5.0.0",
     "@types/jsdom": "^21.1.7",
     "@types/node": "^22.5.4",

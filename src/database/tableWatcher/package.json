@@ -12,7 +12,6 @@
   "description": "",
   "devDependencies": {
     "@prisma/client": "^6.1.0",
-    "@types/eventsource": "^1.1.15",
     "@types/node": "^22.10.2",
     "prisma": "^6.1.0",
     "typescript": "^5.7.2"
@@ -20,11 +19,8 @@
   "files": [
     "dist"
   ],
-  "engines": {
-    "node": ">=16.13"
-  },
   "dependencies": {
-    "eventsource": "^3.0.2",
+    "eventsource": "^3.0.1",
     "pino": "^9.5.0"
   }
 }
