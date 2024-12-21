@@ -1,5 +1,5 @@
 import { execSync } from "child_process"
-import EventSource from "eventsource";
+import { EventSource } from "eventsource";
 import { LocalClient } from "dc-db-local";
 import { createSMDBClient } from "dc-db-smdb";
 import { CurrentTimestamp } from "./types";

@@ -1,5 +1,5 @@
 import { LocalClient, createLocalClient } from "dc-db-local";
-import EventSource from 'eventsource';
+import { EventSource } from 'eventsource';
 import { sync } from "./sync";
 import path from "path";
 import { startServer } from "./server";

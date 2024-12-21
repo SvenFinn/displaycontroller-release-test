@@ -36,7 +36,7 @@ export class TableWatcher extends EventEmitter {
         }
         events.onmessage = async (event: MessageEvent) => {
             logger.info("Received server state");
-            const curState = JSON.parse(event.data);
+            const curState = JSON.parse(event.data as string);
             if (curState != this.serverState) {
                 this.serverState = curState;
                 if (this.serverState) {
