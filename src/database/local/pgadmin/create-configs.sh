@@ -16,7 +16,7 @@ fi
 hostport=$(echo "${url_no_protocol/$userpass@/}" | cut -d"/" -f1)
 host=$(echo "$hostport" | cut -d":" -f1)
 port=$(echo "$hostport" | grep ":" | cut -d":" -f2)
-path=$(echo "$url_no_protocol" | grep "/" | cut -d"/" -f2-)
+path=$(echo "$url_no_protocol" | grep "/" | cut -d"/" -f2- | cut -d"?" -f1)
 
 echo -n '{
     "Servers": {
