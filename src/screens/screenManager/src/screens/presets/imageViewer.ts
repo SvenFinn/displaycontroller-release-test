@@ -31,17 +31,22 @@ export default async function imageViewer(screen: ViewerDbScreen): Promise<Scree
 }
 
 async function createFileList(path: string): Promise<string[]> {
-    const files = await fetch(`http://images/api/images/${path}`);
-    if (!files.ok) return [];
-    // Check if the response is a JSON object or HTML
-    const contentType = files.headers.get("content-type");
-    if (!contentType) return [];
-    if (!contentType.includes("application/json")) return [];
-    const fileList = await files.json();
-    if (!isDirectoryListing(fileList)) return [];
-    const mappedList = fileList.map(async (file) => {
-        if (file.type === "folder") return await createFileList(`${path}/${file.name}`);
-        return `${path}/${file.name}`;
-    });
-    return (await Promise.all(mappedList)).flat();
+    try {
+        const files = await fetch(`http://images/api/images/${path}`);
+        if (!files.ok) return [];
+        // Check if the response is a JSON object or HTML
+        const contentType = files.headers.get("content-type");
+        if (!contentType) return [];
+        if (!contentType.includes("application/json")) return [];
+        const fileList = await files.json();
+        if (!isDirectoryListing(fileList)) return [];
+        const mappedList = fileList.map(async (file) => {
+            if (file.type === "folder") return await createFileList(`${path}/${file.name}`);
+            return `${path}/${file.name}`;
+        });
+        return (await Promise.all(mappedList)).flat();
+    } catch (e) {
+        logger.error(`Failed to fetch files for path ${path}`);
+        return [];
+    }
 }
