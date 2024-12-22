@@ -4,6 +4,6 @@ services:
     hostname: reverse_proxy
     build: .
     ports:
-      - "80:80"
+      - "${APP_PORT}:80"
     networks:
       - displaycontroller

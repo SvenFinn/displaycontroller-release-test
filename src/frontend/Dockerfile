@@ -2,9 +2,7 @@ FROM node:latest AS base
 
 WORKDIR /app
 
-ARG SELF_DB_URL
-ARG MEYTON_DB_USER
-ARG MEYTON_DB_PASS
+ARG APP_PORT
 
 FROM base AS deps
 
@@ -26,7 +24,8 @@ COPY --from=screen-types . .
 
 WORKDIR /app/frontend
 COPY . .
-RUN npm run build;
+RUN export NEXT_PUBLIC_APP_PORT=$APP_PORT && \
+    npm run build;
 
 FROM base AS final
 

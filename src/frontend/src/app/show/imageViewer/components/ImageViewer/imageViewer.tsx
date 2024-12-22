@@ -11,7 +11,7 @@ interface ImageViewerProps {
 export default function ImageViewer({ options, onReady }: ImageViewerProps) {
     const host = typeof window !== "undefined" ? window.location.host : "localhost";
     const hostWithoutPort = host.split(":")[0];
-    const imageUrl = `http://${hostWithoutPort}:80/api/images/${options.file}`;
+    const imageUrl = `http://${hostWithoutPort}:${process.env.NEXT_PUBLIC_APP_PORT}/api/images/${options.file}`;
     return (
         <div className={styles.imageViewer}>
             <img src={imageUrl} alt="image" onLoad={onReady} className={styles.imageViewer} />

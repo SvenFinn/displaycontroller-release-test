@@ -10,3 +10,5 @@ services:
       additional_contexts:
         - range-types=../ranges/types
         - screen-types=../screens/screenManager/types
+      args:
+        - APP_PORT=${APP_PORT}

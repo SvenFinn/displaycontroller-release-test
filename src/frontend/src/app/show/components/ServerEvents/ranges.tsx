@@ -14,7 +14,7 @@ export default function RangeEvents({ action, ranges }: RangeEventsProps): React
     const dispatch = useAppDispatch();
     const host = typeof window !== "undefined" ? window.location.host : "localhost";
     const hostWithoutPort = host.split(":")[0];
-    const path = new URL(`http://${hostWithoutPort}:80/api/ranges/sse`);
+    const path = new URL(`http://${hostWithoutPort}:${process.env.NEXT_PUBLIC_APP_PORT}/api/ranges/sse`);
     path.searchParams.append("ranges", JSON.stringify(ranges));
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

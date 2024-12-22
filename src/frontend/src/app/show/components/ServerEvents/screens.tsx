@@ -13,7 +13,7 @@ export default function ScreenEvents({ action }: ScreenEventsProps) {
     const dispatch = useDispatch();
     const host = typeof window !== "undefined" ? window.location.host : "localhost";
     const hostWithoutPort = host.split(":")[0];
-    const path = new URL(`http://${hostWithoutPort}:80/api/screens/current/sse`);
+    const path = new URL(`http://${hostWithoutPort}:${process.env.NEXT_PUBLIC_APP_PORT}/api/screens/current/sse`);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function screensAction(data: any) {
