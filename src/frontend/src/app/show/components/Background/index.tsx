@@ -2,9 +2,9 @@
 
 import image from "./background.png"
 import style from "./background.module.css"
-import { useAppSelector } from "../../store/store"
+import { useAppSelector } from "../Screens/store/store"
 
-export function Background() {
+export default function Background() {
     const screens = useAppSelector((state) => state.screens);
     const isUnavailable = screens.every((screen) => screen === null);
     if (!isUnavailable) {

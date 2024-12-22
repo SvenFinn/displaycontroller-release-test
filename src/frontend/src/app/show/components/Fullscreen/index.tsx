@@ -1,7 +1,7 @@
-import React from "react";
+"use client";
+
 import styles from "./fullscreen.module.css";
 import icon from "./fullscreen.png";
-
 
 export default function FullscreenButton(): React.JSX.Element {
 

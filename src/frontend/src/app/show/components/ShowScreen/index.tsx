@@ -3,8 +3,8 @@
 import { ScreenAvailable } from "@shared/screens";
 import DrawTarget from "../../drawTarget/components/DrawTarget/drawTarget";
 import { useState } from "react";
-import { useAppSelector, useAppDispatch } from "../../store/store";
-import { screenReady } from "../../store/screensReducer";
+import { useAppSelector, useAppDispatch } from "../Screens/store/store";
+import { screenReady } from "../Screens/store/screensReducer";
 import styles from "./showScreen.module.css";
 import ImageViewer from "../../imageViewer/components/ImageViewer/imageViewer";
 import Evaluation from "../../evaluation/components/Evaluation";

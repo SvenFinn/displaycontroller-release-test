@@ -5,7 +5,7 @@ import styles from "./clock.module.css";
 
 export default function Clock({ locale }: { locale?: string }): React.JSX.Element {
     locale = locale || "de-DE";
-    const [time, setTime] = useState<string>(new Date().toLocaleTimeString(locale));
+    const [time, setTime] = useState<string>("00:00:00");
 
     useEffect(() => {
         const interval = setInterval(() => {

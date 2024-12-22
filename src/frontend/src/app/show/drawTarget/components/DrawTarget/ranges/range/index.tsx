@@ -6,6 +6,8 @@ import CurrentHit from "./currentHit"
 import DrawRange from "./drawRange"
 import SeriesList from "./seriesList"
 import Total from "./total"
+import { Shooter } from "@shared/ranges/shooter"
+import { useEffect, useState, useRef } from "react"
 
 interface DrawTargetRangeProps {
     highlightAssign: boolean,
@@ -14,12 +16,41 @@ interface DrawTargetRangeProps {
 
 export default function Range({ highlightAssign, id }: DrawTargetRangeProps): React.JSX.Element {
     const range = useAppSelector((state) => state.ranges[id]);
-    if (highlightAssign) return <></>
+    const [lastShooter, setLastShooter] = useState<null | Shooter>(null);
+    const firstActiveRender = useRef(true);
+    const rangeRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (!rangeRef.current) return;
+        if (!range || !range.active) {
+            rangeRef.current.style.animation = "none";
+            firstActiveRender.current = true;
+            return;
+        }
+        // Prevent highlight on the first render after the range is activated
+        if (firstActiveRender.current) {
+            firstActiveRender.current = false;
+            setLastShooter(range.shooter);
+            return;
+        }
+        if (highlightAssign) {
+            if (range.shooter !== null && JSON.stringify(range.shooter) !== JSON.stringify(lastShooter)) {
+                setLastShooter(range.shooter);
+                rangeRef.current.style.animation = "none";
+                setTimeout(() => {
+                    if (!rangeRef.current) return;
+                    rangeRef.current.style.animation = "";
+                }, 10);
+            }
+        }
+    }, [range, highlightAssign])
+
     if (!range || !range.active) return (
         <div></div>
     )
+
     return (
-        <div className={styles.range}>
+        <div className={styles.range} style={{ animation: "none" }} ref={rangeRef}>
             <RangeNr id={id} />
             <RangeName id={id} />
             <CurrentHit id={id} />

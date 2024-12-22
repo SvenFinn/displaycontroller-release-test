@@ -8,6 +8,21 @@ div.range {
     position: relative;
     display: flex;
     flex-direction: column;
+    animation-name: highlightAssign;
+    animation-duration: 2s;
+    animation-iteration-count: 5;
+    animation-direction: normal;
+    animation-timing-function: steps(1);
+}
+
+
+@keyframes highlightAssign {
+    0% {
+        background-color: #FFA000;
+    }
+    50% {
+        background-color: #FFFFFF;
+    }
 }
 
 div.rangeNumber {
