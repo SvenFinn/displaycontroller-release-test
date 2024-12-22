@@ -19,6 +19,11 @@ export async function checkCondition(localClient: LocalClient, screenId: number)
         logger.warn(`Screen ${screenId} is not a valid screen`);
         return false;
     }
+    if (screen.visibleFrom && screen.visibleFrom > new Date()) return false;
+    if (screen.visibleUntil) {
+        screen.visibleUntil.setDate(screen.visibleUntil.getDate() + 1);
+        if (screen.visibleUntil < new Date()) return false;
+    }
     if (!screen.condition) return true;
     switch (screen.condition.type) {
         case "all_ranges_free":

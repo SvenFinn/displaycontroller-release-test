@@ -5,8 +5,8 @@ export type BaseDbScreen = {
     preset: string;
     options: any;
     condition: Condition | null;
-    visibleFrom: Date;
-    visibleUntil: Date;
+    visibleFrom: Date | null;
+    visibleUntil: Date | null;
     duration: number;
     createdAt: Date;
     updatedAt: Date;
