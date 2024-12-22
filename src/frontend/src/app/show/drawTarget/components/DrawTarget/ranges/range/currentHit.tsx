@@ -1,3 +1,4 @@
+import ScaleText from "@frontend/app/show/components/ScaleText";
 import { getHitString, getRoundName } from "../../../../../lib/ranges";
 import { useAppSelector } from "../../ranges-store/store"
 import styles from "./range.module.css"
@@ -15,7 +16,7 @@ export default function CurrentHit({ id }: CurrentHitProps): React.JSX.Element {
     return (
         <div className={styles.currentShot}>
             <ShotArrowW id={id} />
-            {hit}
+            <ScaleText text={hit} />
         </div>
     )
 }
