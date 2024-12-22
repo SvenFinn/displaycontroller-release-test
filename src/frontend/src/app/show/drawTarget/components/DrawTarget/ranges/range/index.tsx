@@ -45,7 +45,7 @@ export default function Range({ highlightAssign, id }: DrawTargetRangeProps): Re
         }
     }, [range, highlightAssign])
 
-    if (!range || !range.active) return (
+    if (id < 1 || !range || !range.active) return (
         <div></div>
     )
 
