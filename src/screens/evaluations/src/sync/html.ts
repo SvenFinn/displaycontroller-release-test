@@ -65,6 +65,7 @@ async function rewriteHTMLFile(inputFName: string, outputFName: string): Promise
     if (body != null) {
         body.style.fontSize = "1.667vh";
         body.style.overflow = "hidden";
+        body.style.userSelect = "none";
     }
 
     // Pin credits table to bottom
