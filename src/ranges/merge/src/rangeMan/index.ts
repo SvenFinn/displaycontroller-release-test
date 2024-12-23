@@ -75,8 +75,10 @@ export class RangeManager {
             return this.ranges.get(rangeId)?.isFree() || false;
         }).sort((a, b) => a - b);
     }
-    public getRanges(): number[] {
-        return [...this.ranges.keys()].sort((a, b) => a - b);
+    public getActiveRanges(): number[] {
+        return [...this.ranges.keys()].filter((rangeId) => {
+            return this.ranges.get(rangeId)?.isActive() || false;
+        }).sort((a, b) => a - b);
     }
 }
 

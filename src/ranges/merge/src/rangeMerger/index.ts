@@ -66,6 +66,10 @@ export class RangeMerger extends EventEmitter {
         return this.rangeData.shooter === null;
     }
 
+    public isActive(): boolean {
+        return this.rangeData.active;
+    }
+
     private resend() {
         this.emit("update", this.rangeData);
         if (!this.rangeData.active) {

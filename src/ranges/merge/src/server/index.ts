@@ -7,7 +7,7 @@ const app: Express = express();
 const localClient: LocalClient = new LocalClient();
 
 app.get('/api/ranges(/)?', async (req: Request, res: Response) => {
-    res.status(200).send(rangeManager.getRanges());
+    res.status(200).send(rangeManager.getActiveRanges());
 });
 
 app.get('/api/ranges/free(/)?', async (req: Request, res: Response) => {
