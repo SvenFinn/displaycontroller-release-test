@@ -5,3 +5,9 @@ span.measure {
     width: auto;
     white-space: nowrap;
 }
+
+div.scaleText {
+    position:relative;
+    width: 100%;
+    overflow-x:hidden;
+}

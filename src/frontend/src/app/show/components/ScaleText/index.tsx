@@ -25,10 +25,10 @@ export default function ScaleText({ text, }: ScaleTextProps): React.JSX.Element 
     }, [text]);
 
     return (
-        <>
+        <div className={styles.scaleText}>
             <span ref={ref} className={styles.measure}>{text}</span>
             <span className={styles.scaleText} style={{ fontSize: `${fontSize}%` }}>{text}</span>
-        </>
+        </div>
     )
 
 }
