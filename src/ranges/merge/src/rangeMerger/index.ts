@@ -62,7 +62,7 @@ export class RangeMerger extends EventEmitter {
     }
 
     public isFree(): boolean {
-        if (this.rangeData.active === false) return true;
+        if (this.rangeData.active === false) return false;
         return this.rangeData.shooter === null;
     }
 
