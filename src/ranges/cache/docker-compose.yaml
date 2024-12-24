@@ -2,6 +2,7 @@ services:
   dc-ranges-cache:
     container_name: dc-ranges-cache
     hostname: ranges-cache
+    image: ghcr.io/svenfinn/dc-ranges-cache
     networks:
       - displaycontroller
     build:

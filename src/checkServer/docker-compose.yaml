@@ -2,6 +2,7 @@ services:
   dc-check-server:
     container_name: dc-check-server
     hostname: check-server
+    image: ghcr.io/svenfinn/dc-check-server
     networks:
       - displaycontroller
     build:

@@ -2,6 +2,7 @@ services:
   dc-ranges-log:
     container_name: dc-ranges-log
     hostname: ranges-log
+    image: ghcr.io/svenfinn/dc-ranges-log
     build:
       context: .
       dockerfile: Dockerfile

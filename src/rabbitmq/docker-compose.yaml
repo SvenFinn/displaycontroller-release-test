@@ -1,6 +1,7 @@
 services:
   dc-rabbitmq:
     container_name: dc-rabbitmq
+    image: ghcr.io/svenfinn/dc-rabbitmq
     hostname: rabbitmq
     build:
       context: .

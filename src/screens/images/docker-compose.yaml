@@ -1,6 +1,7 @@
 services:
   dc-images:
     container_name: dc-images
+    image: ghcr.io/svenfinn/dc-images
     hostname: images
     networks:
       - displaycontroller

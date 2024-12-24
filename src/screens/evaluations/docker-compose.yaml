@@ -1,6 +1,7 @@
 services:
   dc-evaluations:
     hostname: evaluations
+    image: ghcr.io/svenfinn/dc-evaluations
     container_name: dc-evaluations
     networks:
       - displaycontroller

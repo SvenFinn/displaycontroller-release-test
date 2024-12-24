@@ -1,7 +1,8 @@
 services:
   dc-sync-time:
     container_name: dc-sync-time
-    hostname: sync_time
+    image: ghcr.io/svenfinn/dc-sync-time
+    hostname: sync-time
     build:
       context: .
       dockerfile: Dockerfile

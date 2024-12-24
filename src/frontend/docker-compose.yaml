@@ -1,6 +1,7 @@
 services:
   dc-frontend:
     hostname: frontend
+    image: ghcr.io/svenfinn/dc-frontend
     container_name: dc-frontend
     networks:
       - displaycontroller

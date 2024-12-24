@@ -1,6 +1,7 @@
 services:
   dc-screens-man:
     container_name: dc-screens-man
+    image: ghcr.io/svenfinn/dc-screens-man
     hostname: screens-manager
     networks:
       - displaycontroller

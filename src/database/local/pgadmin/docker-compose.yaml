@@ -1,6 +1,6 @@
 services:
   dc-pgadmin:
-    #image: dpage/pgadmin4
+    image: ghcr.io/svenfinn/dc-pgadmin
     build:
       context: .
       dockerfile: Dockerfile
