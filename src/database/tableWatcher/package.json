@@ -21,6 +21,6 @@
   ],
   "dependencies": {
     "eventsource": "^3.0.1",
-    "pino": "^9.5.0"
+    "pino": "^9.6.0"
   }
 }
