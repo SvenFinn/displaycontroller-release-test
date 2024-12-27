@@ -19,6 +19,9 @@ export default function ShowScreen({ id }: ShowScreenProps): React.JSX.Element {
     const dispatch = useAppDispatch();
 
     if (!screen) {
+        if (visible) {
+            setVisible(false);
+        }
         return <></>;
     }
 
@@ -28,7 +31,7 @@ export default function ShowScreen({ id }: ShowScreenProps): React.JSX.Element {
     }
 
     return (
-        <div className={styles.showScreen} style={{ visibility: visible ? "visible" : "hidden" }}>
+        <div className={styles.showScreen} style={{ visibility: visible ? "visible" : "hidden" }} id={`screen-${id}`}>
             {getScreenComponent(screen, handleReady)}
         </div>
     );
