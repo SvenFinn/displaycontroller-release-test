@@ -1,3 +1,5 @@
+name: displaycontroller
+
 include:
   - proxy/docker-compose.yaml
   - database/local/docker-compose.yaml
