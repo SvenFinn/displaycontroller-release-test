@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import ServerEvents from "./base";
 import { isScreen, Screen } from "@shared/screens";
 import { ActionCreatorWithPayload } from "@reduxjs/toolkit";
+import { useEffect, useState } from "react";
 
 interface ScreenEventsProps {
     action: ActionCreatorWithPayload<Screen>;
@@ -11,9 +12,20 @@ interface ScreenEventsProps {
 
 export default function ScreenEvents({ action }: ScreenEventsProps) {
     const dispatch = useDispatch();
-    const host = typeof window !== "undefined" ? window.location.host : "localhost";
-    const hostWithoutPort = host.split(":")[0];
-    const path = new URL(`http://${hostWithoutPort}:${process.env.NEXT_PUBLIC_APP_PORT}/api/screens/current/sse`);
+    const [host, setHost] = useState<string>("");
+
+    useEffect(() => {
+        console.log(window.location.host);
+        setHost(window.location.host.split(":")[0]);
+    }, []);
+
+    if (host === "") {
+        return <></>;
+    }
+
+    console.log(`http://${host}:${process.env.NEXT_PUBLIC_APP_PORT}/api/screens/current/sse`);
+
+    const path = new URL(`http://${host}:${process.env.NEXT_PUBLIC_APP_PORT}/api/screens/current/sse`);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function screensAction(data: any) {
