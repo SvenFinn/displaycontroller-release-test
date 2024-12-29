@@ -6,7 +6,7 @@ FROM base AS local-deps
 
 WORKDIR /app/database/local
 COPY --from=local-db . .
-RUN npm ci --loglevel=info;\
+RUN npm ci --loglevel=info && \
     npm run build;
 
 WORKDIR /app/logger

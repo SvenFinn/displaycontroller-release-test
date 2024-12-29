@@ -10,17 +10,17 @@ FROM base AS local-deps
 
 WORKDIR /app/database/local
 COPY --from=local-db . .
-RUN npm ci --loglevel=info;\
+RUN npm ci --loglevel=info && \
     npm run build;
 
 WORKDIR /app/database/ssmdb2
 COPY --from=ssmdb2 . .
-RUN npm ci --loglevel=info;\
+RUN npm ci --loglevel=info && \
     npm run build;
 
 WORKDIR /app/database/tableWatcher
 COPY --from=table-watcher . .
-RUN npm ci --loglevel=info;\
+RUN npm ci --loglevel=info && \
     npm run build;
 
 WORKDIR /app/logger
