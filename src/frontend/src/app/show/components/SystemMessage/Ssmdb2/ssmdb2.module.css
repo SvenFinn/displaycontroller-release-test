@@ -1,0 +1,16 @@
+
+div.ssmdb2 {
+    font-size: 5vh;
+    text-align: center;
+    display:flex;
+    flex-direction: column;
+    height:100%;
+}
+
+div.ssmdb2 img{
+    display: flex;
+    flex-shrink: 1;
+    justify-content: center;
+    min-height: 0%;
+    object-fit:contain;
+}

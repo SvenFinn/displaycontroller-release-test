@@ -13,3 +13,6 @@ services:
         - screen-types=../screens/screenManager/types
       args:
         - APP_PORT=${APP_PORT}
+        - MAX_MEYTON_VERSION_STR=${MAX_MEYTON_VERSION_STR}
+        - MIN_MEYTON_VERSION_STR=${MIN_MEYTON_VERSION_STR}
+        - APP_VERSION=${APP_VERSION}

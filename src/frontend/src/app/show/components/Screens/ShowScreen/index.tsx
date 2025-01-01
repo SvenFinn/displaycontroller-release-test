@@ -8,6 +8,7 @@ import { screenReady } from "../store/screensReducer";
 import styles from "./showScreen.module.css";
 import ImageViewer from "../../../imageViewer/components/ImageViewer/imageViewer";
 import Evaluation from "../../../evaluation/components/Evaluation";
+import SystemMessage from "../../SystemMessage";
 
 interface ShowScreenProps {
     id: number
@@ -47,6 +48,8 @@ function getScreenComponent(screen: ScreenAvailable, setIsReady: () => void): Re
             return <ImageViewer options={screen.options} onReady={setIsReady} />;
         case "evaluation":
             return <Evaluation options={screen.options} onReady={setIsReady} />;
+        case "systemMessage":
+            return <SystemMessage options={screen.options} onReady={setIsReady} />;
         default:
             setTimeout(setIsReady, 500);
             return <h1>Unknown preset: {screen.preset}</h1>;
