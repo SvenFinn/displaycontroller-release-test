@@ -1,21 +1,11 @@
 import { createSocket, RemoteInfo } from "dgram";
-import pino from "pino";
+import { logger } from "dc-logger";
 import { RangeProxyType } from "./types";
 import amqp from "amqplib";
 import { decode } from "iconv-lite";
 import dotenv from "dotenv";
 
 dotenv.config();
-
-const logger = pino({
-    level: process.env.LOG_LEVEL || "info",
-    transport: {
-        target: 'pino-pretty',
-        options: {
-            colorize: true
-        }
-    }
-});
 
 if (!process.env.MULTICAST_MSG_MIN_LENGTH) {
     logger.error("MULTICAST_MSG_MIN_LENGTH is not defined");
