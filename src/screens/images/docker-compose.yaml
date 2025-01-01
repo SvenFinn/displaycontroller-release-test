@@ -12,6 +12,3 @@ services:
         - logger=../../logger
     volumes:
       - "./files:/app/files"
-    depends_on:
-      dc-db-migrate:
-        condition: service_completed_successfully
