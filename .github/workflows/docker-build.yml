@@ -108,17 +108,17 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v4
 
-      - name: Install yq
-        run: |
-          sudo apt-get update
-          sudo apt-get install yq jq -y
+      #- name: Install yq
+      #  run: |
+      #    sudo apt-get update
+      #    sudo apt-get install yq jq -y
 
       - name: Determine services
         id: services
         run: |
           cd src
-          config=$(docker compose config 2>/dev/null)
-          services=$(echo "$config" | yq '.services | to_entries | map(select(.value.image | test("^ghcr\\.io"))) | .[].key')
+          config=$(docker compose config --format json 2>/dev/null)
+          services=$(echo "$config" | jq '.services | to_entries | map(select(.value.image | test("^ghcr\\.io"))) | .[].key')
 
           # Convert the service names into a properly formatted JSON array
           servicesJson=$(echo "$services" | jq -R -s -c 'split("\n") | map(select(length > 0) | gsub("^\"|\"$"; ""))')          # Output the JSON to a file (for debugging purposes) and set it in the environment
@@ -135,10 +135,10 @@ jobs:
         service: ${{fromJson(needs.prep-matrix.outputs.matrix)}}
 
     steps:
-      - name: Install yq
-        run: |
-          sudo apt-get update
-          sudo apt-get install yq jq -y
+      #- name: Install yq
+      #  run: |
+      #    sudo apt-get update
+      #    sudo apt-get install yq jq -y
 
       - name: Checkout the repository
         uses: actions/checkout@v4
@@ -153,7 +153,7 @@ jobs:
             export $arg
           done
 
-          config=$(docker compose config ${{ matrix.service }} 2>/dev/null | yq -r '.services."${{ matrix.service }}"')
+          config=$(docker compose config --format json ${{ matrix.service }} 2>/dev/null | jq -r '.services."${{ matrix.service }}"')
           echo $config
           image=$(echo "$config" | jq -r -c .image)
           context=$(echo "$config" | jq -r -c .build.context)
