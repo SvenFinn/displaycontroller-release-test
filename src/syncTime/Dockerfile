@@ -8,6 +8,11 @@ ARG MEYTON_DB_PASS
 
 FROM base AS local-deps
 
+WORKDIR /app/logger
+COPY --from=logger . .
+RUN npm ci --loglevel=info && \
+    npm run build;
+
 WORKDIR /app/database/local
 COPY --from=local-db . .
 RUN npm ci --loglevel=info && \
@@ -15,11 +20,6 @@ RUN npm ci --loglevel=info && \
 
 WORKDIR /app/database/smdb
 COPY --from=smdb-db . .
-RUN npm ci --loglevel=info && \
-    npm run build;
-
-WORKDIR /app/logger
-COPY --from=logger . .
 RUN npm ci --loglevel=info && \
     npm run build;
 
