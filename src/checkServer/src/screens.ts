@@ -21,7 +21,7 @@ export async function sendSystemScreen(serverState: AdvServerState, channel: amq
                 type: "serverIncompatible",
                 serverVersion: serverState.version
             },
-            duration: 10,
+            duration: 10000,
             id: MAX_DB_NUM,
             subId: 0
         };
@@ -36,7 +36,7 @@ export async function sendSystemScreen(serverState: AdvServerState, channel: amq
             options: {
                 type: "ssmdb2"
             },
-            duration: 30,
+            duration: 30000,
             id: MAX_DB_NUM,
             subId: 0
         };
