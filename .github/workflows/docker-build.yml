@@ -6,21 +6,101 @@ on:
   push:
     branches:
       - "development"
+  create:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to tag the Docker image with"
+        required: true
+        default: "development"
 
 permissions:
   contents: read
   packages: write
 
-# Defines two custom environment variables for the workflow. These are used for the Container registry domain, and a name for the Docker image that this workflow builds.
-env:
-  REGISTRY: ghcr.io
-
-# There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
 jobs:
+  prep-args:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push' || (github.event_name == 'create' && github.event.ref_type == 'tag')
+
+    outputs:
+      args: ${{ steps.args.outputs.BUILD_ARGS }}
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+
+      - name: Determine APP_VERSION
+        id: app-version
+        run: |
+          if [ ! -z "${{ github.event.inputs.version }}" ]; then
+            app_version="${{ github.event.inputs.version }}"
+          else
+            branch=$(git branch --show-current)
+            if [ "$branch" = "development" ]; then
+              app_version="development"
+            else
+              app_version=$(git describe --tags --abbrev=0)
+            fi
+          fi
+          echo "app_version=$app_version"
+          echo "app_version=$app_version" >> $GITHUB_OUTPUT
+
+      - name: Prep arguments
+        id: args
+        env:
+          APP_VERSION: ${{ steps.app-version.outputs.app_version }}
+          SELF_DB_URL: ${{ vars.SELF_DB_URL }}
+          SERVER_STATE_HOST: ${{ vars.SERVER_STATE_HOST }}
+          MIN_MEYTON_VERSION: ${{ vars.MIN_MEYTON_VERSION }}
+          MIN_MEYTON_VERSION_STR: ${{ vars.MIN_MEYTON_VERSION_STR }}
+          MAX_MEYTON_VERSION: ${{ vars.MAX_MEYTON_VERSION }}
+          MAX_MEYTON_VERSION_STR: ${{ vars.MAX_MEYTON_VERSION_STR }}
+          MEYTON_SSH_USER: ${{ vars.MEYTON_SSH_USER }}
+          MEYTON_SSH_PASS: ${{ vars.MEYTON_SSH_PASS }}
+          MEYTON_DB_USER: ${{ vars.MEYTON_DB_USER }}
+          MEYTON_DB_PASS: ${{ vars.MEYTON_DB_PASS }}
+          DISCIPLINE_DEFAULT_COLOR: ${{ vars.DISCIPLINE_DEFAULT_COLOR }}
+          MULTICAST_MSG_MIN_LENGTH: ${{ vars.MULTICAST_MSG_MIN_LENGTH }}
+          LOG_LEVEL: ${{ vars.LOG_LEVEL }}
+          APP_PORT: ${{ vars.APP_PORT }}
+        run: |
+          echo "APP_VERSION=$app_version" > /tmp/args
+          echo "SELF_DB_URL=$SELF_DB_URL" >> /tmp/args
+          echo "SERVER_STATE_HOST=$SERVER_STATE_HOST" >> /tmp/args
+          echo "MIN_MEYTON_VERSION=$MIN_MEYTON_VERSION" >> /tmp/args
+          echo "MIN_MEYTON_VERSION_STR=$MIN_MEYTON_VERSION_STR" >> /tmp/args
+          echo "MAX_MEYTON_VERSION=$MAX_MEYTON_VERSION" >> /tmp/args
+          echo "MAX_MEYTON_VERSION_STR=$MAX_MEYTON_VERSION_STR" >> /tmp/args
+          echo "MEYTON_SSH_USER=$MEYTON_SSH_USER" >> /tmp/args
+          echo "MEYTON_SSH_PASS=$MEYTON_SSH_PASS" >> /tmp/args
+          echo "MEYTON_DB_USER=$MEYTON_DB_USER" >> /tmp/args
+          echo "MEYTON_DB_PASS=$MEYTON_DB_PASS" >> /tmp/args
+          echo "DISCIPLINE_DEFAULT_COLOR=$DISCIPLINE_DEFAULT_COLOR" >> /tmp/args
+          echo "MULTICAST_MSG_MIN_LENGTH=$MULTICAST_MSG_MIN_LENGTH" >> /tmp/args
+          echo "LOG_LEVEL=$LOG_LEVEL" >> /tmp/args
+          echo "APP_PORT=$APP_PORT" >> /tmp/args
+          echo "BUILD_ARGS=$(cat /tmp/args | base64 --wrap=0)"
+          echo "BUILD_ARGS=$(cat /tmp/args | base64 --wrap=0)" >> $GITHUB_OUTPUT
+
+      - name: Validate that all arguments exist
+        run: |
+          cd src
+          args=$(echo "${{ steps.args.outputs.BUILD_ARGS }}" | base64 --decode)
+          for arg in $args; do
+            export $arg
+          done
+          docker compose config 1>/dev/null 2>/tmp/docker-compose-errors
+          errors=$(cat /tmp/docker-compose-errors)
+          if [ ! -z "$errors" ]; then
+            echo "$errors"
+            exit 1
+          fi
+
   prep-matrix:
     runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push' || (github.event_name == 'create' && github.event.ref_type == 'tag')
 
-    # This job is responsible for setting up the matrix of build jobs that will run in parallel.
     outputs:
       matrix: ${{ steps.services.outputs.services }}
 
@@ -46,7 +126,9 @@ jobs:
           echo "$servicesJson"
 
   build:
-    needs: prep-matrix
+    needs:
+      - prep-args
+      - prep-matrix
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -63,21 +145,13 @@ jobs:
 
       - name: Generate build config
         id: build-config
-        env:
-          SELF_DB_URL: ${{ vars.SELF_DB_URL }}
-          SERVER_STATE_HOST: ${{ vars.SERVER_STATE_HOST }}
-          MIN_MEYTON_VERSION: ${{ vars.MIN_MEYTON_VERSION }}
-          MAX_MEYTON_VERSION: ${{ vars.MAX_MEYTON_VERSION }}
-          MEYTON_SSH_USER: ${{ vars.MEYTON_SSH_USER }}
-          MEYTON_SSH_PASS: ${{ vars.MEYTON_SSH_PASS }}
-          MEYTON_DB_USER: ${{ vars.MEYTON_DB_USER }}
-          MEYTON_DB_PASS: ${{ vars.MEYTON_DB_PASS }}
-          DISCIPLINE_DEFAULT_COLOR: ${{ vars.DISCIPLINE_DEFAULT_COLOR }}
-          MULTICAST_MSG_MIN_LENGTH: ${{ vars.MULTICAST_MSG_MIN_LENGTH }}
-          LOG_LEVEL: ${{ vars.LOG_LEVEL }}
-          APP_PORT: ${{ vars.APP_PORT }}
         run: |
           cd src
+
+          args=$(echo "${{ needs.prep-args.outputs.args }}" | base64 --decode)
+          for arg in $args; do
+            export $arg
+          done
 
           config=$(docker compose config ${{ matrix.service }} 2>/dev/null | yq -r '.services."${{ matrix.service }}"')
           echo $config
