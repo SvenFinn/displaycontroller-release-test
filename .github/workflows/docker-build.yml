@@ -6,6 +6,13 @@ on:
   push:
     branches:
       - "development"
+  create:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to tag the Docker image with"
+        required: true
+        default: "development"
 
 permissions:
   contents: read
@@ -17,6 +24,37 @@ env:
 
 # There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
 jobs:
+  prep-args:
+    runs-on: ubuntu-latest
+    #outputs:
+    #  args: ${{ steps.services.outputs.args }}
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install yq jq -y
+
+      # Determine APP_VERSION
+      - name: Determine APP_VERSION
+        id: app-version
+        run: |
+          if [ ! -z "${{ github.event.inputs.version }}" ]; then
+            app_version="${{ github.event.inputs.version }}"
+          else
+            branch=$(git branch --show-current)
+            if [ "$branch" = "development" ]; then
+              app_version="development"
+            else
+              app_version=$(git describe --tags --abbrev=0)
+            fi
+          fi
+          echo "app_version=$app_version"
+          echo "app_version=$app_version" >> $GITHUB_OUTPUT
+
   prep-matrix:
     runs-on: ubuntu-latest
 
