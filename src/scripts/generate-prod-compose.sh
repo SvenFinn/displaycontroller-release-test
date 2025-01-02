@@ -13,8 +13,7 @@ config=$(echo "$config" | yq 'del(.services[].build)' -y )
 config=$(echo "$config" | yq --arg APP_TAG "$APP_TAG" '(.services[].image | select(test("^ghcr"))) |= . + ":" + $APP_TAG' -y)
 
 # Replace all occurrences of cwd with $PROD_PATH
-# Example: turn /home/svenfinn/Dokumente/Development/displaycontroller/src/screens/images/files into /app/src/screens/images/files
-config=$(echo "$config" | yq --arg PROD_PATH "$PROD_PATH" --arg CWD "$(pwd)" '.services |= map_values(.volumes[]?.source |= gsub("^" + $CWD; $PROD_PATH))' -y)
+config=$(echo "$config" | yq --arg PROD_PATH "$PROD_PATH/volumes" --arg CWD "$(pwd)" '.services |= map_values(.volumes[]?.source |= gsub("^" + $CWD; $PROD_PATH))' -y)
 
 cd - > /dev/null
 
