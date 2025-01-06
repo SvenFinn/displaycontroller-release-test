@@ -1,4 +1,4 @@
-FROM node:latest AS base
+FROM node:alpine AS base
 
 WORKDIR /app
 
@@ -38,11 +38,13 @@ RUN npm i --loglevel=info --install-links;
 
 COPY . .
 RUN npm run build && \
-    echo "SELF_DB_URL=$SELF_DB_URL\n \
-    MEYTON_DB_USER=$MEYTON_DB_USER\n \
-    MEYTON_DB_PASS=$MEYTON_DB_PASS\n" > dist/.env;
+    echo "SELF_DB_URL=$SELF_DB_URL" > dist/.env &&  \
+    echo "MEYTON_DB_USER=$MEYTON_DB_USER" >> dist/.env && \
+    echo "MEYTON_DB_PASS=$MEYTON_DB_PASS" >> dist/.env;
 
 FROM base AS final
+
+RUN apk add --no-cache --update openssl # Required for prisma 
 
 COPY --from=build /app/syncTime/dist ./
 COPY --from=deps /app/syncTime/node_modules ./node_modules

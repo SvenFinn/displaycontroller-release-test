@@ -1,4 +1,4 @@
-FROM node:latest AS base
+FROM node:alpine AS base
 
 WORKDIR /app
 
@@ -40,17 +40,15 @@ WORKDIR /app/checkServer
 
 COPY . .
 RUN npm run build && \
-    echo "MIN_MEYTON_VERSION=$MIN_MEYTON_VERSION\n \
-    MAX_MEYTON_VERSION=$MAX_MEYTON_VERSION\n \
-    MEYTON_SSH_USER=$MEYTON_SSH_USER\n \
-    MEYTON_SSH_PASS=$MEYTON_SSH_PASS\n \
-    SELF_DB_URL=$SELF_DB_URL" > dist/.env;
+    echo "MIN_MEYTON_VERSION=$MIN_MEYTON_VERSION" > dist/.env && \
+    echo "MAX_MEYTON_VERSION=$MAX_MEYTON_VERSION" >> dist/.env && \
+    echo "MEYTON_SSH_USER=$MEYTON_SSH_USER" >> dist/.env && \
+    echo "MEYTON_SSH_PASS=$MEYTON_SSH_PASS" >> dist/.env && \
+    echo "SELF_DB_URL=$SELF_DB_URL" >> dist/.env;
 
 FROM base AS final
 
-RUN apt-get update; apt-get install sshpass netcat-openbsd -y; \
-    apt-get clean; \
-    rm -rf /var/lib/apt/lists/*;
+RUN apk add --update --no-cache netcat-openbsd sshpass openssh-client
 
 WORKDIR /app
 

@@ -3,7 +3,7 @@ include:
 
 services:
   dc-database:
-    image: postgres:latest
+    image: postgres:alpine
     container_name: dc-database
     hostname: database
     networks:

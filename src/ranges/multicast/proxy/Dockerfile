@@ -1,4 +1,4 @@
-FROM node:latest AS base
+FROM node:alpine AS base
 
 ARG MULTICAST_MSG_MIN_LENGTH
 

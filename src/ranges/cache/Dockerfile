@@ -1,4 +1,4 @@
-FROM node:latest AS base
+FROM node:alpine AS base
 
 WORKDIR /app
 
@@ -49,15 +49,18 @@ WORKDIR /app/ranges/cache
 
 COPY . .
 RUN npm run build && \
-    echo "SELF_DB_URL=$SELF_DB_URL\n \
-    TARGET_DEFAULT_COLOR=$TARGET_DEFAULT_COLOR\n \
-    MEYTON_DB_PASS=$MEYTON_DB_PASS\n \
-    MEYTON_DB_USER=$MEYTON_DB_USER" > dist/.env;
+    echo "SELF_DB_URL=$SELF_DB_URL" > dist/.env &&  \
+    echo "TARGET_DEFAULT_COLOR=$TARGET_DEFAULT_COLOR" >> dist/.env && \
+    echo "MEYTON_DB_USER=$MEYTON_DB_USER" >> dist/.env && \
+    echo "MEYTON_DB_PASS=$MEYTON_DB_PASS" >> dist/.env;
+
 COPY ./package.json dist/
 
 FROM base AS final
 
 WORKDIR /app
+
+RUN apk add --update --no-cache openssl # Required for prisma
 
 COPY --from=build /app/ranges/cache/dist ./
 COPY --from=deps /app/ranges/cache/node_modules ./node_modules

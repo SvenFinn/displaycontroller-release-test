@@ -1,4 +1,4 @@
-FROM node:latest AS base
+FROM node:alpine AS base
 
 WORKDIR /app
 
@@ -43,18 +43,16 @@ WORKDIR /app/ranges/log
 
 COPY . .
 RUN npm run build && \
-    echo "SELF_DB_URL=$SELF_DB_URL\n \
-    MEYTON_SSH_USER=$MEYTON_SSH_USER\n \
-    MEYTON_SSH_PASS=$MEYTON_SSH_PASS" > dist/.env;
+    echo "SELF_DB_URL=$SELF_DB_URL" > dist/.env &&  \
+    echo "MEYTON_SSH_USER=$MEYTON_SSH_USER" >> dist/.env && \
+    echo "MEYTON_SSH_PASS=$MEYTON_SSH_PASS" >> dist/.env;
 COPY src/logReader/range-logs.sh dist/log/src/logReader/
 
 FROM base AS final
 
 WORKDIR /app
 
-RUN apt-get update; apt-get install sshpass -y; \
-    apt-get clean; \
-    rm -rf /var/lib/apt/lists/*;
+RUN apk add --update --no-cache sshpass
 
 COPY --from=build /app/ranges/log/dist ./
 COPY --from=deps /app/ranges/log/node_modules ./node_modules
