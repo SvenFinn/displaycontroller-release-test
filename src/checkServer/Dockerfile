@@ -48,7 +48,7 @@ RUN npm run build && \
 
 FROM base AS final
 
-RUN apk add --update --no-cache netcat-openbsd sshpass
+RUN apk add --update --no-cache netcat-openbsd sshpass openssh-client
 
 WORKDIR /app
 
