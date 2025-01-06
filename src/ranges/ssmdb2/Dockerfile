@@ -1,4 +1,4 @@
-FROM node:latest AS base
+FROM node:alpine AS base
 
 WORKDIR /app
 
@@ -48,12 +48,14 @@ WORKDIR /app/ranges/ssmdb2
 
 COPY . .
 RUN npm run build && \
-    echo "SELF_DB_URL=$SELF_DB_URL\n \
-    MEYTON_DB_PASS=$MEYTON_DB_PASS\n \
-    MEYTON_DB_USER=$MEYTON_DB_USER" > dist/.env;
+    echo "SELF_DB_URL=$SELF_DB_URL" > dist/.env &&  \
+    echo "MEYTON_DB_USER=$MEYTON_DB_USER" >> dist/.env && \
+    echo "MEYTON_DB_PASS=$MEYTON_DB_PASS" >> dist/.env;
 FROM base AS final
 
 WORKDIR /app
+
+RUN apk add --no-cache --update openssl # Required for prisma
 
 COPY --from=build /app/ranges/ssmdb2/dist ./
 COPY --from=deps /app/ranges/ssmdb2/node_modules ./node_modules

@@ -1,4 +1,4 @@
-FROM node:latest AS base
+FROM node:alpine AS base
 
 WORKDIR /app
 
@@ -35,9 +35,7 @@ RUN npm run build && \
 
 FROM base AS final
 
-RUN apt-get update; apt-get install smbclient -y;\
-    apt-get clean; \
-    rm -rf /var/lib/apt/lists/*;
+RUN apk add --no-cache samba-client
 
 COPY --from=build /app/screens/evaluations/dist ./
 COPY --from=deps /app/screens/evaluations/node_modules ./node_modules

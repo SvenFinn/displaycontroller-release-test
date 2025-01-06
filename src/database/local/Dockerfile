@@ -1,4 +1,4 @@
-FROM node:latest AS base
+FROM node:alpine AS base
 
 WORKDIR /app
 
@@ -22,10 +22,10 @@ COPY src/entrypoint.sh schema.prisma dist/
 
 FROM base AS final
 
-RUN apt-get update && apt-get install netcat-openbsd -y
+RUN apk add --no-cache --update netcat-openbsd
 
 COPY --from=build /app/dist ./
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/package.json ./package.json
 
-CMD ["bash", "entrypoint.sh"]
+CMD ["sh", "entrypoint.sh"]

@@ -1,4 +1,4 @@
-FROM node:latest AS base
+FROM node:alpine AS base
 
 WORKDIR /app
 
@@ -28,9 +28,7 @@ COPY src/img dist/src/img
 
 FROM base AS final
 
-RUN apt-get update; apt-get install ghostscript graphicsmagick -y; \
-    apt-get clean; \
-    rm -rf /var/lib/apt/lists/*;
+RUN apk add --no-cache --update ghostscript graphicsmagick
 
 COPY --from=build /app/screens/images/dist ./
 COPY --from=deps /app/screens/images/node_modules ./node_modules
