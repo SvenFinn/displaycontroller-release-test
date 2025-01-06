@@ -5,6 +5,7 @@ import styles from './logo.module.css';
 
 export default function Logo(): React.JSX.Element {
     const [host, setHost] = useState<string>("");
+    const [cacheBlock, setCacheBlock] = useState<string>(crypto.randomUUID());
 
     useEffect(() => {
         setHost(window.location.host.split(":")[0]);
@@ -13,7 +14,16 @@ export default function Logo(): React.JSX.Element {
     if (host === "") {
         return <></>;
     }
+
+    const logo = `http://${host}:${process.env.NEXT_PUBLIC_APP_PORT}/api/images/icon.png?cache=${cacheBlock}`;
+
+    function onImageError(event: React.SyntheticEvent<HTMLImageElement, Event>) {
+        if (event.currentTarget.naturalHeight === 0 && event.currentTarget.naturalWidth === 0) {
+            setCacheBlock(crypto.randomUUID());
+        }
+    }
+
     return (
-        <img src={`http://${host}:${process.env.NEXT_PUBLIC_APP_PORT}/api/images/icon.png`} alt="Logo" className={styles.logo} />
+        <img src={`http://${host}:${process.env.NEXT_PUBLIC_APP_PORT}/api/images/icon.png`} alt="Logo" className={styles.logo} onError={onImageError} />
     );
 }
