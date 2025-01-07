@@ -5,8 +5,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "postinstall": "npx prisma generate"
+    "build": "npm run generate && tsc",
+    "generate": "npx prisma generate"
   },
   "author": "",
   "license": "ISC",
@@ -22,7 +22,8 @@
   },
   "files": [
     "dist",
-    "schema.prisma"
+    "schema.prisma",
+    "generated"
   ],
   "prisma": {
     "schema": "schema.prisma"

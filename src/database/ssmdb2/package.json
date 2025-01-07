@@ -2,10 +2,11 @@
   "name": "dc-db-ssmdb2",
   "version": "1.0.0",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "postinstall": "npx prisma generate"
+    "build": "npm run generate && tsc",
+    "generate": "npx prisma generate"
   },
   "author": "Sven Finn",
   "license": "ISC",
@@ -13,11 +14,16 @@
   "dependencies": {
     "@prisma/client": "^5.21.1",
     "dc-db-local": "file:../local",
-    "dotenv": "^16.4.5",
-    "prisma": "^5.21.1"
+    "dotenv": "^16.4.5"
   },
   "devDependencies": {
     "@types/node": "^22.7.8",
+    "prisma": "^6.2.0",
     "typescript": "^5.6.3"
-  }
+  },
+  "files": [
+    "dist",
+    "schema.prisma",
+    "generated"
+  ]
 }
