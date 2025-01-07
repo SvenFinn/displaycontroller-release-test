@@ -134,3 +134,6 @@ src/screens/images/files
 
 generated
 swagger-output.json
+
+
+*.pat
