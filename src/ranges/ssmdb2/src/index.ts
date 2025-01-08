@@ -24,7 +24,7 @@ async function main() {
                 where: {
                     timestamp:
                     {
-                        gt: new Date(localTime.getTime() - 15000)
+                        gt: new Date(localTime.getTime() - 1000)
                     }
                 },
                 select: {
