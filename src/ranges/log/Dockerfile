@@ -52,7 +52,7 @@ FROM base AS final
 
 WORKDIR /app
 
-RUN apk add --update --no-cache sshpass
+RUN apk add --update --no-cache sshpass openssh-client
 
 COPY --from=build /app/ranges/log/dist ./
 COPY --from=deps /app/ranges/log/node_modules ./node_modules
