@@ -2,12 +2,12 @@ export type DisciplineRoundMode = DisciplineRoundModeRings | DisciplineRoundMode
 
 type DisciplineRoundModeRings = {
     mode: "rings",
-    accuracy: number
+    decimals: number
 }
 
 type DisciplineRoundModeDivider = {
     mode: "divider",
-    accuracy: number
+    decimals: number
 }
 
 type DisciplineRoundModeCircle = {
@@ -24,7 +24,7 @@ type DisciplineRoundModeHundred = {
 
 type DisciplineRoundModeRingsDiv = {
     mode: "ringsDiv",
-    accuracy: number
+    decimals: number
 }
 
 type DisciplineRoundModeHidden = {
@@ -39,6 +39,6 @@ export function isDisciplineRoundMode(disciplineRoundMode: any): disciplineRound
     if (typeof disciplineRoundMode !== "object") return false;
     if (typeof disciplineRoundMode.mode !== "string") return false;
     if (disciplineRoundMode.mode !== "rings" && disciplineRoundMode.mode !== "divider" && disciplineRoundMode.mode !== "ringsDiv") return true;
-    if (typeof disciplineRoundMode.accuracy !== "number") return false;
+    if (typeof disciplineRoundMode.decimals !== "number") return false;
     return true;
 }

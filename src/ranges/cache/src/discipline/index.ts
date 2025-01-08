@@ -116,11 +116,11 @@ async function getRound(smdbClient: SmdbClient, disciplineId: number, roundId: n
 function getMode(mode: number): DisciplineRoundMode {
     switch (mode) {
         case 1:
-            return { mode: "rings", accuracy: 0.1 };
+            return { mode: "rings", decimals: 1 };
         case 2:
-            return { mode: "rings", accuracy: 1 };
+            return { mode: "rings", decimals: 0 };
         case 3:
-            return { mode: "divider", accuracy: 1 };
+            return { mode: "divider", decimals: 0 };
         case 4:
             return { mode: "circle" };
         case 5:
@@ -128,15 +128,15 @@ function getMode(mode: number): DisciplineRoundMode {
         case 6:
             return { mode: "hundred" };
         case 7:
-            return { mode: "ringsDiv", accuracy: 0.1 };
+            return { mode: "ringsDiv", decimals: 1 };
         case 8:
-            return { mode: "ringsDiv", accuracy: 1 };
+            return { mode: "ringsDiv", decimals: 0 };
         case 9:
-            return { mode: "divider", accuracy: 0.1 };
+            return { mode: "divider", decimals: 1 };
         case 10:
             return { mode: "hidden" };
         case 11:
-            return { mode: "divider", accuracy: 0.01 };
+            return { mode: "divider", decimals: 2 };
         case 12:
             return { mode: "decimal" };
         default:

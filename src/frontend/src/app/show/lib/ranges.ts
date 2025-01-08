@@ -46,11 +46,10 @@ export function getHitArr(data: Range, roundId?: number, index?: number): Array<
             ]
 
         case "divider": {
-            const acc = getNumberOfDecimalPlaces(round.mode.accuracy);
             return [
                 `${hit.id}`,
 
-                `${floor(hit.divisor, acc).toFixed(acc)}`
+                `${floor(hit.divisor, round.mode.decimals).toFixed(round.mode.decimals)}`
             ];
         }
 
@@ -120,7 +119,6 @@ export function getTotal(data: Range, roundId?: number): string {
 }
 
 function accumulateHits(hits: Array<Hit>, round: DisciplineRound, startId: number, endId: number): string {
-    const acc = getNumberOfDecimalPlaces("accuracy" in round.mode ? round.mode.accuracy : 0);
     const hitsToAccumulate = hits.slice(startId, endId);
     let sum = 0;
     if (round.mode.mode == "divider") {
@@ -132,15 +130,18 @@ function accumulateHits(hits: Array<Hit>, round: DisciplineRound, startId: numbe
         switch (round.mode.mode) {
             case "divider":
                 if (hit.divisor < sum) {
-                    sum = floor(hit.divisor, acc);
+                    sum = floor(hit.divisor, round.mode.decimals);
                     hitId = hit.id;
                 }
                 break;
-            case "rings":
-            case "ringsDiv":
             case "fullHidden":
             case "hidden":
-                sum += floor(hit.rings, acc);
+                if (round.counts) return "***";
+                sum += floor(hit.rings, 0);
+                break;
+            case "rings":
+            case "ringsDiv":
+                sum += floor(hit.rings, round.mode.decimals);
                 break;
             case "hundred":
                 sum += (Math.floor(hit.rings) - 1) * 10 + 1;
@@ -154,14 +155,15 @@ function accumulateHits(hits: Array<Hit>, round: DisciplineRound, startId: numbe
     }
     switch (round.mode.mode) {
         case "divider":
+        case "rings":
             if (sum == Infinity) return "";
-            return `${sum.toFixed(acc)} (${hitId})`;
+            return `${sum.toFixed(round.mode.decimals)} (${hitId})`;
         case "hidden":
         case "fullHidden":
             if (round.counts) return "***";
-            return sum.toFixed(acc);
+            return sum.toFixed(0);
         default:
-            return sum.toFixed(acc);
+            return sum.toFixed(0);
     }
 }
 
