@@ -6,6 +6,7 @@ export default function DrawHits({ range }: { range: Range }): React.JSX.Element
     if (!range.discipline) return <></>;
     const round = range.discipline.rounds[range.round];
     if (!round) return <></>;
+    if (round.mode.mode == "fullHidden") return <></>;
     const hitsPerView = round.hitsPerView;
     if (!range.hits) return <></>;
     const hits = range.hits[range.round];

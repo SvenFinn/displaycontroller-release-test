@@ -62,6 +62,7 @@ export function getHitArr(data: Range, roundId?: number, index?: number): Array<
                 ]
             } else {
                 return [
+                    `${hit.id}`,
                     "***"
                 ]
             }

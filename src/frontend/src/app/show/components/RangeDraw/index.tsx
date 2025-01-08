@@ -68,7 +68,7 @@ function getSizeInt(range: Range, ref: SVGSVGElement): [number, number] {
     if (round.zoom.mode === "auto") {
         if (!range.hits) return [0, 0];
         const hits = range.hits[range.round];
-        if (!hits || hits.length == 0) {
+        if (!hits || hits.length == 0 || round.mode.mode === "fullHidden") {
             const layout = range.discipline.layouts[round.layoutId];
             if (!layout) return [0, 0];
             const diameter = layout[layout.length - 1].diameter + gauge * 1.1;
