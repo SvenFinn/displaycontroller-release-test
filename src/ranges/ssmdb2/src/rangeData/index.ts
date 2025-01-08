@@ -46,7 +46,7 @@ async function getHits(ssmdb2Client: Ssmdb2Client, targetId: number): Promise<Hi
             x: hit.x / 100,
             y: hit.y / 100,
             divisor: hit.dividerHundredth / 100,
-            rings: hit.rings / 10,
+            rings: hit.ringsTenth / 10,
             innerTen: hit.innerTen
         });
     }
