@@ -7,6 +7,3 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - displaycontroller
-
-volumes:
-  dc_portainer_data:

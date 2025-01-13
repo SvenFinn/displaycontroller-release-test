@@ -3,6 +3,7 @@ services:
     container_name: dc-images
     image: ghcr.io/svenfinn/dc-images
     hostname: images
+    restart: unless-stopped
     networks:
       - displaycontroller
     build:

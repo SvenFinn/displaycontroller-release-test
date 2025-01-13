@@ -3,6 +3,7 @@ services:
     image: ghcr.io/svenfinn/dc-reverse-proxy
     container_name: dc-reverse-proxy
     hostname: reverse_proxy
+    restart: unless-stopped
     build: .
     ports:
       - "${APP_PORT}:80"

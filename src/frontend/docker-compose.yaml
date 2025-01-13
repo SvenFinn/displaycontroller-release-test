@@ -3,6 +3,7 @@ services:
     hostname: frontend
     image: ghcr.io/svenfinn/dc-frontend
     container_name: dc-frontend
+    restart: unless-stopped
     networks:
       - displaycontroller
     build:
