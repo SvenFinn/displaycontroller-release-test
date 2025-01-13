@@ -5,7 +5,7 @@ import styles from './logo.module.css';
 
 export default function Logo(): React.JSX.Element {
     const [host, setHost] = useState<string>("");
-    const [cacheBlock, setCacheBlock] = useState<string>(crypto.randomUUID());
+    const [cacheBlock, setCacheBlock] = useState<number>((new Date().getTime()));
 
     useEffect(() => {
         setHost(window.location.host.split(":")[0]);
@@ -19,7 +19,7 @@ export default function Logo(): React.JSX.Element {
 
     function onImageError(event: React.SyntheticEvent<HTMLImageElement, Event>) {
         if (event.currentTarget.naturalHeight === 0 && event.currentTarget.naturalWidth === 0) {
-            setCacheBlock(crypto.randomUUID());
+            setTimeout(() => setCacheBlock((new Date()).getTime()), 1000);
         }
     }
 
