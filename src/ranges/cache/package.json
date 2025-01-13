@@ -14,11 +14,11 @@
     "dc-db-smdb": "file:../../database/smdb",
     "dc-logger": "file:../../logger",
     "dc-table-watcher": "file:../../database/tableWatcher",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.7"
   },
   "devDependencies": {
-    "@types/node": "^22.7.4",
+    "@types/node": "^22.10.6",
     "tsc-alias": "^1.8.10",
-    "typescript": "^5.6.2"
+    "typescript": "^5.7.3"
   }
 }

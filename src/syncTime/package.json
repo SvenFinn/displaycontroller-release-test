@@ -10,14 +10,14 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "@types/node": "^22.5.4",
-    "typescript": "^5.5.4"
+    "@types/node": "^22.10.6",
+    "typescript": "^5.7.3"
   },
   "dependencies": {
     "dc-db-local": "file:../database/local",
     "dc-db-smdb": "file:../database/smdb",
     "dc-logger": "file:../logger",
-    "dotenv": "^16.4.5",
-    "eventsource": "^3.0.1"
+    "dotenv": "^16.4.7",
+    "eventsource": "3.0.1"
   }
 }

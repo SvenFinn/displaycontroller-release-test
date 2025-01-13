@@ -13,15 +13,14 @@
     "amqplib": "^0.10.5",
     "dc-db-local": "file:../database/local",
     "dc-logger": "file:../logger",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2"
   },
   "devDependencies": {
     "@types/amqplib": "^0.10.6",
     "@types/express": "^5.0.0",
-    "@types/node": "^22.2.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.5.4"
+    "@types/node": "^22.10.6",
+    "typescript": "^5.7.3"
   },
   "prisma": {
     "schema": "../database/prisma/src/schema.prisma"
