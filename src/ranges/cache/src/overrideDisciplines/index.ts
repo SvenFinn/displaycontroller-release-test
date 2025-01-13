@@ -3,6 +3,14 @@ import { OverrideDiscipline } from "@shared/ranges/internal/startList"
 
 export async function getOverrideDisciplines(smdbClient: SmdbClient): Promise<Array<OverrideDiscipline>> {
     const overrideDisciplinesDb = await smdbClient.priceShooting.findMany({
+        where: {
+            id: {
+                gt: 0 // Special case, because Meyton uses 0 as a "empty" value
+            },
+            discipline: {
+                active: true
+            }
+        },
         select: {
             id: true,
             listId: true,
