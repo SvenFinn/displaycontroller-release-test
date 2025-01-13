@@ -42,22 +42,11 @@ async function getStartList(smdbClient: SmdbClient, startListId: number): Promis
         const currentDate = new Date();
         startListDbActive = startDate <= currentDate && currentDate <= endDate;
     }
-    const startListType = getStartListType(startListDb.type);
-    if (startListType === "price") {
-        return {
-            id: startListDb.id,
-            name: startListDb.name,
-            active: startListDbActive,
-            type: "price",
-            overrideDisciplines: await getOverrideDisciplineId(smdbClient, startListDb.id),
-        }
-    } else {
-        return {
-            id: startListDb.id,
-            name: startListDb.name,
-            active: startListDbActive,
-            type: startListType
-        }
+    return {
+        id: startListDb.id,
+        name: startListDb.name,
+        active: startListDbActive,
+        type: getStartListType(startListDb.type)
     }
 }
 
@@ -74,25 +63,4 @@ function getStartListType(type: StartListTypes): InternalStartList["type"] {
         case StartListTypes.priceShooting:
             return "price";
     }
-}
-
-async function getOverrideDisciplineId(smdbClient: SmdbClient, startListId: number): Promise<Array<number>> {
-    const specialDisciplinesDb = await smdbClient.startList.findUnique({
-        where: {
-            id: startListId
-        },
-        include: {
-            priceShooting: {
-                select: {
-                    id: true,
-                }
-            }
-        }
-    });
-    if (!specialDisciplinesDb) {
-        return [];
-    }
-    return specialDisciplinesDb.priceShooting.map(specialDiscipline => {
-        return specialDisciplinesDb.id;
-    });
 }
