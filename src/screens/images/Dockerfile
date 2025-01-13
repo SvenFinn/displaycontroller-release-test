@@ -36,5 +36,6 @@ COPY --from=deps /app/screens/images/node_modules ./node_modules
 EXPOSE 80
 
 ENV NODE_ENV=production
+ENV LOG_LEVEL=info
 
 CMD ["node", "./src/index.js"]

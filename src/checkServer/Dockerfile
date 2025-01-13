@@ -58,5 +58,6 @@ COPY --from=deps /app/checkServer/node_modules ./node_modules
 EXPOSE 80
 
 ENV NODE_ENV=production
+ENV LOG_LEVEL=info
 
 CMD ["node", "/app/checkServer/src/index.js"]

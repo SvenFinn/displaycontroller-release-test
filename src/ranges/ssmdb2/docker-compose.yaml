@@ -27,3 +27,5 @@ services:
         condition: service_completed_successfully
       dc-rabbitmq:
         condition: service_healthy
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL}

@@ -50,5 +50,6 @@ COPY --from=build /app/syncTime/dist ./
 COPY --from=deps /app/syncTime/node_modules ./node_modules
 
 ENV NODE_ENV=production
+ENV LOG_LEVEL=info
 
 CMD ["node", "index.js"]

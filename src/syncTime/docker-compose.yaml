@@ -21,3 +21,5 @@ services:
       - dc-check-server
     cap_add:
       - SYS_TIME
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL}

@@ -62,5 +62,6 @@ COPY --from=deps /app/ranges/ssmdb2/node_modules ./node_modules
 
 ENV NODE_ENV=production
 ENV TZ=Europe/Berlin
+ENV LOG_LEVEL=info
 
 CMD ["node", "/app/ssmdb2/src/index.js"]

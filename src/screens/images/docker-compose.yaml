@@ -13,3 +13,5 @@ services:
         - logger=../../logger
     volumes:
       - "./files:/app/files"
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL}

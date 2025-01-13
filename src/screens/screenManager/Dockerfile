@@ -52,5 +52,6 @@ COPY --from=deps /app/screens/screenManager/node_modules ./node_modules
 EXPOSE 80
 
 ENV NODE_ENV=production
+ENV LOG_LEVEL=info
 
 CMD ["node", "/app/screens/screenManager/src/index.js"]

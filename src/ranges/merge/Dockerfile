@@ -51,5 +51,6 @@ COPY --from=build /app/ranges/merger/dist ./
 COPY --from=deps /app/ranges/merger/node_modules ./node_modules
 
 ENV NODE_ENV=production
+ENV LOG_LEVEL=info
 
 CMD ["node", "/app/merger/src/index.js"]

@@ -58,5 +58,6 @@ COPY --from=build /app/ranges/log/dist ./
 COPY --from=deps /app/ranges/log/node_modules ./node_modules
 
 ENV NODE_ENV=production
+ENV LOG_LEVEL=info
 
 CMD ["node", "/app/log/src/index.js"]

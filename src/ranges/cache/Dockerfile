@@ -66,6 +66,6 @@ COPY --from=build /app/ranges/cache/dist ./
 COPY --from=deps /app/ranges/cache/node_modules ./node_modules
 
 ENV NODE_ENV=production
-
+ENV LOG_LEVEL=info
 
 CMD ["node", "/app/cache/src/index.js"]

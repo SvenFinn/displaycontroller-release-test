@@ -19,3 +19,5 @@ services:
         condition: service_completed_successfully
       dc-check-server:
         condition: service_started
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL}
