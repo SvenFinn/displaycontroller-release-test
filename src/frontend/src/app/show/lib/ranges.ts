@@ -156,9 +156,10 @@ function accumulateHits(hits: Array<Hit>, round: DisciplineRound, startId: numbe
     }
     switch (round.mode.mode) {
         case "divider":
-        case "rings":
             if (sum == Infinity) return "";
             return `${sum.toFixed(round.mode.decimals)} (${hitId})`;
+        case "rings":
+            return `${sum.toFixed(round.mode.decimals)}`;
         case "hidden":
         case "fullHidden":
             if (round.counts) return "***";
