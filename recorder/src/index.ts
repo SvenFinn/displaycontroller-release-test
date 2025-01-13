@@ -9,8 +9,7 @@ async function main() {
     const es = new EventSource(URL);
     es.onmessage = async (e) => {
         const data = JSON.parse(e.data);
-        console.log(data);
-        data.timestamp = new Date(data.timestamp).toISOString();
+        data.timestamp = new Date();
         await handle.write(JSON.stringify(data) + "\n");
     };
     es.onopen = () => {

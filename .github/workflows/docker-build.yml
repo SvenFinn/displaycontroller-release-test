@@ -82,12 +82,12 @@ jobs:
           echo "LOG_LEVEL=$LOG_LEVEL" >> /tmp/args
           echo "APP_PORT=$APP_PORT" >> /tmp/args
           echo "APP_PATH=$APP_PATH" >> /tmp/args
+          echo "SCREEN_RESOLUTION=PLACEHOLDER" >> /tmp/args
           echo "BUILD_ARGS=$(cat /tmp/args | base64 --wrap=0)"
           echo "BUILD_ARGS=$(cat /tmp/args | base64 --wrap=0)" >> $GITHUB_OUTPUT
 
       - name: Validate that all arguments exist
         run: |
-          cd src
           args=$(echo "${{ steps.args.outputs.BUILD_ARGS }}" | base64 --decode)
           for arg in $args; do
             export $arg
@@ -118,7 +118,6 @@ jobs:
       - name: Determine services
         id: services
         run: |
-          cd src
           config=$(docker compose config --format json 2>/dev/null)
           services=$(echo "$config" | jq '.services | to_entries | map(select(.value.image | test("^ghcr\\.io"))) | .[].key')
 
@@ -148,7 +147,6 @@ jobs:
       - name: Generate build config
         id: build-config
         run: |
-          cd src
 
           args=$(echo "${{ needs.prep-args.outputs.args }}" | base64 --decode)
           for arg in $args; do
@@ -223,7 +221,7 @@ jobs:
 
       - name: Generate docker-compose.yml
         run: |
-          cd src/scripts
+          cd scripts
           args=$(echo "${{ needs.prep-args.outputs.args }}" | base64 --decode)
           for arg in $args; do
             export $arg
@@ -237,4 +235,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: docker-compose
-          path: src/scripts/docker-compose.prod.yml
+          path: scripts/docker-compose.yaml
