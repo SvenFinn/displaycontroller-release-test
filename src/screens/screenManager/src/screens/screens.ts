@@ -1,19 +1,21 @@
 import { LocalClient } from "dc-db-local";
-import { resolvePreset } from "../presets";
+import { resolvePreset } from "./presets";
 import { isDbScreen } from "@shared/screens";
 import { Screen } from "@shared/screens";
-import { checkCondition } from "../conditions";
+import { checkCondition } from "./conditions";
 import { logger } from "dc-logger";
 
 export async function loadNextScreen(localClient: LocalClient, currentScreenId: number): Promise<Array<Screen>> {
-    let nextScreenId = currentScreenId;
     let loopOne = true;
     while (true) {
         const nextScreen = await localClient.screens.findFirst({
             where: {
                 id: {
-                    gt: nextScreenId
+                    gt: currentScreenId
                 }
+            },
+            orderBy: {
+                id: "asc"
             },
             select: {
                 id: true
@@ -26,17 +28,20 @@ export async function loadNextScreen(localClient: LocalClient, currentScreenId: 
                 }]; // We have looped through all screens and found no new screen
             }
             loopOne = false;
-            nextScreenId = 0;
+            currentScreenId = 0;
             continue
         }
-        nextScreenId = nextScreen.id;
+        logger.info(`Found screen with id ${nextScreen.id} for old screen id ${currentScreenId}`);
+        const nextScreenId = nextScreen.id;
         if (! await checkCondition(localClient, nextScreenId)) {
             continue;
         }
+        logger.info(`Found screen with id ${nextScreenId}`);
         const parsedScreen = await loadScreen(localClient, nextScreenId);
         if (parsedScreen.length > 0) {
             return parsedScreen;
         }
+        currentScreenId = nextScreenId;
     }
 }
 
