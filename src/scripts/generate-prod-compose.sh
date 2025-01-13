@@ -4,6 +4,8 @@ cd "$(dirname "$0")/.."
 APP_TAG=$1
 PROD_PATH=$2
 
+export SCREEN_RESOLUTION="\$SCREEN_RESOLUTION"
+
 config=$(docker compose config)
 
 # Remove all build-related configuration
@@ -15,6 +17,8 @@ config=$(echo "$config" | yq --arg APP_TAG "$APP_TAG" '(.services[].image | sele
 # Replace all occurrences of cwd with $PROD_PATH
 config=$(echo "$config" | yq --arg PROD_PATH "$PROD_PATH/volumes" --arg CWD "$(pwd)" '.services |= map_values(.volumes[]?.source |= gsub("^" + $CWD; $PROD_PATH))' -y)
 
+config=$(echo "$config" | sed 's/$$SCREEN_RESOLUTION/${SCREEN_RESOLUTION}/g')
+
 cd - > /dev/null
 
-echo "$config" > docker-compose.prod.yml
+echo "$config" > docker-compose.yaml

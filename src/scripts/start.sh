@@ -7,14 +7,14 @@ APP_PORT=${APP_PORT:-80}
 
 export COMPOSE_MENU=0
 
-#screen_res=`xrandr --current | grep "*" | uniq | awk '{print $1}'`
-#echo "Screen resolution is $screen_res"
+screen_res=`xrandr --current | grep "*" | uniq | awk '{print $1}' | tail -n 1`
+echo "Screen resolution is $screen_res"
+export SCREEN_RESOLUTION=$screen_res
 
 # Stop the containers if they are running
 docker compose stop
 
 # Start the containers
-#SCREEN_RES=$screen_res 
 docker compose up --remove-orphans --no-build&
 docker_pid=$!
 

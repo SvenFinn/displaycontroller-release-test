@@ -15,3 +15,4 @@ services:
       - "./files:/app/files"
     environment:
       - LOG_LEVEL=${LOG_LEVEL}
+      - SCREEN_RESOLUTION=${SCREEN_RESOLUTION}

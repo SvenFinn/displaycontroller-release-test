@@ -58,6 +58,12 @@ async function handleFiles(files: fileUpload.FileArray, path: string) {
 async function handleFile(file: fileUpload.UploadedFile, path: string) {
     if (file.mimetype === "application/pdf") {
         logger.info("Converting PDF to images");
+        let screenResolution = process.env.SCREEN_RESOLUTION;
+        if (!screenResolution) {
+            logger.warn("SCREEN_RESOLUTION not set, using default of 1920x1080");
+            screenResolution = "1920x1080";
+        }
+        const minDimension = Math.min(...screenResolution.split("x").map(parseInt));
         if (fs.existsSync(`${path}/${file.name}`)) {
             fs.rmSync(`${path}/${file.name}`, { recursive: true });
         }
@@ -66,6 +72,7 @@ async function handleFile(file: fileUpload.UploadedFile, path: string) {
             density: 300,
             savePath: path + "/" + file.name,
             saveFilename: "page",
+            width: minDimension,
             format: "png",
             preserveAspectRatio: true,
         });
