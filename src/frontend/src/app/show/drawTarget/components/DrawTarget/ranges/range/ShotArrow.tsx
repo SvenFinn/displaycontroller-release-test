@@ -6,6 +6,7 @@ export default function ShotArrowW({ id }: { id: number }): React.JSX.Element {
     const range = useAppSelector((state) => state.ranges[id]);
     if (!range) return <></>
     if (!range.active) return <></>
+    if (!range.discipline) return <></>
     if (!range.hits) return <></>
     const hits = range.hits[range.round];
     if (!hits) return <></>
