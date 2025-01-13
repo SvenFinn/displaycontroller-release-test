@@ -39,6 +39,8 @@ export async function checkCondition(localClient: LocalClient, screenId: number)
         case "ranges_online_count":
             return ranges_online_count(screen.condition);
         default:
+            // @ts-ignore
+            logger.warn(`Invalid condition type: ${screen.condition.type}`)
             return false;
     }
 }
