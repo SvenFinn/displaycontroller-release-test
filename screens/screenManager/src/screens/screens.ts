@@ -33,6 +33,7 @@ export async function loadNextScreen(localClient: LocalClient, currentScreenId: 
         }
         logger.info(`Found screen with id ${nextScreen.id} for old screen id ${currentScreenId}`);
         const nextScreenId = nextScreen.id;
+        currentScreenId = nextScreenId; // Update currentScreenId for next iteration
         if (! await checkCondition(localClient, nextScreenId)) {
             continue;
         }
@@ -41,7 +42,6 @@ export async function loadNextScreen(localClient: LocalClient, currentScreenId: 
         if (parsedScreen.length > 0) {
             return parsedScreen;
         }
-        currentScreenId = nextScreenId;
     }
 }
 
