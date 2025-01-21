@@ -5,14 +5,14 @@ services:
   dc-database:
     image: postgres:alpine
     container_name: dc-database
-    hostname: database
+    hostname: ${SELF_DB_HOST}
     restart: unless-stopped
     networks:
       - displaycontroller
     environment:
-      POSTGRES_USER: softwareAccess
-      POSTGRES_PASSWORD: TRcOkg6xzacXdUWI
-      POSTGRES_DB: displaycontroller
+      POSTGRES_USER: ${SELF_DB_USER}
+      POSTGRES_PASSWORD: ${SELF_DB_PASS}
+      POSTGRES_DB: ${SELF_DB_NAME}
   dc-db-migrate:
     container_name: dc-db-migrate
     image: ghcr.io/svenfinn/dc-db-migrate
@@ -22,4 +22,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - SELF_DB_URL=${SELF_DB_URL}
+        - SELF_DB_HOST=${SELF_DB_HOST}
+        - SELF_DB_USER=${SELF_DB_USER}
+        - SELF_DB_PASS=${SELF_DB_PASS}
+        - SELF_DB_NAME=${SELF_DB_NAME}
