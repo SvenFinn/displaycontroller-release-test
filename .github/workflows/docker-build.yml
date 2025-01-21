@@ -50,8 +50,6 @@ jobs:
         id: args
         env:
           APP_VERSION: ${{ steps.app-version.outputs.app_version }}
-          SELF_DB_URL: ${{ vars.SELF_DB_URL }}
-          SERVER_STATE_HOST: ${{ vars.SERVER_STATE_HOST }}
           MIN_MEYTON_VERSION: ${{ vars.MIN_MEYTON_VERSION }}
           MIN_MEYTON_VERSION_STR: ${{ vars.MIN_MEYTON_VERSION_STR }}
           MAX_MEYTON_VERSION: ${{ vars.MAX_MEYTON_VERSION }}
@@ -65,10 +63,16 @@ jobs:
           LOG_LEVEL: ${{ vars.LOG_LEVEL }}
           APP_PORT: ${{ vars.APP_PORT }}
           APP_PATH: ${{ vars.APP_PATH }}
+          SELF_DB_HOST: ${{ vars.SELF_DB_HOST }}
+          SELF_DB_USER: ${{ vars.SELF_DB_USER }}
+          SELF_DB_PASS: ${{ vars.SELF_DB_PASS }}
+          SELF_DB_NAME: ${{ vars.SELF_DB_NAME }}
         run: |
           echo "APP_VERSION=$APP_VERSION" > /tmp/args
-          echo "SELF_DB_URL=$SELF_DB_URL" >> /tmp/args
-          echo "SERVER_STATE_HOST=$SERVER_STATE_HOST" >> /tmp/args
+          echo "SELF_DB_HOST=$SELF_DB_HOST" >> /tmp/args
+          echo "SELF_DB_USER=$SELF_DB_USER" >> /tmp/args
+          echo "SELF_DB_PASS=$SELF_DB_PASS" >> /tmp/args
+          echo "SELF_DB_NAME=$SELF_DB_NAME" >> /tmp/args
           echo "MIN_MEYTON_VERSION=$MIN_MEYTON_VERSION" >> /tmp/args
           echo "MIN_MEYTON_VERSION_STR=$MIN_MEYTON_VERSION_STR" >> /tmp/args
           echo "MAX_MEYTON_VERSION=$MAX_MEYTON_VERSION" >> /tmp/args
