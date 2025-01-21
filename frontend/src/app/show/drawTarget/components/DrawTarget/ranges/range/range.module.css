@@ -96,6 +96,10 @@ table.seriesList tr td.empty {
     border: none;
 }
 
+table.seriesList tr td:has(+ td.empty) {
+    border-right: none;
+}
+
 div.total {
     font-weight: bolder;
     margin: auto;
