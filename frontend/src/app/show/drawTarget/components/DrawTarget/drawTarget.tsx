@@ -23,7 +23,7 @@ export default function DrawTarget({ options, onReady }: DrawTargetProps): React
 
     const ranges = options.ranges.flat();
     return (
-        <div style={{ height: "100%", fontSize: "100vh", userSelect: "none" }}>
+        <div style={{ height: "100%", fontSize: "100vmin", userSelect: "none" }}>
             <Provider store={store}>
                 <RangesEvents action={setRange} ranges={ranges} />
                 <Header />

@@ -63,7 +63,7 @@ async function rewriteHTMLFile(inputFName: string, outputFName: string): Promise
 
     const body = dom.window.document.querySelector("body");
     if (body != null) {
-        body.style.fontSize = "2vh";
+        body.style.fontSize = "2vmin";
         body.style.overflow = "hidden";
         body.style.userSelect = "none";
     }

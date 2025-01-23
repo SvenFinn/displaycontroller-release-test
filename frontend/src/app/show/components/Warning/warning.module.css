@@ -5,6 +5,6 @@ div.warning {
     width: 100%;
     background-color: #FF4000;
     color: white;
-    font-size:4vh;
+    font-size:4vmin;
     text-align: center;
 }
