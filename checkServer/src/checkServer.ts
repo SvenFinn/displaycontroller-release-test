@@ -90,7 +90,7 @@ export async function checkServerAvailable(): Promise<boolean> {
         return false;
     }
     try {
-        execSync("nc -zw 1 " + server + " 22", { encoding: "utf-8" });
+        execSync("nc -zw 1 " + server + " 22", { encoding: "utf-8", stdio: ["ignore", "ignore", "ignore"] });
         return true
     } catch (e) {
         return false
