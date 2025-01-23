@@ -130,7 +130,7 @@ dist
 .pnp.*
 
 
-src/screens/images/files
+screens/images/files
 
 generated
 swagger-output.json
