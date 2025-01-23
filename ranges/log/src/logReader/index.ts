@@ -63,11 +63,11 @@ export class LogReader extends EventEmitter {
         sshThread.stdout?.on("data", (data: any) => {
             logger.debug("Received log data");
             dataBuffer += data.toString();
-            if (dataBuffer.includes("LOG_DATA_END")) { // Found data
-                const data = dataBuffer.split("LOG_DATA_END")[0];
-                dataBuffer = dataBuffer.split("LOG_DATA_END")[1];
-                this.parseData(data);
+            const splitBuffer = dataBuffer.split("LOG_DATA_END");
+            while (splitBuffer.length > 1) {
+                this.parseData(splitBuffer.shift() as string);
             }
+            dataBuffer = splitBuffer.join("LOG_DATA_END");
         });
         return sshThread;
     }

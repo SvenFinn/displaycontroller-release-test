@@ -47,6 +47,7 @@ export function parseLine(line: string): undefined | LogLine {
         }
         return logInformation;
     } catch (error) {
+        logger.warn(`Error occurred whilst trying to parse line: ${error}`);
         return undefined;
     }
 }
@@ -59,12 +60,14 @@ function parseTargetId(targetId: string): undefined | number {
         }
         return intTargetId;
     }
+    logger.warn("Failed to parse targetId");
     return undefined;
 }
 
 function parseTimeStamp(timestamp: string): undefined | Date {
     const splitTimestamp = timestamp.split(" ");
     if (splitTimestamp.length != 2) {
+        logger.warn("Failed to parse timestamp");
         return undefined;
     }
     const fixedTimestamp = splitTimestamp.map((value) => {
@@ -75,6 +78,7 @@ function parseTimeStamp(timestamp: string): undefined | Date {
     const date = fixedTimestamp[0].split(".");
     const tempTime = fixedTimestamp[1].split(":");
     if (date.length != 3 || tempTime.length != 3) {
+        logger.warn("Failed to parse timestamp");
         return undefined;
     }
     const time = [tempTime[0], tempTime[1], ...tempTime[2].split(".")];
@@ -86,6 +90,7 @@ function parseTimeStamp(timestamp: string): undefined | Date {
     const seconds = parseInt(time[2]);
     const milliseconds = parseInt(time[3]);
     if (isNaN(year) || isNaN(month) || isNaN(day) || isNaN(hours) || isNaN(minutes) || isNaN(seconds) || isNaN(milliseconds)) {
+        logger.warn("Failed to parse timestamp");
         return undefined;
     }
     return new Date(year, month, day, hours, minutes, seconds, milliseconds);
