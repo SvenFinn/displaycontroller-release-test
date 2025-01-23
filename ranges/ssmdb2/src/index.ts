@@ -1,12 +1,14 @@
 import { TableWatcherFast } from "dc-table-watcher"
 import { createSSMDB2Client } from "dc-db-ssmdb2"
-import { getRangeData } from "./rangeData";
 import amqp from "amqplib";
 import { logger } from "dc-logger";
 
 import "./cache/updater"; // Import the cache updater
+import { getRanges } from "./rangeData";
+import { InternalRange } from "@shared/ranges/internal";
 
-let lastRangeStates: Record<number, string> = {};
+const lastRangeStates: Map<number, string> = new Map();
+const nextRangeStateTimeouts: Map<number, NodeJS.Timeout> = new Map();
 
 async function main() {
     const connection = await amqp.connect("amqp://rabbitmq");
@@ -18,42 +20,35 @@ async function main() {
     const tableWatcher = new TableWatcherFast(ssmdb2Client, ["Scheiben", "Treffer"], 10000, 100, 30000);
     tableWatcher.on('change', async (tables: string[]) => {
         logger.info("Change detected, refreshing ranges");
-        const localTime = new Date((new Date()).setMinutes((new Date()).getMinutes() - new Date().getTimezoneOffset()));
-        const targets = await ssmdb2Client.target.findMany(
-            {
-                where: {
-                    timestamp:
-                    {
-                        gt: new Date(localTime.getTime() - 1000)
-                    }
-                },
-                select: {
-                    rangeId: true,
-                    id: true,
-                    timestamp: true,
-                },
-                orderBy: {
-                    timestamp: 'desc'
-                },
-                distinct: ['rangeId'],
-            });
-        await Promise.all(targets.map(async (target) => {
-            const rangeData = await getRangeData(ssmdb2Client, target.id);
-            if (rangeData === null) {
-                return;
+        const ranges = await getRanges(ssmdb2Client);
+        for (let i = 0; i < ranges.length; i++) {
+            const rangeData = ranges[i];
+            if (nextRangeStateTimeouts.has(rangeData.rangeId)) {
+                logger.warn("Fast change, cancelling update");
+                clearTimeout(nextRangeStateTimeouts.get(rangeData.rangeId));
+                nextRangeStateTimeouts.delete(rangeData.rangeId);
             }
-            if (lastRangeStates[rangeData.rangeId] === JSON.stringify(rangeData)) {
-                return;
+            if (lastRangeStates.get(rangeData.rangeId) === JSON.stringify(rangeData)) {
+                continue;
             }
-            lastRangeStates[rangeData.rangeId] = JSON.stringify(rangeData);
-            setTimeout(() => {
-                delete lastRangeStates[rangeData.rangeId];
-            }, 10000);
-
-            channel.publish("ranges.ssmdb2", "", Buffer.from(JSON.stringify(rangeData)));
-        }));
+            nextRangeStateTimeouts.set(rangeData.rangeId, setTimeout((rangeState: InternalRange) => {
+                nextRangeStateTimeouts.delete(rangeState.rangeId);
+                if (lastRangeStates.get(rangeState.rangeId) === JSON.stringify(rangeState)) {
+                    return;
+                }
+                lastRangeStates.set(rangeState.rangeId, JSON.stringify(rangeState));
+                logger.debug("Publishing range state for range " + rangeState.rangeId);
+                channel.publish("ranges.ssmdb2", "", Buffer.from(JSON.stringify(rangeState)));
+            }, 300, rangeData));
+        }
     });
     await tableWatcher.start();
+    setInterval(() => {
+        lastRangeStates.forEach((value, key) => {
+            lastRangeStates.delete(key);
+        })
+    }, 10000);
 }
+
 
 main();

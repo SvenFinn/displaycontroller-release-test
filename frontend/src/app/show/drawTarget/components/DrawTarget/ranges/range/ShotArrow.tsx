@@ -4,15 +4,7 @@ import styles from "./range.module.css";
 
 export default function ShotArrowW({ id }: { id: number }): React.JSX.Element {
     const range = useAppSelector((state) => state.ranges[id]);
-    if (!range) return <></>
-    if (!range.active) return <></>
-    if (!range.discipline) return <></>
-    if (!range.hits) return <></>
-    const hits = range.hits[range.round];
-    if (!hits) return <></>
-    const hit = hits[hits.length - 1];
-    if (!hit) return <></>
     return (
-        <ShotArrow hit={hit} className={styles.shotArrow} />
+        <ShotArrow hitIndex={-1} className={styles.shotArrow} range={range} />
     )
 }

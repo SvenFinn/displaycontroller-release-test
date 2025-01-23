@@ -2,7 +2,10 @@ FROM node:alpine AS base
 
 WORKDIR /app
 
-ARG SELF_DB_URL
+ARG SELF_DB_HOST
+ARG SELF_DB_NAME
+ARG SELF_DB_USER
+ARG SELF_DB_PASS
 ARG MEYTON_DB_USER
 ARG MEYTON_DB_PASS
 
@@ -38,7 +41,7 @@ RUN npm i --loglevel=info --install-links;
 
 COPY . .
 RUN npm run build && \
-    echo "SELF_DB_URL=$SELF_DB_URL" > dist/.env &&  \
+    echo "SELF_DB_URL=postgresql://$SELF_DB_USER:$SELF_DB_PASS@$SELF_DB_HOST:5432/$SELF_DB_NAME" > dist/.env && \
     echo "MEYTON_DB_USER=$MEYTON_DB_USER" >> dist/.env && \
     echo "MEYTON_DB_PASS=$MEYTON_DB_PASS" >> dist/.env;
 

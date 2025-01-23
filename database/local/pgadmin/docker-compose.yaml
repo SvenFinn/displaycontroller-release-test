@@ -5,7 +5,10 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - SELF_DB_URL=${SELF_DB_URL}
+        - SELF_DB_HOST=${SELF_DB_HOST}
+        - SELF_DB_USER=${SELF_DB_USER}
+        - SELF_DB_PASS=${SELF_DB_PASS}
+        - SELF_DB_NAME=${SELF_DB_NAME}
     container_name: dc-pgadmin
     hostname: pgadmin
     networks:

@@ -69,6 +69,10 @@ export class TableWatcher extends EventEmitter {
         this.startInternal();
     }
 
+    public getInterval(): number {
+        return this.interval;
+    }
+
     protected async watch() {
         logger.debug("Checking table checksums");
         let changed: string[] = [];
@@ -115,11 +119,13 @@ export class TableWatcherFast extends TableWatcher {
     }
 
     private changeInterval() {
-        logger.debug("Change detected, increasing interval");
         if (this.fastIntervalTimeout !== null) {
             clearTimeout(this.fastIntervalTimeout);
         }
-        this.setInterval(this.fastInterval);
+        if (this.getInterval() !== this.fastInterval) {
+            logger.debug("Change detected, increasing interval");
+            this.setInterval(this.fastInterval);
+        }
         this.fastIntervalTimeout = setTimeout(() => {
             this.setInterval(this.slowInterval);
         }, this.fastTimeout);

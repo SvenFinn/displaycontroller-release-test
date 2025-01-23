@@ -16,7 +16,10 @@ services:
         - ranges=../../ranges/types
         - logger=../../logger
       args:
-        - SELF_DB_URL=${SELF_DB_URL}
+        - SELF_DB_HOST=${SELF_DB_HOST}
+        - SELF_DB_USER=${SELF_DB_USER}
+        - SELF_DB_PASS=${SELF_DB_PASS}
+        - SELF_DB_NAME=${SELF_DB_NAME}
     depends_on:
       dc-db-migrate:
         condition: service_completed_successfully
