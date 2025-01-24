@@ -62,40 +62,67 @@ function getSize(range: Range, ref: SVGSVGElement): [number, number] {
 function getSizeInt(range: Range, ref: SVGSVGElement): [number, number] {
     if (!range.active) return [0, 0];
     if (!range.discipline) return [0, 0];
+    const round = range.discipline.rounds[range.round];
+    if (!round) return [0, 0];
+    let diameters: [number, number] = [0, 0]
+    switch (round.zoom.mode) {
+        case "auto":
+            diameters = getSizeAuto(range);
+            break;
+        case "fixed":
+            diameters = getSizeFixed(range, round.zoom.value);
+            break;
+        case "none":
+            const layout = range.discipline.layouts[range.round];
+            if (!layout) return [0, 0];
+            diameters = getSizeFixed(range, layout[0].value);
+            break;
+        default:
+            return [0, 0];
+    }
+    const largestW = Math.max(diameters[0], diameters[1] / ref.clientHeight * ref.clientWidth);
+    return [largestW, largestW / ref.clientWidth * ref.clientHeight];
+}
+
+function getSizeAuto(range: Range): [number, number] {
+    if (!range.active) return [0, 0];
+    if (!range.discipline) return [0, 0];
     const gauge = range.discipline.gauge;
     const round = range.discipline.rounds[range.round];
     if (!round) return [0, 0];
-    if (round.zoom.mode === "auto") {
-        if (!range.hits) return [0, 0];
-        const hits = range.hits[range.round];
-        if (!hits || hits.length == 0 || round.mode.mode === "fullHidden") {
-            const layout = range.discipline.layouts[round.layoutId];
-            if (!layout) return [0, 0];
-            const diameter = layout[layout.length - 1].diameter + gauge * 1.1;
-            if (diameter === 0) return [0, 0];
-            const diameterRelative = diameter / Math.min(ref.clientWidth, ref.clientHeight)
-            return [diameterRelative * ref.clientWidth, diameterRelative * ref.clientHeight];
-        }
-        const largestDimensions = [Math.max(...hits.map(hit => Math.abs(hit.x) + gauge * 1.1)),
-        Math.max(...hits.map(hit => Math.abs(hit.y) + gauge * 1.1)) / ref.clientHeight * ref.clientWidth];
-        const largestW = Math.max(...largestDimensions) * 2;
-        return [largestW, largestW / ref.clientWidth * ref.clientHeight];
-    } else if (round.zoom.mode === "fixed") {
-        const zoom = round.zoom;
+    const hitsPerView = round.hitsPerView;
+    if (!range.hits) return [0, 0];
+    const hits = range.hits[range.round];
+    if (!hits || hits.length == 0 || round.mode.mode === "fullHidden") {
         const layout = range.discipline.layouts[round.layoutId];
         if (!layout) return [0, 0];
-        const ring = layout.find(ring => ring.value === zoom.value);
-        if (!ring) return [0, 0];
-        const diameter = ring.diameter + gauge * 1.1;
-        const diameterRelative = diameter / Math.min(ref.clientWidth, ref.clientHeight);
-        return [diameterRelative * ref.clientWidth, diameterRelative * ref.clientHeight];
-    } else if (round.zoom.mode === "none") {
-        const layout = range.discipline.layouts[round.layoutId];
-        if (!layout) return [0, 0];
-        const diameter = layout[0].diameter + gauge * 1.1;
-        const diameterRelative = diameter / Math.min(ref.clientWidth, ref.clientHeight);
-        return [diameterRelative * ref.clientWidth, diameterRelative * ref.clientHeight];
-    } else {
-        return [0, 0];
+        const diameter = layout[layout.length - 1].diameter + gauge * 1.1;
+        if (diameter === 0) return [0, 0];
+        return [diameter, diameter];
+
     }
+    let startingIndex = 0;
+    if (hits.length < round.maxHits) {
+        startingIndex = Math.floor((hits.length - 1) / hitsPerView) * hitsPerView;
+
+    }
+    const hitsCopy = hits.slice(startingIndex)
+    const sizes = [Math.max(...hitsCopy.map(hit => Math.abs(hit.x) + gauge * 1.1)),
+    Math.max(...hitsCopy.map(hit => Math.abs(hit.y) + gauge * 1.1))];
+    return sizes.map((s) => s * 2) as [number, number];
+}
+
+function getSizeFixed(range: Range, value: number): [number, number] {
+    if (!range.active) return [0, 0];
+    if (!range.discipline) return [0, 0];
+    const gauge = range.discipline.gauge;
+    const round = range.discipline.rounds[range.round];
+    if (!round) return [0, 0];
+    const zoom = round.zoom;
+    const layout = range.discipline.layouts[round.layoutId];
+    if (!layout) return [0, 0];
+    const ring = layout.find(ring => ring.value === value);
+    if (!ring) return [0, 0];
+    const diameter = ring.diameter + gauge * 1.1;
+    return [diameter, diameter];
 }

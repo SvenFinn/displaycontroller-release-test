@@ -11,7 +11,10 @@ export default function DrawHits({ range }: { range: Range }): React.JSX.Element
     if (!range.hits) return <></>;
     const hits = range.hits[range.round];
     if (!hits) return <></>;
-    const startingIndex = Math.floor((hits.length - 1) / hitsPerView) * hitsPerView;
+    let startingIndex = 0;
+    if (hits.length < round.maxHits) {
+        startingIndex = Math.floor((hits.length - 1) / hitsPerView) * hitsPerView;
+    }
     const hitsCopy = hits.slice(startingIndex)
     const gauge = range.discipline.gauge;
     return (
