@@ -3,6 +3,10 @@ export function floor(x: number, decimals: number): number {
     return Number(`${Math.floor(Number(`${x}e${decimals}`))}e-${decimals}`);
 }
 
+export function round(x: number, decimals: number): number {
+    return Number(`${Math.round(Number(`${x}e${decimals}`))}e-${decimals}`);
+}
+
 export function getNumberOfDecimalPlaces(x: number): number {
     const text = x.toString();
 

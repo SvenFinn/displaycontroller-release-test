@@ -1,7 +1,8 @@
 import Hit from "./hit"
 import { Range } from "@shared/ranges";
+import TargetCircle from "./targetCircle";
 
-export default function DrawHits({ range }: { range: Range }): React.JSX.Element {
+export default function DrawHits({ range, strokeWidth }: { range: Range, strokeWidth: number }): React.JSX.Element {
     if (!range.active) return <></>;
     if (!range.discipline) return <></>;
     const round = range.discipline.rounds[range.round];
@@ -22,6 +23,7 @@ export default function DrawHits({ range }: { range: Range }): React.JSX.Element
             {hitsCopy.map((hit, index) => (
                 <Hit key={index} hit={hit} gauge={gauge} isLatest={index == hitsCopy.length - 1} />
             ))}
+            {round.mode.mode == "circle" ? <TargetCircle hits={hitsCopy} gauge={gauge} strokeWidth={strokeWidth} /> : <></>}
         </g>
     )
 }    

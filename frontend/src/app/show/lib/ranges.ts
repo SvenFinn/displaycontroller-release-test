@@ -1,7 +1,8 @@
 import { Range } from "@shared/ranges";
-import { floor, getNumberOfDecimalPlaces } from "./math";
+import { floor, round as mRound } from "./math";
 import { DisciplineRound } from "@shared/ranges/discipline/round";
 import { Hit } from "@shared/ranges/hits";
+import smallestEnclosingCircle from "smallest-enclosing-circle";
 
 export function getRoundName(data: Range, roundId?: number): string | null {
     if (!data.active) return null;
@@ -48,7 +49,6 @@ export function getHitArr(data: Range, roundId?: number, index?: number): Array<
         case "divider": {
             return [
                 `${hit.id}`,
-
                 `${floor(hit.divisor, round.mode.decimals).toFixed(round.mode.decimals)}`
             ];
         }
@@ -83,8 +83,8 @@ export function getHitArr(data: Range, roundId?: number, index?: number): Array<
         case "circle":
             return [
                 `${hit.id}`,
-                `${hit.x}`,
-                `${hit.y}`
+                `${mRound(hit.x, 2).toFixed(2)}`,
+                `${mRound(hit.y, 2).toFixed(2)}`
             ]
 
         default:
@@ -92,34 +92,38 @@ export function getHitArr(data: Range, roundId?: number, index?: number): Array<
     }
 }
 
-export function getSeries(data: Range, roundId?: number, hitCount?: number): Array<string> {
+export function getSeries(data: Range, roundId?: number, hitCount?: number, gauge?: number): Array<string> {
     if (!data.active) return [];
     if (!data.hits) return [];
+    if (!data.discipline) return [];
     if (!roundId) roundId = data.round;
     const round = getRound(data, roundId);
     if (!round) return [];
     if (!hitCount) hitCount = round.hitsPerSum;
     const hits = data.hits[roundId];
     if (!hits) return [];
+    if (!gauge) gauge = data.discipline.gauge;
     const series = [];
     for (let i = 0; i < hits.length; i += hitCount) {
-        series.push(accumulateHits(hits, round, i, i + hitCount));
+        series.push(accumulateHits(hits, round, gauge, i, i + hitCount));
     }
     return series;
 }
 
-export function getTotal(data: Range, roundId?: number): string {
+export function getTotal(data: Range, roundId?: number, gauge?: number): string {
     if (!data.active) return "";
     if (!data.hits) return "";
+    if (!data.discipline) return "";
     if (!roundId) roundId = data.round;
     const round = getRound(data, roundId);
     if (!round) return "";
     const hits = data.hits[roundId];
     if (!hits) return "";
-    return accumulateHits(hits, round, 0, hits.length);
+    if (!gauge) gauge = data.discipline.gauge;
+    return accumulateHits(hits, round, gauge, 0, hits.length);
 }
 
-function accumulateHits(hits: Array<Hit>, round: DisciplineRound, startId: number, endId: number): string {
+function accumulateHits(hits: Array<Hit>, round: DisciplineRound, gauge: number, startId: number, endId: number): string {
     const hitsToAccumulate = hits.slice(startId, endId);
     let sum = 0;
     if (round.mode.mode == "divider") {
@@ -150,6 +154,9 @@ function accumulateHits(hits: Array<Hit>, round: DisciplineRound, startId: numbe
             case "decimal":
                 sum += Math.floor(hit.rings * 10) % 10;
                 break;
+            case "circle":
+                sum = 0;
+                break;
             default:
                 throw new Error("Unsupported mode");
         }
@@ -164,6 +171,9 @@ function accumulateHits(hits: Array<Hit>, round: DisciplineRound, startId: numbe
         case "fullHidden":
             if (round.counts) return "***";
             return sum.toFixed(0);
+        case "circle":
+            const radius = smallestEnclosingCircle(hitsToAccumulate).r;
+            return mRound((isNaN(radius) ? 0 : radius * 2) + gauge, 1).toFixed(1);
         default:
             return sum.toFixed(0);
     }

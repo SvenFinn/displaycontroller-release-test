@@ -46,8 +46,8 @@ export default function DrawRange({ range, className }: DrawRangeProps): React.J
     return (
         <svg ref={ref} className={className} viewBox={viewBox} strokeWidth={strokeWidth}>
             <Rings layout={layout} color={range.discipline.color} />
-            <Hits range={range} />
             <CountsCorner counts={round.counts} size={size} />
+            <Hits range={range} strokeWidth={strokeWidth} />
         </svg>
     )
 }
