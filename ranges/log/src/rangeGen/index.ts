@@ -15,7 +15,7 @@ export class RangeGen {
     private hits: Hits;
     private multicast: TTLHandler<InternalRange>;
 
-    constructor(rangeId: number,) {
+    constructor(rangeId: number) {
         this.rangeId = rangeId;
         this.targetId = 0;
         this.shooter = null;
@@ -162,7 +162,7 @@ export class RangeGen {
             startListId: multicastInfo.startListId,
             hits: this.hits,
             source: "log",
-            ttl: 20000
+            ttl: 11000
         }
     }
 

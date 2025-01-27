@@ -21,20 +21,18 @@ const tables = [
     "Schuetze", // shooter
 ]
 
-let smdbClient: SmdbClient | null = null;
-let localClient: LocalClient | null = null;
 
 async function init() {
     logger.info("Starting cache");
-    localClient = await createLocalClient();
-    smdbClient = await createSMDBClient(localClient);
+    const localClient = await createLocalClient();
+    const smdbClient = await createSMDBClient(localClient);
     const tableWatcher = new TableWatcher(smdbClient, tables, 10000);
     tableWatcher.on("change", async (tables: string[]) => {
         await Promise.all([
-            updateDisciplineCache(),
-            updateStartListCache(),
-            updateShooterCache(),
-            updateOverrideDisciplineCache(),
+            updateDisciplineCache(localClient, smdbClient),
+            updateStartListCache(localClient, smdbClient),
+            updateShooterCache(localClient, smdbClient),
+            updateOverrideDisciplineCache(localClient, smdbClient),
         ]);
     });
     await tableWatcher.start();
@@ -42,33 +40,33 @@ async function init() {
 
 
 
-async function updateDisciplineCache() {
+async function updateDisciplineCache(localClient: LocalClient, smdbClient: SmdbClient) {
     logger.info("Updating discipline cache");
     const disciplines = await getDisciplineCache(smdbClient as SmdbClient);
-    await writeCache("discipline", disciplines);
+    await writeCache(localClient, "discipline", disciplines);
 }
 
-async function updateStartListCache() {
+async function updateStartListCache(localClient: LocalClient, smdbClient: SmdbClient) {
     logger.info("Updating start list cache");
-    const startLists = await getStartListCache(smdbClient as SmdbClient);
-    await writeCache("startList", startLists);
+    const startLists = await getStartListCache(smdbClient);
+    await writeCache(localClient, "startList", startLists);
 }
 
-async function updateShooterCache() {
+async function updateShooterCache(localClient: LocalClient, smdbClient: SmdbClient) {
     logger.info("Updating shooter cache");
-    const shooters = await getShooterCache(smdbClient as SmdbClient);
-    await writeCache("shooter", shooters);
+    const shooters = await getShooterCache(smdbClient);
+    await writeCache(localClient, "shooter", shooters);
 }
 
-async function updateOverrideDisciplineCache() {
+async function updateOverrideDisciplineCache(localClient: LocalClient, smdbClient: SmdbClient) {
     logger.info("Updating override discipline cache");
-    const overrideDisciplines = await getOverrideDisciplines(smdbClient as SmdbClient);
-    await writeCache("overrideDiscipline", overrideDisciplines);
+    const overrideDisciplines = await getOverrideDisciplines(smdbClient);
+    await writeCache(localClient, "overrideDiscipline", overrideDisciplines);
 }
 
-async function writeCache(type: "shooter" | "startList" | "discipline" | "overrideDiscipline", cache: Array<Shooter> | Array<StartList> | Array<Discipline> | Array<OverrideDiscipline>) {
+async function writeCache(localClient: LocalClient, type: "shooter" | "startList" | "discipline" | "overrideDiscipline", cache: Array<Shooter> | Array<StartList> | Array<Discipline> | Array<OverrideDiscipline>) {
     await Promise.all(cache.map(async item => {
-        await localClient?.cache.upsert({
+        await localClient.cache.upsert({
             where: {
                 type_key: {
                     type: type,
@@ -85,7 +83,7 @@ async function writeCache(type: "shooter" | "startList" | "discipline" | "overri
             }
         });
     }));
-    await localClient?.cache.deleteMany({
+    await localClient.cache.deleteMany({
         where: {
             type: type,
             NOT: {
