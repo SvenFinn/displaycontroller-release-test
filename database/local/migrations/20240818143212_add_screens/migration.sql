@@ -9,7 +9,7 @@ CREATE TABLE "Screens" (
     "condition" JSONB,
     "visibleFrom" TIMESTAMP(3),
     "visibleUntil" TIMESTAMP(3),
-    "duration" DOUBLE PRECISION NOT NULL DEFAULT -1,
+    "duration" INTEGER NOT NULL DEFAULT 30000,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 

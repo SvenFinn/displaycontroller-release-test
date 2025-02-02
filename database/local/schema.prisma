@@ -25,7 +25,7 @@ model Screens {
     condition    Json?
     visibleFrom  DateTime?
     visibleUntil DateTime?
-    duration     Float         @default(-1)
+    duration     Int           @default(30000)
     createdAt    DateTime      @default(now())
     updatedAt    DateTime      @default(now()) @updatedAt
 }
