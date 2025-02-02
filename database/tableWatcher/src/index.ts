@@ -22,7 +22,7 @@ export class TableWatcher extends EventEmitter {
         }
         const events = new EventSource("http://check-server:80/api/serverState/sse");
         events.onopen = () => {
-            logger.info("Connected to server state SSE");
+            logger.info("Connected to server state events");
         }
         events.onmessage = async (event: MessageEvent) => {
             logger.info("Received server state");

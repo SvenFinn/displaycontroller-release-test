@@ -21,7 +21,7 @@ async function main() {
   }
   const eventSource = new EventSource("http://check-server:80/api/serverState/sse");
   eventSource.onopen = () => {
-    logger.info("Connected to server state SSE")
+    logger.info("Connected to server state events")
   }
   eventSource.onmessage = async (event) => {
     if (syncTimeout) {
@@ -44,7 +44,7 @@ async function loop() {
     logger.error(e);
   }
   if (timestampQuery.length > 0) {
-    console.log(timestampQuery[0].UTC_TIMESTAMP.getTime());
+    logger.info(`Setting time to ${timestampQuery[0].UTC_TIMESTAMP}`);
     const date = timestampQuery[0].UTC_TIMESTAMP;
     execSync(`date -s @${Math.round(date.getTime() / 1000)}`);
   }

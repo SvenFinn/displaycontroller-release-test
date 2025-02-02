@@ -13,7 +13,7 @@ const localClient: LocalClient = new LocalClient();
 let sseConnections: Response[] = [];
 
 export async function sendSSEResponse(data: Screen) {
-    logger.info("Sending SSE response");
+    logger.info("Sending screen update");
     sseConnections.forEach((socket) => {
         socket.write(`data: ${JSON.stringify(data)}\n\n`);
     });
@@ -34,7 +34,7 @@ app.get('/api/screens/current(/)?', (req: Request, res: Response) => {
 });
 
 app.get('/api/screens/current/sse(/)?', (req: Request, res: Response) => {
-    logger.info("New SSE connection");
+    logger.info("New screens events connection");
     const headers = {
         'Content-Type': 'text/event-stream',
         'Connection': 'keep-alive',

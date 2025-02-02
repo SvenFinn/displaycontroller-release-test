@@ -72,7 +72,7 @@ async function main() {
     const serverStateEvents = new EventSource("http://check-server:80/api/serverState/sse");
     serverStateEvents.onmessage = loop;
     serverStateEvents.onopen = () => {
-        logger.info("Connected to server state SSE");
+        logger.info("Connected to server state events");
     }
 }
 

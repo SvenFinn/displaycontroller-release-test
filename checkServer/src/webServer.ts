@@ -20,7 +20,7 @@ app.get("/api/serverState/full", (req: Request, res: Response) => {
 });
 
 app.get("/api/serverState/sse", (req: Request, res: Response) => {
-    logger.info("New sse connection");
+    logger.info("New serverState connection");
     const headers = {
         'Content-Type': 'text/event-stream',
         'Connection': 'keep-alive',
@@ -39,7 +39,7 @@ app.get("/api/serverState/sse", (req: Request, res: Response) => {
 });
 
 export function updateServerState(newServerInf: AdvServerState) {
-    logger.info("Sending sse");
+    logger.info("Sending serverState update");
     serverInf = newServerInf;
     sockets.forEach((socket) => {
         socket.write(`data: ${serverInf.online ? serverInf.compatible : false}\n\n`);
