@@ -73,6 +73,7 @@ async function handleFile(file: fileUpload.UploadedFile, path: string) {
             savePath: path + "/" + file.name,
             saveFilename: "page",
             width: minDimension,
+            height: minDimension,
             format: "png",
             preserveAspectRatio: true,
         });
