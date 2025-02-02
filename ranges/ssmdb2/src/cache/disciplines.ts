@@ -12,7 +12,7 @@ export async function updateDisciplines(client: LocalClient) {
     disciplineIdToObj.clear();
     for (const override of overrides) {
         disciplineIdToObj.set(Number(override.key), {
-            disciplineId: Number(override.key),
+            overrideId: Number(override.key),
             roundId: 0
         });
     }
