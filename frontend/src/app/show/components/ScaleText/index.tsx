@@ -16,7 +16,7 @@ export default function ScaleText({ text, }: ScaleTextProps): React.JSX.Element 
         function applyFontSize() {
             if (!ref.current) return;
             if (!ref.current.parentElement) return;
-            setFontSize(Math.min(100, Math.floor(100 * (ref.current.parentElement.clientWidth * 0.99) / ref.current.clientWidth)));
+            setFontSize(Math.min(100, Math.floor(100 * (ref.current.parentElement.clientWidth * 0.95) / ref.current.clientWidth)));
         }
         window.addEventListener("resize", applyFontSize);
         return () => {
