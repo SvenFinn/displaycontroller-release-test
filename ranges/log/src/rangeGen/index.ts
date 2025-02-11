@@ -24,6 +24,13 @@ export class RangeGen {
         this.multicast = new TTLHandler();
     }
 
+    public reset() {
+        this.targetId = 0;
+        this.shooter = null;
+        this.disciplineId = 0;
+        this.hits = [];
+    }
+
     public addLogLine(logLine: LogLine) {
         if (logLine.rangeId !== this.rangeId) {
             logger.warn("RangeId mismatch", logLine.rangeId, this.rangeId);
@@ -31,16 +38,10 @@ export class RangeGen {
         }
         if (this.targetId != logLine.targetId) {
             logger.info(`TargetId changed, resetting range ${this.rangeId}`);
+            this.reset();
             this.targetId = logLine.targetId;
             this.disciplineId = logLine.discipline.id;
-            this.hits = [];
-        }
-        if (this.shooter !== logLine.shooter.id) {
-            if (logLine.shooter.id == 0) {
-                this.shooter = null;
-            } else {
-                this.shooter = logLine.shooter.id;
-            }
+            this.shooter = logLine.shooter.id;
         }
         this.addHit(logLine);
     }
@@ -50,6 +51,9 @@ export class RangeGen {
             return
         }
         this.multicast.setMessage(multicastInfo);
+        if (multicastInfo.shooter === null) {
+            this.reset();
+        }
     }
 
     private async addHit(logLine: LogLine) {

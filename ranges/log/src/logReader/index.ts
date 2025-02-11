@@ -63,11 +63,11 @@ export class LogReader extends EventEmitter {
         sshThread.stdout?.on("data", (data: any) => {
             logger.debug("Received log data");
             dataBuffer += data.toString();
-            const splitBuffer = dataBuffer.split("LOG_DATA_END");
+            const splitBuffer = dataBuffer.split("\n");
             while (splitBuffer.length > 1) {
                 this.parseData(splitBuffer.shift() as string);
             }
-            dataBuffer = splitBuffer.join("LOG_DATA_END");
+            dataBuffer = splitBuffer.join("\n");
         });
         return sshThread;
     }
@@ -81,6 +81,11 @@ export class LogReader extends EventEmitter {
         const lines = data.split("\n");
         for (const line of lines) {
             if (line === "") {
+                continue;
+            }
+            if (line.includes("LOG_RESET")) {
+                logger.warn("Received log reset");
+                this.emit("reset");
                 continue;
             }
             const parsedLine = parseLine(line);

@@ -23,6 +23,11 @@ async function main() {
         range.addLogLine(data);
         await range.sendRange(logChannel);
     });
+    logReader.on("reset", async () => {
+        ranges.forEach(async (range) => {
+            range.reset();
+        });
+    });
 }
 
 function getRangeGen(rangeId: number): RangeGen {

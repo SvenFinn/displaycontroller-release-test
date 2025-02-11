@@ -9,7 +9,7 @@ export function parseLine(line: string): undefined | LogLine {
         values[i] = values[i].trim();
     }
     if (values.length != 30) {
-        logger.warn("log line was smaller than expected");
+        logger.warn(`log line does not have correct length: ${values.length} != 30`);
         return undefined;
     }
     try {

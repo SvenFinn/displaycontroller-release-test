@@ -5,53 +5,42 @@
 # These represent the shots that were fired per range.
 # Meyton calls this feature "Schussprotokoll".
 
-cd /var/shootmaster # Change to the directory where the log files are stored
+cd /var/shootmaster || exit 1
 
-fileStates="" # This variable will hold the state of the log files
+tail_count=0 # Number of files being tailed
+tail_pid= # PID of the tail process
 
-
-# Get the initial line count of each log file
-fileList=`find -maxdepth 1 -type f -name "log.*.txt" ! -name "log.0.txt" | sort -n` 
-for file in $fileList; do # Loop through all log files
-  initialLineCount=`cut -d";" -f 16 $file | cut -d"\"" -f 2 | sed /$(date +%-d.%m.%Y)/d | wc -l` # Get the line count of shots fired before today
-  fileStates="$fileStates$file;$initialLineCount " # Append the file name and line count to the fileStates variable
-done
-
-while true; do # Loop forever
-  
-  for fileInfo in $fileStates; do # Loop through all log files
-    if [ $fileInfo == "" ]; then # Discard empty entries (Last entry is always empty)
-      continue 
+# Ensure tail is cleaned up on exit
+cleanup() {
+    # If a tail process is running, kill it
+    if [ -n "$tail_pid" ]; then
+        kill "$tail_pid" 2>/dev/null
+        wait "$tail_pid" 2>/dev/null
     fi
-    fileName=`echo $fileInfo | cut -d';' -f1` # Get the file name
-    if [ ! -f $fileName ]; then  # If the file does not exist anymore
-      continue  # Skip this file
-    fi
-    oldLineCount=`echo $fileInfo | cut -d';' -f2` # Get the old line count 
-    lineCount=`wc -l $fileName | cut -d' ' -f1` # Get the new line count
-    if [ $lineCount -gt $oldLineCount ]; then  # If the line count has changed
-      tail -n `expr $lineCount - $oldLineCount` $fileName # Print the new lines
-    elif [ $lineCount -lt $oldLineCount ]; then # If the log file was reset
-      tail -n $lineCount $fileName # Print the new lines
-    fi
-  done
+    exit 0
+}
+trap cleanup SIGINT SIGTERM EXIT
 
-  # Update the file states
-  tempFileStates=""
-  existingFiles=`find -maxdepth 1 -type f -name "log.*.txt" ! -name "log.0.txt" | sort -n` # Get all log files
-  for file in $existingFiles; do # Loop through all log files
+# Main loop
+while true; do
+    # Get the current number of log files
+    current_count=$(find . -maxdepth 1 -name "log.*.txt" | wc -l)
 
-    fileNew=`echo "$fileStates" | grep "$file"` # Check if the file is already in the fileStates variable
-    if [ "$fileNew" == "" ]; then # If the file is not in the fileStates variable
-      tempFileStates="$tempFileStates$file;0 " # Add the file to the fileStates variable as empty
-    else # If the file is already in the fileStates variable
-      lineCount=`wc -l $file | cut -d' ' -f1` # Get the line count of the file
-      tempFileStates="$tempFileStates$file;$lineCount " # Add the file to the fileStates variable with the line count
+    # If the number of log files has changed, restart tail
+    if [ "$current_count" -ne "$tail_count" ]; then
+
+        # If a tail process is running, kill it
+        if [ -n "$tail_pid" ]; then
+            kill "$tail_pid" 2>/dev/null
+            wait "$tail_pid" 2>/dev/null
+        fi
+
+        # Update the tail count and start a new tail process
+        tail_count="$current_count"
+        echo "LOG_RESET" # This is a signal for the log reader to reset its state
+        tail -n+2 -q -f $(find . -maxdepth 1 -name "log.*.txt" ! -name "log.0.txt") &
+        tail_pid=$!
     fi
-  done
-  fileStates=$tempFileStates # Update the fileStates variable
 
-  echo "LOG_DATA_END" # Print the end of the data marker
-  
-  sleep 2
+    sleep 10s
 done
