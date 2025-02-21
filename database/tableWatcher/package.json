@@ -11,9 +11,9 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "@prisma/client": "^6.3.1",
-    "@types/node": "^22.13.1",
-    "prisma": "^6.3.1",
+    "@prisma/client": "^6.4.1",
+    "@types/node": "^22.13.5",
+    "prisma": "^6.4.1",
     "typescript": "^5.7.3"
   },
   "files": [
@@ -21,6 +21,6 @@
   ],
   "dependencies": {
     "dc-logger": "file:../../logger",
-    "eventsource": "3.0.1"
+    "eventsource": "^3.0.5"
   }
 }
