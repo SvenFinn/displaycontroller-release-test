@@ -13,14 +13,7 @@ export function getRoundName(data: Range, roundId?: number): string | null {
     return round.name;
 }
 
-export function getHitString(data: Range, roundId?: number, index?: number): string | null {
-    const hitArr = getHitArr(data, roundId, index);
-    if (!hitArr) return null;
-    const hitId = hitArr.shift();
-    return `${hitId}: ${hitArr.join(" ")}`;
-}
-
-export function getHitArr(data: Range, roundId?: number, index?: number): Array<string> | null {
+export function getHitString(data: Range, roundId?: number, index?: number): Array<string> | null {
     if (!data.active) return null;
     if (!data.hits) return null;
     if (!roundId) roundId = data.round;

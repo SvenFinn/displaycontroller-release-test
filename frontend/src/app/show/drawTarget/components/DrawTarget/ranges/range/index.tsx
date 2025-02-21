@@ -52,11 +52,11 @@ export default function Range({ highlightAssign, id }: DrawTargetRangeProps): Re
     return (
         <div className={styles.range} style={{ animation: "none" }} ref={rangeRef}>
             <RangeNr id={id} />
-            <RangeName id={id} />
-            <CurrentHit id={id} />
-            <DrawRange id={id} />
-            <SeriesList id={id} />
-            <Total id={id} />
+            <RangeName shooter={range.shooter} />
+            <CurrentHit range={range} />
+            <DrawRange range={range} />
+            <SeriesList range={range} />
+            <Total range={range} />
         </div>
     )
 }

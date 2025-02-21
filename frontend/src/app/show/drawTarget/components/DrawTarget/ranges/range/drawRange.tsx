@@ -1,5 +1,6 @@
 "use client";
 
+import { Range } from "@shared/ranges";
 import DrawRange from "../../../../../components/RangeDraw"
 import { useAppSelector } from "../../ranges-store/store";
 import styles from "./range.module.css";
@@ -7,11 +8,10 @@ import { useEffect, useRef, useState } from "react";
 
 
 interface DrawRangeProps {
-    id: number
+    range: Range
 }
 
-export default function DrawRangeW({ id }: DrawRangeProps): React.JSX.Element {
-    const range = useAppSelector((state) => state.ranges[id]);
+export default function DrawRangeW({ range }: DrawRangeProps): React.JSX.Element {
     const [maxHeight, setMaxHeight] = useState<number>(0);
     const ref = useRef<HTMLDivElement>(null);
 
@@ -40,8 +40,6 @@ export default function DrawRangeW({ id }: DrawRangeProps): React.JSX.Element {
             window.removeEventListener("resize", updateMaxHeight);
         }
     });
-
-    if (!range) return <></>
 
     return (
         <div ref={ref} className={styles.drawRange} style={{

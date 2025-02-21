@@ -1,22 +1,27 @@
 import ScaleText from "@frontend/app/show/components/ScaleText";
 import { getHitString, getRoundName } from "../../../../../lib/ranges";
-import { useAppSelector } from "../../ranges-store/store"
 import styles from "./range.module.css"
 import ShotArrowW from "./ShotArrow";
+import { Range } from "@shared/ranges";
 
 interface CurrentHitProps {
-    id: number
+    range: Range
 }
 
-export default function CurrentHit({ id }: CurrentHitProps): React.JSX.Element {
-    const range = useAppSelector((state) => state.ranges[id]);
-    if (!range?.active) return <></>
-    const hit = getHitString(range) || getRoundName(range);
+export default function CurrentHit({ range }: CurrentHitProps): React.JSX.Element {
+    const hit = getHit(range) || getRoundName(range);
     if (!hit) return <></>
     return (
         <div className={styles.currentShot}>
-            <ShotArrowW id={id} />
+            <ShotArrowW range={range} />
             <ScaleText text={hit} />
         </div>
     )
+}
+
+function getHit(range: Range): string | null {
+    const hitArr = getHitString(range);
+    if (!hitArr) return null;
+    const hitId = hitArr.shift();
+    return `${hitId}: ${hitArr.join(" ")}`;
 }

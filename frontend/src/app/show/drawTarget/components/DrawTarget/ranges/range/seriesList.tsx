@@ -1,12 +1,9 @@
 import ScaleText from "@frontend/app/show/components/ScaleText";
 import { getSeries } from "../../../../../lib/ranges";
-import { useAppSelector } from "../../ranges-store/store"
 import styles from "./range.module.css"
+import { Range } from "@shared/ranges";
 
-export default function SeriesList({ id }: { id: number }): React.JSX.Element {
-    const range = useAppSelector((state) => state.ranges[id]);
-    if (!range) return <></>;
-    if (!range.active) return <></>;
+export default function SeriesList({ range }: { range: Range }): React.JSX.Element {
     const series = getSeries(range);
     const rows = Math.ceil(series.length / 4);
     return (
