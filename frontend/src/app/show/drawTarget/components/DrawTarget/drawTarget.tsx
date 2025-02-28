@@ -21,11 +21,10 @@ export default function DrawTarget({ options, onReady }: DrawTargetProps): React
         return () => clearTimeout(timeout);
     }, [onReady]);
 
-    const ranges = options.ranges.flat();
     return (
         <div style={{ height: "100%", fontSize: "100vmin", userSelect: "none" }}>
             <Provider store={store}>
-                <RangesEvents action={setRange} ranges={ranges} />
+                <RangesEvents action={setRange} ranges={options.ranges} />
                 <Header />
                 <Ranges options={options} />
             </Provider>

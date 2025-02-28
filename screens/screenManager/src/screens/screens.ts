@@ -37,7 +37,6 @@ export async function loadNextScreen(localClient: LocalClient, currentScreenId: 
         if (! await checkCondition(localClient, nextScreenId)) {
             continue;
         }
-        logger.info(`Found screen with id ${nextScreenId}`);
         const parsedScreen = await loadScreen(localClient, nextScreenId);
         if (parsedScreen.length > 0) {
             return parsedScreen;
