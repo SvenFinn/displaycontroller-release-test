@@ -19,6 +19,7 @@ services:
       GUNICORN_ACCESS_LOGFILE: "/dev/null"
       PGADMIN_CONFIG_SERVER_MODE: "False"
       PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+      PGADMIN_CONFIG_UPGRADE_CHECK_ENABLED: "False"
     depends_on:
       dc-db-migrate:
         condition: service_completed_successfully
