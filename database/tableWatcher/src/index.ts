@@ -88,7 +88,7 @@ export class TableWatcher extends EventEmitter {
                     this.checksums[table] = checksumValue;
                 }
             } catch (error) {
-                console.error(error);
+                logger.warn(`Failed to get checksum for table: ${table}`);
                 return;
             }
         }));
