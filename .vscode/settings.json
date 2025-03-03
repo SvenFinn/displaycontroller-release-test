@@ -21,5 +21,10 @@
         "sshpass",
         "ssmdb",
         "targetd"
-    ]
+    ],
+    "files.exclude": {
+        "**/dist": true,
+        "**/node_modules": true
+    },
+    "postman.settings.dotenv-detection-notification-visibility": false
 }
