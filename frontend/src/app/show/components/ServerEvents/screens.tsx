@@ -15,7 +15,6 @@ export default function ScreenEvents({ action }: ScreenEventsProps) {
     const [host, setHost] = useState<string>("");
 
     useEffect(() => {
-        console.log(window.location.host);
         setHost(window.location.host.split(":")[0]);
     }, []);
 
@@ -23,7 +22,6 @@ export default function ScreenEvents({ action }: ScreenEventsProps) {
         return <></>;
     }
 
-    console.log(`http://${host}:${process.env.NEXT_PUBLIC_APP_PORT}/api/screens/current/sse`);
 
     const path = new URL(`http://${host}:${process.env.NEXT_PUBLIC_APP_PORT}/api/screens/current/sse`);
 
@@ -32,7 +30,6 @@ export default function ScreenEvents({ action }: ScreenEventsProps) {
         if (!isScreen(data)) {
             return;
         }
-        console.log(data);
         dispatch(action(data));
     }
 
