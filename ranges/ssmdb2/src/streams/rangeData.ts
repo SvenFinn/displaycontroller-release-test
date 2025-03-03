@@ -61,7 +61,7 @@ export class RangeDataStream extends Transform {
             hits: hits,
             discipline: getDisciplineId(data.disciplineId, hits.length === 0 ? 0 : hits.length - 1),
             source: "ssmdb2",
-            ttl: 11000 // 11 seconds, was measured manually
+            ttl: 15000
         }
     }
 

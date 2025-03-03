@@ -1,6 +1,6 @@
 import { isInternalShooterById, isInternalShooterByName, InternalShooter, InternalShooterById, InternalShooterByName } from "@shared/ranges/internal";
 import { LocalClient } from "dc-db-local";
-import { isShooter as isShooterTypeCheck } from "@shared/ranges/shooter";
+import { isShooter } from "@shared/ranges/shooter";
 
 export const shooterMap = new Map<InternalShooterById, InternalShooterByName>();
 
@@ -12,7 +12,7 @@ export async function updateShooters(client: LocalClient) {
     });
     shooterMap.clear();
     for (const shooter of shooters) {
-        if (!isShooterTypeCheck(shooter.value)) {
+        if (!isShooter(shooter.value)) {
             continue;
         }
         if (shooter.value.id === null) {
@@ -22,7 +22,12 @@ export async function updateShooters(client: LocalClient) {
     }
 }
 
-export function isSameShooter(shooterOne: InternalShooter, shooterTwo: InternalShooter): boolean {
+export function isSameShooter(shooterOne: InternalShooter | null, shooterTwo: InternalShooter | null): boolean {
+    if (shooterOne === null && shooterTwo === null) {
+        return true;
+    } else if (shooterOne === null || shooterTwo === null) {
+        return false;
+    }
     const isShooterOneById = isInternalShooterById(shooterOne);
     const isShooterTwoById = isInternalShooterById(shooterTwo);
     if (isShooterOneById && isShooterTwoById) {

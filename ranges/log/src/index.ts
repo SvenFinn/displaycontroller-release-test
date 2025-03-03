@@ -1,68 +1,40 @@
-import { LogReader } from "./logReader";
-import { RangeGen } from "./rangeGen";
+import { logReaderStream } from "./streams/logReader";
 import amqp from "amqplib";
 import { isInternalRange } from "@shared/ranges/internal";
 import { logger } from "dc-logger";
 
 import "./cache/updater"; // Import the updater to start the caching
+import { ServerStateStream } from "./streams/serverState";
+import { LocalClient } from "dc-db-local";
+import { LogParserStream } from "./streams/logParser";
+import { MulticastStream } from "./streams/multicastRecv";
+import { RangeMerger } from "./streams/mergeRange";
+import { AccumulateRanges } from "./streams/accumulateRanges";
+import { DebounceStream } from "./streams/debounce";
+import { RabbitSenderStream } from "./streams/rabbitSender";
 
-const ranges = new Map<number, RangeGen>();
 
 async function main() {
     logger.info("Connecting to rabbitmq");
     const connection = await amqp.connect("amqp://rabbitmq");
-    const logChannel = await connection.createChannel();
-    await recvMultiCast(await connection.createChannel(), logChannel);
-    await logChannel.assertExchange("ranges.log", "fanout", {
-        durable: false,
-    });
-    const logReader = new LogReader();
-    logReader.on("data", async (data) => {
-        const rangeId = data.rangeId;
-        const range = getRangeGen(rangeId);
-        range.addLogLine(data);
-        await range.sendRange(logChannel);
-    });
-    logReader.on("reset", async () => {
-        ranges.forEach(async (range) => {
-            range.reset();
-        });
-    });
-}
+    const localClient = new LocalClient();
 
-function getRangeGen(rangeId: number): RangeGen {
-    if (!ranges.has(rangeId)) {
-        ranges.set(rangeId, new RangeGen(rangeId));
-    }
-    const range = ranges.get(rangeId);
-    if (!range) {
-        throw new Error("Range not found");
-    }
-    return range;
-}
+    const serverState = new ServerStateStream();
+    const logReader = new logReaderStream(localClient);
+    const logParser = new LogParserStream();
+    const accumulateRanges = new AccumulateRanges();
+    const debounceRanges = new DebounceStream(300);
+    serverState.pipe(logReader).pipe(logParser).pipe(accumulateRanges).pipe(debounceRanges);
 
-async function recvMultiCast(channel: amqp.Channel, logChannel: amqp.Channel) {
-    await channel.assertExchange("ranges.multicast", "fanout", {
-        durable: false,
-    });
-    const queue = await channel.assertQueue("", {
-        exclusive: true,
-    });
-    channel.bindQueue(queue.queue, "ranges.multicast", "");
-    channel.consume(queue.queue, async (msg) => {
-        if (msg === null) {
-            return;
-        }
-        const message = JSON.parse(msg.content.toString());
-        if (isInternalRange(message)) {
-            const range = getRangeGen(message.rangeId);
-            range.setMulticastInfo(message);
-            await range.sendRange(logChannel);
-        } else {
-            logger.error("Received invalid multicast message");
-        }
-        channel.ack(msg);
-    });
+    const multicastRecv = new MulticastStream(connection);
+
+    const merger = new RangeMerger(localClient);
+    accumulateRanges.on("data", (data) => merger.write(data));
+    multicastRecv.on("data", (data) => merger.write(data));
+
+    const sender = new RabbitSenderStream(connection);
+    merger.pipe(sender);
+    logger.info("Connected to rabbitmq");
 }
 
 main();

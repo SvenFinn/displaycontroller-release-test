@@ -49,7 +49,7 @@ RUN npm run build && \
     echo "SELF_DB_URL=postgresql://$SELF_DB_USER:$SELF_DB_PASS@$SELF_DB_HOST:5432/$SELF_DB_NAME" > dist/.env && \
     echo "MEYTON_SSH_USER=$MEYTON_SSH_USER" >> dist/.env && \
     echo "MEYTON_SSH_PASS=$MEYTON_SSH_PASS" >> dist/.env;
-COPY src/logReader/range-logs.sh dist/log/src/logReader/
+COPY src/streams/range-logs.sh dist/log/src/streams/
 
 FROM base AS final
 
