@@ -11,13 +11,13 @@ FROM base AS deps
 
 WORKDIR /app/frontend
 COPY package.json package-lock.json ./
-RUN npm i --omit=dev --loglevel=info
+RUN npm ci --omit=dev --loglevel=info
 
 FROM base AS build
 
 WORKDIR /app/frontend
 COPY package.json package-lock.json ./
-RUN npm i --loglevel=info
+RUN npm ci --loglevel=info
 
 WORKDIR /app/ranges/types
 COPY --from=range-types . .

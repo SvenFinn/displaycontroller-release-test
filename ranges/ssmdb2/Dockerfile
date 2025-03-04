@@ -42,7 +42,7 @@ FROM local-deps AS build
 WORKDIR /app/ranges/ssmdb2
 
 COPY package.json package-lock.json ./
-RUN npm i --loglevel=info --install-links;
+RUN npm i --loglevel=info;
 
 WORKDIR /app/ranges/types
 COPY --from=range-types . .

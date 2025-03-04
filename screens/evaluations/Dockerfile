@@ -30,7 +30,7 @@ FROM local-deps AS build
 WORKDIR /app/screens/evaluations
 
 COPY package.json package-lock.json ./
-RUN npm i --loglevel=info --install-links;
+RUN npm i --loglevel=info;
 
 COPY . .
 RUN npm run build && \

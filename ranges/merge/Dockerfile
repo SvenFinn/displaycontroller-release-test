@@ -35,7 +35,7 @@ FROM local-deps AS build
 WORKDIR /app/ranges/merger
 
 COPY package.json package-lock.json ./
-RUN npm i --loglevel=info --install-links;
+RUN npm i --loglevel=info;
 
 WORKDIR /app/ranges/types
 COPY --from=range-types . .
@@ -49,6 +49,8 @@ RUN npm run build && \
 FROM base AS final
 
 WORKDIR /app
+
+EXPOSE 80
 
 COPY --from=build /app/ranges/merger/dist ./
 COPY --from=deps /app/ranges/merger/node_modules ./node_modules

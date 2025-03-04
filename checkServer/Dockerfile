@@ -11,7 +11,6 @@ ARG SELF_DB_NAME
 ARG SELF_DB_USER
 ARG SELF_DB_PASS
 
-
 FROM base AS local-deps
 
 WORKDIR /app/logger
@@ -35,7 +34,7 @@ FROM local-deps AS build
 WORKDIR /app/checkServer
 
 COPY package.json package-lock.json ./
-RUN npm i --loglevel=info --install-links;
+RUN npm i --loglevel=info;
 
 WORKDIR /app/screens/screenManager/types
 COPY --from=screen-manager . .

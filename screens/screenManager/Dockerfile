@@ -28,7 +28,7 @@ FROM local-deps AS build
 WORKDIR /app/screens/screenManager
 
 COPY package.json package-lock.json ./
-RUN npm i --loglevel=info --install-links;
+RUN npm i --loglevel=info;
 
 WORKDIR /app/screens/images
 COPY --from=images . .
