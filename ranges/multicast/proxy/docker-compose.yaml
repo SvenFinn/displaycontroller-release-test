@@ -1,0 +1,18 @@
+services:
+  dc-ranges-multicast-proxy:
+    container_name: dc-ranges-multicast-proxy
+    image: ghcr.io/svenfinn/dc-ranges-multicast-proxy
+    network_mode: host
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - MULTICAST_MSG_MIN_LENGTH=${MULTICAST_MSG_MIN_LENGTH}
+      additional_contexts:
+        - logger=../../../logger
+    depends_on:
+      dc-rabbitmq:
+        condition: service_healthy
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL}

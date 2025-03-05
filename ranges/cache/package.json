@@ -1,0 +1,24 @@
+{
+  "name": "dc-ranges-cache",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "author": "Sven Finn",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dc-db-local": "file:../../database/local",
+    "dc-db-smdb": "file:../../database/smdb",
+    "dc-logger": "file:../../logger",
+    "dc-table-watcher": "file:../../database/tableWatcher",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.9",
+    "tsc-alias": "^1.8.11",
+    "typescript": "^5.8.2"
+  }
+}

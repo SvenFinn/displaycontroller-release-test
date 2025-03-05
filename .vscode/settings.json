@@ -2,9 +2,29 @@
     "cSpell.words": [
         "conv",
         "CONV",
+        "datasources",
         "ergebnis",
+        "eventsource",
+        "fanout",
         "fileupload",
+        "meyton",
         "pino",
-        "smbclient"
-    ]
+        "pkey",
+        "postgresql",
+        "prisma",
+        "proxied",
+        "rabbitmq",
+        "shootmaster",
+        "shootmasterd",
+        "smbclient",
+        "smdb",
+        "sshpass",
+        "ssmdb",
+        "targetd"
+    ],
+    "files.exclude": {
+        "**/dist": true,
+        "**/node_modules": true
+    },
+    "postman.settings.dotenv-detection-notification-visibility": false
 }

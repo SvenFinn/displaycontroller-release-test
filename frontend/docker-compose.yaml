@@ -1,0 +1,19 @@
+services:
+  dc-frontend:
+    hostname: frontend
+    image: ghcr.io/svenfinn/dc-frontend
+    container_name: dc-frontend
+    restart: unless-stopped
+    networks:
+      - displaycontroller
+    build:
+      context: .
+      dockerfile: Dockerfile
+      additional_contexts:
+        - range-types=../ranges/types
+        - screen-types=../screens/screenManager/types
+      args:
+        - APP_PORT=${APP_PORT}
+        - MAX_MEYTON_VERSION_STR=${MAX_MEYTON_VERSION_STR}
+        - MIN_MEYTON_VERSION_STR=${MIN_MEYTON_VERSION_STR}
+        - APP_VERSION=${APP_VERSION}

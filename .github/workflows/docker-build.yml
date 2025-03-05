@@ -1,0 +1,247 @@
+#
+name: Create and publish a Docker image
+
+# Configures this workflow to run every time a change is pushed to the branch called `release`.
+on:
+  push:
+    branches:
+      - "development"
+  create:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to tag the Docker image with"
+        required: true
+        default: "development"
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  prep-args:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push' || (github.event_name == 'create' && github.event.ref_type == 'tag')
+
+    outputs:
+      args: ${{ steps.args.outputs.BUILD_ARGS }}
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+
+      - name: Determine APP_VERSION
+        id: app-version
+        run: |
+          if [ ! -z "${{ github.event.inputs.version }}" ]; then
+            app_version="${{ github.event.inputs.version }}"
+          else
+            branch=$(git branch --show-current)
+            if [ "$branch" = "development" ]; then
+              app_version="development"
+            else
+              app_version=$(git describe --tags --abbrev=0)
+            fi
+          fi
+          echo "app_version=$app_version"
+          echo "app_version=$app_version" >> $GITHUB_OUTPUT
+
+      - name: Prep arguments
+        id: args
+        env:
+          APP_VERSION: ${{ steps.app-version.outputs.app_version }}
+          MIN_MEYTON_VERSION: ${{ vars.MIN_MEYTON_VERSION }}
+          MIN_MEYTON_VERSION_STR: ${{ vars.MIN_MEYTON_VERSION_STR }}
+          MAX_MEYTON_VERSION: ${{ vars.MAX_MEYTON_VERSION }}
+          MAX_MEYTON_VERSION_STR: ${{ vars.MAX_MEYTON_VERSION_STR }}
+          MEYTON_SSH_USER: ${{ vars.MEYTON_SSH_USER }}
+          MEYTON_SSH_PASS: ${{ vars.MEYTON_SSH_PASS }}
+          MEYTON_DB_USER: ${{ vars.MEYTON_DB_USER }}
+          MEYTON_DB_PASS: ${{ vars.MEYTON_DB_PASS }}
+          DISCIPLINE_DEFAULT_COLOR: ${{ vars.DISCIPLINE_DEFAULT_COLOR }}
+          MULTICAST_MSG_MIN_LENGTH: ${{ vars.MULTICAST_MSG_MIN_LENGTH }}
+          LOG_LEVEL: ${{ vars.LOG_LEVEL }}
+          APP_PORT: ${{ vars.APP_PORT }}
+          APP_PATH: ${{ vars.APP_PATH }}
+          SELF_DB_HOST: ${{ vars.SELF_DB_HOST }}
+          SELF_DB_USER: ${{ vars.SELF_DB_USER }}
+          SELF_DB_PASS: ${{ vars.SELF_DB_PASS }}
+          SELF_DB_NAME: ${{ vars.SELF_DB_NAME }}
+        run: |
+          echo "APP_VERSION=$APP_VERSION" > /tmp/args
+          echo "SELF_DB_HOST=$SELF_DB_HOST" >> /tmp/args
+          echo "SELF_DB_USER=$SELF_DB_USER" >> /tmp/args
+          echo "SELF_DB_PASS=$SELF_DB_PASS" >> /tmp/args
+          echo "SELF_DB_NAME=$SELF_DB_NAME" >> /tmp/args
+          echo "MIN_MEYTON_VERSION=$MIN_MEYTON_VERSION" >> /tmp/args
+          echo "MIN_MEYTON_VERSION_STR=$MIN_MEYTON_VERSION_STR" >> /tmp/args
+          echo "MAX_MEYTON_VERSION=$MAX_MEYTON_VERSION" >> /tmp/args
+          echo "MAX_MEYTON_VERSION_STR=$MAX_MEYTON_VERSION_STR" >> /tmp/args
+          echo "MEYTON_SSH_USER=$MEYTON_SSH_USER" >> /tmp/args
+          echo "MEYTON_SSH_PASS=$MEYTON_SSH_PASS" >> /tmp/args
+          echo "MEYTON_DB_USER=$MEYTON_DB_USER" >> /tmp/args
+          echo "MEYTON_DB_PASS=$MEYTON_DB_PASS" >> /tmp/args
+          echo "DISCIPLINE_DEFAULT_COLOR=$DISCIPLINE_DEFAULT_COLOR" >> /tmp/args
+          echo "MULTICAST_MSG_MIN_LENGTH=$MULTICAST_MSG_MIN_LENGTH" >> /tmp/args
+          echo "LOG_LEVEL=$LOG_LEVEL" >> /tmp/args
+          echo "APP_PORT=$APP_PORT" >> /tmp/args
+          echo "APP_PATH=$APP_PATH" >> /tmp/args
+          echo "SCREEN_RESOLUTION=PLACEHOLDER" >> /tmp/args
+          echo "BUILD_ARGS=$(cat /tmp/args | base64 --wrap=0)"
+          echo "BUILD_ARGS=$(cat /tmp/args | base64 --wrap=0)" >> $GITHUB_OUTPUT
+
+      - name: Validate that all arguments exist
+        run: |
+          args=$(echo "${{ steps.args.outputs.BUILD_ARGS }}" | base64 --decode)
+          for arg in $args; do
+            export $arg
+          done
+          docker compose config 1>/dev/null 2>/tmp/docker-compose-errors
+          errors=$(cat /tmp/docker-compose-errors)
+          if [ ! -z "$errors" ]; then
+            echo "$errors"
+            exit 1
+          fi
+
+  prep-matrix:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push' || (github.event_name == 'create' && github.event.ref_type == 'tag')
+
+    outputs:
+      matrix: ${{ steps.services.outputs.services }}
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+
+      #- name: Install yq
+      #  run: |
+      #    sudo apt-get update
+      #    sudo apt-get install yq jq -y
+
+      - name: Determine services
+        id: services
+        run: |
+          config=$(docker compose config --format json 2>/dev/null)
+          services=$(echo "$config" | jq '.services | to_entries | map(select(.value.image | test("^ghcr\\.io"))) | .[].key')
+
+          # Convert the service names into a properly formatted JSON array
+          servicesJson=$(echo "$services" | jq -R -s -c 'split("\n") | map(select(length > 0) | gsub("^\"|\"$"; ""))')          # Output the JSON to a file (for debugging purposes) and set it in the environment
+          echo "services=$servicesJson" >> $GITHUB_OUTPUT
+          echo "$servicesJson"
+
+  build:
+    needs:
+      - prep-args
+      - prep-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: ${{fromJson(needs.prep-matrix.outputs.matrix)}}
+
+    steps:
+      #- name: Install yq
+      #  run: |
+      #    sudo apt-get update
+      #    sudo apt-get install yq jq -y
+
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+
+      - name: Generate build config
+        id: build-config
+        run: |
+
+          args=$(echo "${{ needs.prep-args.outputs.args }}" | base64 --decode)
+          for arg in $args; do
+            export $arg
+          done
+
+          config=$(docker compose config --format json ${{ matrix.service }} 2>/dev/null | jq -r '.services."${{ matrix.service }}"')
+          echo $config
+          image=$(echo "$config" | jq -r -c .image)
+          context=$(echo "$config" | jq -r -c .build.context)
+          dockerfile=$(echo "$config" | jq -r -c .build.dockerfile)
+          if [ "$(echo "$config" | jq -r -c '.build.args')" = "null" ]; then
+            args='""'
+          else
+            args=$(echo "$config" | jq -r -c '.build.args | to_entries | map("\(.key)=\(.value)") | join("\n") | @json')
+          fi
+          if [ "$(echo "$config" | jq -r -c '.build.additional_contexts')" = "null" ]; then
+            additional_contexts='""'
+          else
+            additional_contexts=$(echo "$config" | jq -r -c '.build.additional_contexts | to_entries | map("\(.key)=\(.value)") | join("\n") | @json')
+          fi
+
+          echo "image=$image"
+          echo "context=$context"
+          echo "dockerfile=$dockerfile"
+          echo "args=$args"
+          echo "additional_contexts=$additional_contexts"
+          echo "image=$image" >> $GITHUB_OUTPUT
+          echo "context=$context" >> $GITHUB_OUTPUT
+          echo "dockerfile=$dockerfile" >> $GITHUB_OUTPUT
+          echo "args=$args" >> $GITHUB_OUTPUT
+          echo "additional_contexts=$additional_contexts" >> $GITHUB_OUTPUT
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: metadata
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ steps.build-config.outputs.image }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and Push the Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ steps.build-config.outputs.context }}
+          file: "${{ steps.build-config.outputs.context }}/${{ steps.build-config.outputs.dockerfile }}"
+          build-args: |
+            ${{ fromJson(steps.build-config.outputs.args) }}
+          build-contexts: |
+            ${{ fromJson(steps.build-config.outputs.additional_contexts) }}
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          push: true
+
+  generate-compose:
+    runs-on: ubuntu-latest
+    needs: prep-args
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install yq
+        run: |
+          sudo apt-get update
+          sudo apt-get install yq jq -y
+
+      - name: Generate docker-compose.yml
+        run: |
+          cd scripts
+          args=$(echo "${{ needs.prep-args.outputs.args }}" | base64 --decode)
+          for arg in $args; do
+            export $arg
+            echo "$arg"
+          done
+          echo "APP_VERSION=$APP_VERSION"
+          echo "APP_PATH=$APP_PATH"
+          ./generate-prod-compose.sh "$APP_VERSION" "$APP_PATH"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-compose
+          path: scripts/docker-compose.yaml

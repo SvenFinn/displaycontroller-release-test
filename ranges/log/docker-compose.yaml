@@ -1,0 +1,30 @@
+services:
+  dc-ranges-log:
+    container_name: dc-ranges-log
+    hostname: ranges-log
+    image: ghcr.io/svenfinn/dc-ranges-log
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - SELF_DB_HOST=${SELF_DB_HOST}
+        - SELF_DB_USER=${SELF_DB_USER}
+        - SELF_DB_PASS=${SELF_DB_PASS}
+        - SELF_DB_NAME=${SELF_DB_NAME}
+        - MEYTON_SSH_USER=${MEYTON_SSH_USER}
+        - MEYTON_SSH_PASS=${MEYTON_SSH_PASS}
+      additional_contexts:
+        - local-db=../../database/local
+        - range-types=../types
+        - range-ttl=../ttl
+        - logger=../../logger
+    networks:
+      - displaycontroller
+    depends_on:
+      dc-rabbitmq:
+        condition: service_healthy
+      dc-db-migrate:
+        condition: service_completed_successfully
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL}

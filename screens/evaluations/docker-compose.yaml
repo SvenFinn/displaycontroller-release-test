@@ -1,0 +1,26 @@
+services:
+  dc-evaluations:
+    hostname: evaluations
+    image: ghcr.io/svenfinn/dc-evaluations
+    container_name: dc-evaluations
+    restart: unless-stopped
+    networks:
+      - displaycontroller
+    build:
+      context: .
+      dockerfile: Dockerfile
+      additional_contexts:
+        - local-db=../../database/local
+        - logger=../../logger
+      args:
+        - SELF_DB_HOST=${SELF_DB_HOST}
+        - SELF_DB_USER=${SELF_DB_USER}
+        - SELF_DB_PASS=${SELF_DB_PASS}
+        - SELF_DB_NAME=${SELF_DB_NAME}
+    depends_on:
+      dc-db-migrate:
+        condition: service_completed_successfully
+      dc-check-server:
+        condition: service_started
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL}

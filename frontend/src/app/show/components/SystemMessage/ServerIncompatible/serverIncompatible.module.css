@@ -1,0 +1,8 @@
+div.serverIncompatible {
+    font-size:8vmin;
+    text-align:center;
+}
+
+div.serverIncompatible p {
+    padding-bottom: 3%;
+}

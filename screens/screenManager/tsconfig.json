@@ -1,0 +1,32 @@
+{
+    "compilerOptions": {
+        "target": "ES2023",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "strict": true,
+        "outDir": "./dist",
+        "paths": {
+            "@shared/images": [
+                "../images/types"
+            ],
+            "@shared/evaluations": [
+                "../evaluations/types"
+            ],
+            "@shared/screens": [
+                "./types"
+            ],
+            "@shared/screens/*": [
+                "./types/*",
+            ],
+            "@shared/ranges": [
+                "../../ranges/types"
+            ],
+            "@shared/ranges/*": [
+                "../../ranges/types/*"
+            ]
+        }
+    },
+    "include": [
+        "src/**/*.ts"
+    ],
+}

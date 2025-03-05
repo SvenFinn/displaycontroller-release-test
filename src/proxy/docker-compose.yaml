@@ -1,7 +1,0 @@
-services:
-  dc_reverse_proxy:
-    build: .
-    ports:
-      - "80:80"
-    networks:
-      - displaycontroller

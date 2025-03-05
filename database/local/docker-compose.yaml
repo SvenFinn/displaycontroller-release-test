@@ -1,0 +1,28 @@
+include:
+  - ./pgadmin/docker-compose.yaml
+
+services:
+  dc-database:
+    image: postgres:alpine
+    container_name: dc-database
+    hostname: ${SELF_DB_HOST}
+    restart: unless-stopped
+    networks:
+      - displaycontroller
+    environment:
+      POSTGRES_USER: ${SELF_DB_USER}
+      POSTGRES_PASSWORD: ${SELF_DB_PASS}
+      POSTGRES_DB: ${SELF_DB_NAME}
+  dc-db-migrate:
+    container_name: dc-db-migrate
+    image: ghcr.io/svenfinn/dc-db-migrate
+    networks:
+      - displaycontroller
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - SELF_DB_HOST=${SELF_DB_HOST}
+        - SELF_DB_USER=${SELF_DB_USER}
+        - SELF_DB_PASS=${SELF_DB_PASS}
+        - SELF_DB_NAME=${SELF_DB_NAME}

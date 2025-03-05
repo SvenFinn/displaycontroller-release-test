@@ -1,0 +1,26 @@
+{
+  "name": "dc-ranges-log",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc && tsc-alias"
+  },
+  "author": "Sven Finn",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "amqplib": "^0.10.5",
+    "dc-db-local": "file:../../database/local",
+    "dc-logger": "file:../../logger",
+    "dc-ranges-ttl": "file:../ttl",
+    "dotenv": "^16.4.7",
+    "eventsource": "^3.0.5"
+  },
+  "devDependencies": {
+    "@types/amqplib": "^0.10.7",
+    "@types/node": "^22.13.9",
+    "tsc-alias": "^1.8.11",
+    "typescript": "^5.8.2"
+  }
+}

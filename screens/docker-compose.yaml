@@ -1,0 +1,4 @@
+include:
+  - evaluations/docker-compose.yaml
+  - images/docker-compose.yaml
+  - screenManager/docker-compose.yaml

@@ -1,0 +1,28 @@
+services:
+  dc-sync-time:
+    container_name: dc-sync-time
+    image: ghcr.io/svenfinn/dc-sync-time
+    hostname: sync-time
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+      additional_contexts:
+        - local-db=../database/local
+        - smdb-db=../database/smdb
+        - logger=../logger
+      args:
+        - SELF_DB_HOST=${SELF_DB_HOST}
+        - SELF_DB_NAME=${SELF_DB_NAME}
+        - SELF_DB_PASS=${SELF_DB_PASS}
+        - SELF_DB_USER=${SELF_DB_USER}
+        - MEYTON_DB_PASS=${MEYTON_DB_PASS}
+        - MEYTON_DB_USER=${MEYTON_DB_USER}
+    networks:
+      - displaycontroller
+    depends_on:
+      - dc-check-server
+    cap_add:
+      - SYS_TIME
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL}

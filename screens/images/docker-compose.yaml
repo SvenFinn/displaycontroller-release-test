@@ -1,0 +1,18 @@
+services:
+  dc-images:
+    container_name: dc-images
+    image: ghcr.io/svenfinn/dc-images
+    hostname: images
+    restart: unless-stopped
+    networks:
+      - displaycontroller
+    build:
+      context: .
+      dockerfile: Dockerfile
+      additional_contexts:
+        - logger=../../logger
+    volumes:
+      - "./files:/app/files"
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL}
+      - SCREEN_RESOLUTION=${SCREEN_RESOLUTION}

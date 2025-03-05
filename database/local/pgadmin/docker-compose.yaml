@@ -1,0 +1,25 @@
+services:
+  dc-pgadmin:
+    image: ghcr.io/svenfinn/dc-pgadmin
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - SELF_DB_HOST=${SELF_DB_HOST}
+        - SELF_DB_USER=${SELF_DB_USER}
+        - SELF_DB_PASS=${SELF_DB_PASS}
+        - SELF_DB_NAME=${SELF_DB_NAME}
+    container_name: dc-pgadmin
+    hostname: pgadmin
+    networks:
+      - displaycontroller
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: admin
+      GUNICORN_ACCESS_LOGFILE: "/dev/null"
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+      PGADMIN_CONFIG_UPGRADE_CHECK_ENABLED: "False"
+    depends_on:
+      dc-db-migrate:
+        condition: service_completed_successfully

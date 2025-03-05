@@ -1,0 +1,29 @@
+services:
+  dc-screens-man:
+    container_name: dc-screens-man
+    image: ghcr.io/svenfinn/dc-screens-man
+    hostname: screens-manager
+    restart: unless-stopped
+    networks:
+      - displaycontroller
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      additional_contexts:
+        - local-db=../../database/local
+        - images=../images
+        - evaluations=../evaluations
+        - ranges=../../ranges/types
+        - logger=../../logger
+      args:
+        - SELF_DB_HOST=${SELF_DB_HOST}
+        - SELF_DB_USER=${SELF_DB_USER}
+        - SELF_DB_PASS=${SELF_DB_PASS}
+        - SELF_DB_NAME=${SELF_DB_NAME}
+    depends_on:
+      dc-db-migrate:
+        condition: service_completed_successfully
+      dc-rabbitmq:
+        condition: service_healthy
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL}

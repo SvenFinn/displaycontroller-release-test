@@ -1,0 +1,16 @@
+name: displaycontroller
+
+include:
+  - proxy/docker-compose.yaml
+  - database/local/docker-compose.yaml
+  - checkServer/docker-compose.yaml
+  - syncTime/docker-compose.yaml
+  - screens/docker-compose.yaml
+  - ranges/docker-compose.yaml
+  - rabbitmq/docker-compose.yaml
+  - portainer/docker-compose.yaml
+  - frontend/docker-compose.yaml
+
+networks:
+  displaycontroller:
+    driver: bridge

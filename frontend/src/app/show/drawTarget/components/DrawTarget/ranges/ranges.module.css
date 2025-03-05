@@ -1,0 +1,5 @@
+div.drawTargetRanges {
+    display:grid;
+    height:calc(92% - 5px);
+    width:calc(100% - 5px);
+}

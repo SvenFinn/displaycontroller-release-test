@@ -1,0 +1,65 @@
+generator client {
+    provider      = "prisma-client-js"
+    output        = "./generated/client"
+    binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("SELF_DB_URL")
+}
+
+model Parameter {
+    key       String   @id
+    strValue  String?
+    boolValue Boolean?
+    numValue  Float?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Screens {
+    id           Int           @id @default(autoincrement())
+    preset       ScreensPreset
+    options      Json
+    condition    Json?
+    visibleFrom  DateTime?
+    visibleUntil DateTime?
+    duration     Int           @default(30000)
+    createdAt    DateTime      @default(now())
+    updatedAt    DateTime      @default(now()) @updatedAt
+}
+
+enum ScreensPreset {
+    drawTarget
+    cpcView
+    imageViewer
+    evaluation
+    evaluationGallery
+}
+
+model Cache {
+    type CacheTypes
+    key  BigInt
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now()) @updatedAt
+
+    value Json
+
+    @@id([type, key])
+}
+
+enum CacheTypes {
+    shooter
+    startList
+    discipline
+    overrideDiscipline
+}
+
+model KnownRanges {
+    ipAddress String   @id @db.Inet
+    rangeId   Int?     @unique
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now()) @updatedAt
+}
